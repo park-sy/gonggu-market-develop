@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.gonggu.board.controller.BoardControllerTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2022-11-04T07:54:15" hostname="DESKTOP-FMID6HR" time="1.254">
+  <properties/>
+  <testcase name="내 구매 내역 조회" classname="com.gonggu.board.controller.BoardControllerTest" time="1.254"/>
+  <system-out><![CDATA[16:54:01.614 [Test worker] DEBUG org.springframework.test.context.BootstrapUtils - Instantiating CacheAwareContextLoaderDelegate from class [org.springframework.test.context.cache.DefaultCacheAwareContextLoaderDelegate]
+16:54:01.634 [Test worker] DEBUG org.springframework.test.context.BootstrapUtils - Instantiating BootstrapContext using constructor [public org.springframework.test.context.support.DefaultBootstrapContext(java.lang.Class,org.springframework.test.context.CacheAwareContextLoaderDelegate)]
+16:54:01.692 [Test worker] DEBUG org.springframework.test.context.BootstrapUtils - Instantiating TestContextBootstrapper for test class [com.gonggu.board.controller.BoardControllerTest] from class [org.springframework.boot.test.context.SpringBootTestContextBootstrapper]
+16:54:01.714 [Test worker] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper - Neither @ContextConfiguration nor @ContextHierarchy found for test class [com.gonggu.board.controller.BoardControllerTest], using SpringBootContextLoader
+16:54:01.723 [Test worker] DEBUG org.springframework.test.context.support.AbstractContextLoader - Did not detect default resource location for test class [com.gonggu.board.controller.BoardControllerTest]: class path resource [com/gonggu/board/controller/BoardControllerTest-context.xml] does not exist
+16:54:01.724 [Test worker] DEBUG org.springframework.test.context.support.AbstractContextLoader - Did not detect default resource location for test class [com.gonggu.board.controller.BoardControllerTest]: class path resource [com/gonggu/board/controller/BoardControllerTestContext.groovy] does not exist
+16:54:01.725 [Test worker] INFO org.springframework.test.context.support.AbstractContextLoader - Could not detect default resource locations for test class [com.gonggu.board.controller.BoardControllerTest]: no resource found for suffixes {-context.xml, Context.groovy}.
+16:54:01.726 [Test worker] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.gonggu.board.controller.BoardControllerTest]: BoardControllerTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+16:54:01.835 [Test worker] DEBUG org.springframework.test.context.support.ActiveProfilesUtils - Could not find an 'annotation declaring class' for annotation type [org.springframework.test.context.ActiveProfiles] and class [com.gonggu.board.controller.BoardControllerTest]
+16:54:01.959 [Test worker] DEBUG org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider - Identified candidate component class: file [C:\Users\meko6\Desktop\project\gonggu\board\gonggu\build\classes\java\main\com\gonggu\board\GongguApplication.class]
+16:54:01.961 [Test worker] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.gonggu.board.GongguApplication for test class com.gonggu.board.controller.BoardControllerTest
+16:54:02.185 [Test worker] DEBUG org.springframework.boot.test.context.SpringBootTestContextBootstrapper - @TestExecutionListeners is not present for class [com.gonggu.board.controller.BoardControllerTest]: using defaults.
+16:54:02.187 [Test worker] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper - Loaded default TestExecutionListener class names from location [META-INF/spring.factories]: [org.springframework.boot.test.autoconfigure.restdocs.RestDocsTestExecutionListener, org.springframework.boot.test.autoconfigure.web.client.MockRestServiceServerResetTestExecutionListener, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrintOnlyOnFailureTestExecutionListener, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverTestExecutionListener, org.springframework.boot.test.autoconfigure.webservices.client.MockWebServiceServerTestExecutionListener, org.springframework.boot.test.mock.mockito.MockitoTestExecutionListener, org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener, org.springframework.test.context.web.ServletTestExecutionListener, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener, org.springframework.test.context.event.ApplicationEventsTestExecutionListener, org.springframework.test.context.support.DependencyInjectionTestExecutionListener, org.springframework.test.context.support.DirtiesContextTestExecutionListener, org.springframework.test.context.transaction.TransactionalTestExecutionListener, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener, org.springframework.test.context.event.EventPublishingTestExecutionListener]
+16:54:02.223 [Test worker] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper - Using TestExecutionListeners: [org.springframework.test.context.web.ServletTestExecutionListener@5a6d5a8f, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener@4a67318f, org.springframework.test.context.event.ApplicationEventsTestExecutionListener@315ba14a, org.springframework.boot.test.mock.mockito.MockitoTestExecutionListener@17f9344b, org.springframework.boot.test.autoconfigure.SpringBootDependencyInjectionTestExecutionListener@27f0ad19, org.springframework.test.context.support.DirtiesContextTestExecutionListener@54e81b21, org.springframework.test.context.transaction.TransactionalTestExecutionListener@38d5b107, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener@6650813a, org.springframework.test.context.event.EventPublishingTestExecutionListener@44ea608c, org.springframework.boot.test.autoconfigure.restdocs.RestDocsTestExecutionListener@50cf5a23, org.springframework.boot.test.autoconfigure.web.client.MockRestServiceServerResetTestExecutionListener@450794b4, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrintOnlyOnFailureTestExecutionListener@273c947f, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverTestExecutionListener@30457e14, org.springframework.boot.test.autoconfigure.webservices.client.MockWebServiceServerTestExecutionListener@1af1347d, org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener@632aa1a3]
+16:54:02.232 [Test worker] DEBUG org.springframework.test.context.support.AbstractDirtiesContextTestExecutionListener - Before test class: context [DefaultTestContext@51671b08 testClass = BoardControllerTest, testInstance = [null], testMethod = [null], testException = [null], mergedContextConfiguration = [WebMergedContextConfiguration@15051a0 testClass = BoardControllerTest, locations = '{}', classes = '{class com.gonggu.board.GongguApplication}', contextInitializerClasses = '[]', activeProfiles = '{}', propertySourceLocations = '{}', propertySourceProperties = '{org.springframework.boot.test.context.SpringBootTestContextBootstrapper=true}', contextCustomizers = set[org.springframework.boot.test.autoconfigure.actuate.metrics.MetricsExportContextCustomizerFactory$DisableMetricExportContextCustomizer@618c5d94, org.springframework.boot.test.autoconfigure.properties.PropertyMappingContextCustomizer@4b3fa0b3, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverContextCustomizerFactory$Customizer@654d8173, [ImportsContextCustomizer@1162410a key = [org.springframework.boot.test.autoconfigure.web.servlet.MockMvcAutoConfiguration, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcWebClientAutoConfiguration, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcWebDriverAutoConfiguration, org.springframework.boot.autoconfigure.security.oauth2.client.servlet.OAuth2ClientAutoConfiguration, org.springframework.boot.autoconfigure.security.oauth2.resource.servlet.OAuth2ResourceServerAutoConfiguration, org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration, org.springframework.boot.autoconfigure.security.servlet.SecurityFilterAutoConfiguration, org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcSecurityConfiguration, org.springframework.boot.test.autoconfigure.web.reactive.WebTestClientAutoConfiguration]], org.springframework.boot.test.context.filter.ExcludeFilterContextCustomizer@5778826f, org.springframework.boot.test.json.DuplicateJsonObjectContextCustomizerFactory$DuplicateJsonObjectContextCustomizer@1c80e49b, org.springframework.boot.test.mock.mockito.MockitoContextCustomizer@0, org.springframework.boot.test.web.client.TestRestTemplateContextCustomizer@4c51bb7, org.springframework.boot.test.context.SpringBootTestArgs@1, org.springframework.boot.test.context.SpringBootTestWebEnvironment@5f20155b], resourceBasePath = 'src/main/webapp', contextLoader = 'org.springframework.boot.test.context.SpringBootContextLoader', parent = [null]], attributes = map['org.springframework.test.context.web.ServletTestExecutionListener.activateListener' -> true]], class annotated with @DirtiesContext [false] with mode [null].
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::                (v2.7.5)
+
+2022-11-04 16:54:03.003  INFO 25276 --- [    Test worker] c.g.b.controller.BoardControllerTest     : Starting BoardControllerTest using Java 11.0.15.1 on DESKTOP-FMID6HR with PID 25276 (started by meko6 in C:\Users\meko6\Desktop\project\gonggu\board\gonggu)
+2022-11-04 16:54:03.005  INFO 25276 --- [    Test worker] c.g.b.controller.BoardControllerTest     : No active profile set, falling back to 1 default profile: "default"
+2022-11-04 16:54:04.442  INFO 25276 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2022-11-04 16:54:04.613  INFO 25276 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 151 ms. Found 5 JPA repository interfaces.
+2022-11-04 16:54:05.788  INFO 25276 --- [    Test worker] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2022-11-04 16:54:05.942  INFO 25276 --- [    Test worker] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 5.6.12.Final
+2022-11-04 16:54:06.360  INFO 25276 --- [    Test worker] o.hibernate.annotations.common.Version   : HCANN000001: Hibernate Commons Annotations {5.1.2.Final}
+2022-11-04 16:54:06.640  INFO 25276 --- [    Test worker] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2022-11-04 16:54:07.846  INFO 25276 --- [    Test worker] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2022-11-04 16:54:07.887  INFO 25276 --- [    Test worker] org.hibernate.dialect.Dialect            : HHH000400: Using dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+Hibernate: alter table board drop foreign key FKfyf1fchnby6hndhlfaidier1r
+Hibernate: alter table board_image drop foreign key FKp567mlnww479xgirmd98kcqnp
+Hibernate: alter table board_keyword drop foreign key FK7hywgvi3evdpdfgkyjns6e3gn
+Hibernate: alter table board_member drop foreign key FK5nku3bcf54r5yvv5qn3dubgsi
+Hibernate: alter table board_member drop foreign key FKorwfc6b6vlcvho6gig345xgf9
+Hibernate: drop table if exists board
+Hibernate: drop table if exists board_image
+Hibernate: drop table if exists board_keyword
+Hibernate: drop table if exists board_member
+Hibernate: drop table if exists hibernate_sequence
+Hibernate: drop table if exists user
+Hibernate: create table board (board_id bigint not null auto_increment, content varchar(255), create_time datetime, deletion boolean default false not null, now_count integer default 0 not null, price bigint, quantity integer, recruitment_number integer, title varchar(255), url varchar(255), view integer default 0 not null, user_id bigint, primary key (board_id)) engine=InnoDB
+Hibernate: create table board_image (id bigint not null, file_path varchar(255), new_file_name varchar(255), origin_file_name varchar(255), board_id bigint, primary key (id)) engine=InnoDB
+Hibernate: create table board_keyword (id bigint not null, keyword varchar(255), board_id bigint, primary key (id)) engine=InnoDB
+Hibernate: create table board_member (board_member_id bigint not null auto_increment, host boolean default false not null, quantity integer, board_id bigint, user_id bigint, primary key (board_member_id)) engine=InnoDB
+Hibernate: create table hibernate_sequence (next_val bigint) engine=InnoDB
+Hibernate: insert into hibernate_sequence values ( 1 )
+Hibernate: create table user (user_id bigint not null auto_increment, name varchar(255), primary key (user_id)) engine=InnoDB
+Hibernate: alter table board add constraint FKfyf1fchnby6hndhlfaidier1r foreign key (user_id) references user (user_id)
+Hibernate: alter table board_image add constraint FKp567mlnww479xgirmd98kcqnp foreign key (board_id) references board (board_id)
+Hibernate: alter table board_keyword add constraint FK7hywgvi3evdpdfgkyjns6e3gn foreign key (board_id) references board (board_id)
+Hibernate: alter table board_member add constraint FK5nku3bcf54r5yvv5qn3dubgsi foreign key (board_id) references board (board_id)
+Hibernate: alter table board_member add constraint FKorwfc6b6vlcvho6gig345xgf9 foreign key (user_id) references user (user_id)
+2022-11-04 16:54:12.486  INFO 25276 --- [    Test worker] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+2022-11-04 16:54:12.502  INFO 25276 --- [    Test worker] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2022-11-04 16:54:15.768  INFO 25276 --- [    Test worker] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2022-11-04 16:54:15.768  INFO 25276 --- [    Test worker] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2022-11-04 16:54:15.770  INFO 25276 --- [    Test worker] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 2 ms
+2022-11-04 16:54:15.806  INFO 25276 --- [    Test worker] c.g.b.controller.BoardControllerTest     : Started BoardControllerTest in 13.5 seconds (JVM running for 17.347)
+Hibernate: select boardmembe0_.board_member_id as board_me1_3_, boardmembe0_.board_id as board_id4_3_, boardmembe0_.host as host2_3_, boardmembe0_.quantity as quantity3_3_, boardmembe0_.user_id as user_id5_3_ from board_member boardmembe0_
+Hibernate: select board0_.board_id as board_id1_0_, board0_.content as content2_0_, board0_.create_time as create_t3_0_, board0_.deletion as deletion4_0_, board0_.now_count as now_coun5_0_, board0_.price as price6_0_, board0_.quantity as quantity7_0_, board0_.recruitment_number as recruitm8_0_, board0_.title as title9_0_, board0_.url as url10_0_, board0_.user_id as user_id12_0_, board0_.view as view11_0_ from board board0_
+Hibernate: select user0_.user_id as user_id1_4_, user0_.name as name2_4_ from user user0_
+Hibernate: insert into user (name) values (?)
+Hibernate: insert into user (name) values (?)
+Hibernate: insert into user (name) values (?)
+Hibernate: insert into user (name) values (?)
+Hibernate: insert into user (name) values (?)
+Hibernate: insert into board (content, create_time, deletion, now_count, price, quantity, recruitment_number, title, url, user_id, view) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+Hibernate: insert into board (content, create_time, deletion, now_count, price, quantity, recruitment_number, title, url, user_id, view) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+Hibernate: insert into board (content, create_time, deletion, now_count, price, quantity, recruitment_number, title, url, user_id, view) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+Hibernate: insert into board (content, create_time, deletion, now_count, price, quantity, recruitment_number, title, url, user_id, view) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+Hibernate: insert into board (content, create_time, deletion, now_count, price, quantity, recruitment_number, title, url, user_id, view) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+Hibernate: insert into board_member (board_id, host, quantity, user_id) values (?, ?, ?, ?)
+Hibernate: insert into board_member (board_id, host, quantity, user_id) values (?, ?, ?, ?)
+Hibernate: insert into board_member (board_id, host, quantity, user_id) values (?, ?, ?, ?)
+Hibernate: insert into board_member (board_id, host, quantity, user_id) values (?, ?, ?, ?)
+Hibernate: select user0_.user_id as user_id1_4_0_, user0_.name as name2_4_0_ from user user0_ where user0_.user_id=?
+Hibernate: select board0_.board_id as board_id1_0_, board0_.content as content2_0_, board0_.create_time as create_t3_0_, board0_.deletion as deletion4_0_, board0_.now_count as now_coun5_0_, board0_.price as price6_0_, board0_.quantity as quantity7_0_, board0_.recruitment_number as recruitm8_0_, board0_.title as title9_0_, board0_.url as url10_0_, board0_.user_id as user_id12_0_, board0_.view as view11_0_ from board board0_ inner join board_member boardmembe1_ on (board0_.board_id=boardmembe1_.board_id) where boardmembe1_.user_id=? and boardmembe1_.host=? order by board0_.create_time desc
+Hibernate: select images0_.board_id as board_id5_1_0_, images0_.id as id1_1_0_, images0_.id as id1_1_1_, images0_.board_id as board_id5_1_1_, images0_.file_path as file_pat2_1_1_, images0_.new_file_name as new_file3_1_1_, images0_.origin_file_name as origin_f4_1_1_ from board_image images0_ where images0_.board_id=? order by images0_.id asc
+Hibernate: select keywords0_.board_id as board_id3_2_0_, keywords0_.id as id1_2_0_, keywords0_.id as id1_2_1_, keywords0_.board_id as board_id3_2_1_, keywords0_.keyword as keyword2_2_1_ from board_keyword keywords0_ where keywords0_.board_id=? order by keywords0_.id asc
+Hibernate: select images0_.board_id as board_id5_1_0_, images0_.id as id1_1_0_, images0_.id as id1_1_1_, images0_.board_id as board_id5_1_1_, images0_.file_path as file_pat2_1_1_, images0_.new_file_name as new_file3_1_1_, images0_.origin_file_name as origin_f4_1_1_ from board_image images0_ where images0_.board_id=? order by images0_.id asc
+Hibernate: select keywords0_.board_id as board_id3_2_0_, keywords0_.id as id1_2_0_, keywords0_.id as id1_2_1_, keywords0_.board_id as board_id3_2_1_, keywords0_.keyword as keyword2_2_1_ from board_keyword keywords0_ where keywords0_.board_id=? order by keywords0_.id asc
+Hibernate: select images0_.board_id as board_id5_1_0_, images0_.id as id1_1_0_, images0_.id as id1_1_1_, images0_.board_id as board_id5_1_1_, images0_.file_path as file_pat2_1_1_, images0_.new_file_name as new_file3_1_1_, images0_.origin_file_name as origin_f4_1_1_ from board_image images0_ where images0_.board_id=? order by images0_.id asc
+Hibernate: select keywords0_.board_id as board_id3_2_0_, keywords0_.id as id1_2_0_, keywords0_.id as id1_2_1_, keywords0_.board_id as board_id3_2_1_, keywords0_.keyword as keyword2_2_1_ from board_keyword keywords0_ where keywords0_.board_id=? order by keywords0_.id asc
+Hibernate: select images0_.board_id as board_id5_1_0_, images0_.id as id1_1_0_, images0_.id as id1_1_1_, images0_.board_id as board_id5_1_1_, images0_.file_path as file_pat2_1_1_, images0_.new_file_name as new_file3_1_1_, images0_.origin_file_name as origin_f4_1_1_ from board_image images0_ where images0_.board_id=? order by images0_.id asc
+Hibernate: select keywords0_.board_id as board_id3_2_0_, keywords0_.id as id1_2_0_, keywords0_.id as id1_2_1_, keywords0_.board_id as board_id3_2_1_, keywords0_.keyword as keyword2_2_1_ from board_keyword keywords0_ where keywords0_.board_id=? order by keywords0_.id asc
+
+MockHttpServletRequest:
+      HTTP Method = GET
+      Request URI = /board/join-list
+       Parameters = {id=[1]}
+          Headers = [Content-Type:"application/json;charset=UTF-8"]
+             Body = null
+    Session Attrs = {}
+
+Handler:
+             Type = com.gonggu.board.controller.BoardController
+           Method = com.gonggu.board.controller.BoardController#getMyJoinBoard(UserTemp)
+
+Async:
+    Async started = false
+     Async result = null
+
+Resolved Exception:
+             Type = null
+
+ModelAndView:
+        View name = null
+             View = null
+            Model = null
+
+FlashMap:
+       Attributes = null
+
+MockHttpServletResponse:
+           Status = 200
+    Error message = null
+          Headers = [Vary:"Origin", "Access-Control-Request-Method", "Access-Control-Request-Headers", Content-Type:"application/json"]
+     Content type = application/json
+             Body = [{"id":3,"title":"제목2","content":"내용","price":1000,"quantity":null,"recruitmentNumber":2,"images":[],"keywords":[],"view":0},{"id":4,"title":"제목3","content":"내용","price":1000,"quantity":null,"recruitmentNumber":3,"images":[],"keywords":[],"view":0},{"id":5,"title":"제목4","content":"내용","price":1000,"quantity":null,"recruitmentNumber":4,"images":[],"keywords":[],"view":0},{"id":2,"title":"제목1","content":"내용","price":1000,"quantity":null,"recruitmentNumber":1,"images":[],"keywords":[],"view":0}]
+    Forwarded URL = null
+   Redirected URL = null
+          Cookies = []
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
