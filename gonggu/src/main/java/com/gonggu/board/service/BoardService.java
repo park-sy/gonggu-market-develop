@@ -1,6 +1,8 @@
 package com.gonggu.board.service;
 
 import com.gonggu.board.domain.*;
+import com.gonggu.board.exception.BoardJoinFailed;
+import com.gonggu.board.exception.BoardNotFound;
 import com.gonggu.board.repository.*;
 import com.gonggu.board.request.*;
 import com.gonggu.board.response.BoardDetailResponse;
@@ -38,7 +40,7 @@ public class BoardService {
                 .map(BoardResponse::new).collect(Collectors.toList());
     }
     public BoardDetailResponse get(Long id){
-        Board board = boardRepository.findById(id).orElseThrow();
+        Board board = boardRepository.findById(id).orElseThrow(BoardNotFound::new);
         BoardDetailResponse boardDetailResponse = new BoardDetailResponse(board);
         return boardDetailResponse;
     }
@@ -71,16 +73,15 @@ public class BoardService {
                 boardKeywordRepository.save(bk);
             }
         }
-
     }
     public void deleteBoard(Long id){
-        Board board = boardRepository.findById(id).orElseThrow();
+        Board board = boardRepository.findById(id).orElseThrow(BoardNotFound::new);
         BoardEditor.BoardEditorBuilder editorBuilder = board.toEditor();
         BoardEditor boardEditor = editorBuilder.deletion(false).build();
         board.edit(boardEditor);
     }
     public BoardDetailResponse editBoard(Long id, BoardEdit boardEdit){
-        Board board = boardRepository.findById(id).orElseThrow();
+        Board board = boardRepository.findById(id).orElseThrow(BoardNotFound::new);
         BoardEditor.BoardEditorBuilder editorBuilder = board.toEditor();
         BoardEditor boardEditor = editorBuilder.content(boardEdit.getContent()).build();
         board.edit(boardEditor);
@@ -90,7 +91,7 @@ public class BoardService {
     }
 
     public void uploadImage(Long id, MultipartFile[] files) {
-        Board board = boardRepository.findById(id).orElseThrow();
+        Board board = boardRepository.findById(id).orElseThrow(BoardNotFound::new);
         LocalDateTime localDateTime = LocalDateTime.now();
         String now = localDateTime.format(DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS"));
         String basicPath = System.getProperty("board.dri")+"/files";
@@ -120,7 +121,10 @@ public class BoardService {
     }
 
     public void createJoin(Long boardId, BoardJoin join, User user) {
-        Board board = boardRepository.findById(boardId).orElseThrow();
+        Board board = boardRepository.findById(boardId).orElseThrow(BoardNotFound::new);
+        if(board.getNowCount() + join.getQuantity() > board.getRecruitmentNumber()){
+            throw new BoardJoinFailed("구매 참여에 실패하였습니다.");
+        }
         board.editCount(join.getQuantity() + board.getNowCount());
         BoardMember boardMember = BoardMember.builder()
                 .board(board)
@@ -131,24 +135,26 @@ public class BoardService {
     }
 
     public void editJoin(Long boardId, BoardJoin join, User user){
-        Board board = boardRepository.findById(boardId).orElseThrow();
+        Board board = boardRepository.findById(boardId).orElseThrow(BoardNotFound::new);
         BoardMember boardMember = boardMemberRepository.findByBoardAndUser(board, user);
         Integer afterCount = board.getNowCount() + join.getQuantity() - boardMember.getQuantity();
-        if(afterCount < 0 || afterCount > board.getRecruitmentNumber()) return;
+        if(afterCount < 0 || afterCount > board.getRecruitmentNumber()){
+            throw new BoardJoinFailed("수량 변경에 실패하였습니다.");
+        }
 
         board.editCount(afterCount);
         boardMember.editQuantity(join.getQuantity());
     }
 
     public void deleteJoin(Long boardId, User user){
-        Board board = boardRepository.findById(boardId).orElseThrow();
+        Board board = boardRepository.findById(boardId).orElseThrow(BoardNotFound::new);
         BoardMember boardMember = boardMemberRepository.findByBoardAndUser(board, user);
         board.editCount(board.getNowCount()-boardMember.getQuantity());
         boardMemberRepository.delete(boardMember);
     }
 
     public List<BoardMemberResponse> getJoin(Long boardId){
-        Board board = boardRepository.findById(boardId).orElseThrow();
+        Board board = boardRepository.findById(boardId).orElseThrow(BoardNotFound::new);
        return boardMemberRepository.findByBoard(board).stream()
                .map(BoardMemberResponse::new).collect(Collectors.toList());
     }
