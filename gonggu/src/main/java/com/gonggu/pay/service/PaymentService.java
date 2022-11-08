@@ -4,6 +4,8 @@ import com.gonggu.pay.domain.Account;
 import com.gonggu.pay.domain.Payment;
 import com.gonggu.pay.domain.Transaction;
 import com.gonggu.pay.domain.User;
+import com.gonggu.pay.exception.PayChargeFailed;
+import com.gonggu.pay.exception.PayRemitFailed;
 import com.gonggu.pay.repository.AccountRepository;
 import com.gonggu.pay.repository.PaymentRepository;
 import com.gonggu.pay.repository.TransactionRepository;
@@ -48,7 +50,7 @@ public class PaymentService {
 
     public void charge(PaymentCharge paymentCharge, User user) {
         Account account = accountRepository.findByUser(user);
-        if(account.getBalance() < paymentCharge.getRequestCoin()) return;
+        if(account.getBalance() < paymentCharge.getRequestCoin()) throw new PayChargeFailed("충전에 실패하였습니다.");
         //거래 업데이트
         Payment payment = paymentRepository.findByUser(user);
         account.minusBalance(paymentCharge.getRequestCoin());
@@ -58,7 +60,7 @@ public class PaymentService {
 
     public void discharge(PaymentCharge paymentCharge, User user) {
         Payment payment = paymentRepository.findByUser(user);
-        if(payment.getBalance() < paymentCharge.getRequestCoin()) return;
+        if(payment.getBalance() < paymentCharge.getRequestCoin()) throw new PayChargeFailed("인출에 실패하였습니다.");
         //거래 업데이트
         Account account = accountRepository.findByUser(user);
         payment.minusBalance(paymentCharge.getRequestCoin());
@@ -70,7 +72,7 @@ public class PaymentService {
         User from = userRepository.findById(request.getFrom()).orElseThrow();
         User to = userRepository.findById(request.getTo()).orElseThrow();
         Payment fromPayment = paymentRepository.findByUser(from);
-        if(fromPayment.getBalance() < request.getAmount()) return;
+        if(fromPayment.getBalance() < request.getAmount()) throw new PayRemitFailed();
         //송금 로직
 
         Payment toPayment = paymentRepository.findByUser(to);
