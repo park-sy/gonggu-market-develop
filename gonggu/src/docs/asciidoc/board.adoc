@@ -1,0 +1,33 @@
+= Board API
+:doctype: book
+:icons: font
+:source-highlighter: highlights
+:toc: left
+:toclevels: 2
+:sectlinks:
+
+== 게시글 조회
+include::{snippets}/board/search/http-request.adoc[]
+include::{snippets}/board/search/path-parameters.adoc[]
+
+=== 응답
+include::{snippets}/board/search/http-response.adoc[]
+include::{snippets}/board/search/response-fields.adoc[]
+
+== 게시글 상세 보기
+
+include::{snippets}/board/detail/http-request.adoc[]
+include::{snippets}/board/detail/path-parameters.adoc[]
+
+=== 응답
+include::{snippets}/board/detail/http-response.adoc[]
+include::{snippets}/board/detail/response-fields.adoc[]
+
+=== CURL
+include::{snippets}/board/detail/curl-request.adoc[]
+
+== 게시글 작성
+include::{snippets}/board/create/http-request.adoc[]
+include::{snippets}/board/create/request-body.adoc[]
+=== 응답
+include::{snippets}/board/create/http-response.adoc[]

@@ -1,5 +1,6 @@
 package com.gonggu.board.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
 
 import javax.persistence.*;
@@ -17,6 +18,7 @@ public class BoardImage {
     private String newFileName;
     private String filePath;
 
+    @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY ,cascade = CascadeType.MERGE)
     @JoinColumn(name = "board_id")
     private Board board;

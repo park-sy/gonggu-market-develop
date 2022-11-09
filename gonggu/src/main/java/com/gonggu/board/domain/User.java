@@ -15,4 +15,6 @@ public class User {
     @Column(name = "user_id")
     private Long id;
     private String name;
+    //유저 성사율
+    //유저 이미지
 }

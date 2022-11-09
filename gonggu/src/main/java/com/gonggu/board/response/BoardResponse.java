@@ -1,10 +1,10 @@
 package com.gonggu.board.response;
 
 import com.gonggu.board.domain.Board;
-import com.gonggu.board.domain.BoardImage;
-import com.gonggu.board.domain.BoardKeyword;
 import lombok.Getter;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -12,27 +12,27 @@ import java.util.stream.Collectors;
 public class BoardResponse {
 
     private final Long id;
+    private final String category;
     private final String title;
-    private final String content;
-    private final Long price;
+    private final Long remainDate;
+    private final Long unitPrice;
     private final Integer quantity;
-//    private final String url;
-    private final Integer recruitmentNumber;
+    private final Integer nowCount;
+    private final Integer totalCount;
     private final List<BoardImageResponse> images;
-    private final List<String> keywords;
-    private final int view;
-
+    private final boolean deletion;
     public BoardResponse(Board board){
+        LocalDateTime now = LocalDateTime.now();
         this.id = board.getId();
+        this.category = board.getCategory().getName();
         this.title = board.getTitle();
-        this.content = board.getContent();
-        this.price = board.getPrice();
+        this.remainDate = ChronoUnit.DAYS.between(now,board.getExpireTime());
+        this.unitPrice = board.getUnitPrice();
         this.quantity = board.getQuantity();
-//        this.url = board.getUrl();
-        this.recruitmentNumber = board.getRecruitmentNumber();
-        this.view = board.getView();
+        this.nowCount = board.getNowCount();
+        this.totalCount = board.getTotalCount();
         this.images = board.getImages().stream().map(BoardImageResponse::new).collect(Collectors.toList());
-        this.keywords = board.getKeywords().stream().map(BoardKeyword::getKeyword).collect(Collectors.toList());
+        this.deletion = board.isDeletion();
 
     }
 }

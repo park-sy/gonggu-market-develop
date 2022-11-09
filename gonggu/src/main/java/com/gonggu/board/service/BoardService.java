@@ -30,6 +30,7 @@ public class BoardService {
     private final BoardImageRepository boardImageRepository;
     private final BoardMemberRepository boardMemberRepository;
     private final UserRepository userRepository;
+    private final CategoryRepository categoryRepository;
 
     public User findUserTemp(UserTemp userTemp){
         return userRepository.findById(userTemp.getId()).orElseThrow();
@@ -46,15 +47,20 @@ public class BoardService {
     }
 
     public void createBoard(BoardCreate boardCreate, User user){
+        Category category = categoryRepository.findById(boardCreate.getCategoryId()).orElseThrow();
+        Integer divisor = boardCreate.getQuantity() / boardCreate.getUnitQuantity();
         Board board = Board.builder()
                 .title(boardCreate.getTitle())
                 .content(boardCreate.getContent())
                 .price(boardCreate.getPrice())
+                .unitPrice(boardCreate.getPrice()/divisor)
                 .quantity(boardCreate.getQuantity())
+                .unitQuantity(boardCreate.getUnitQuantity())
                 .url(boardCreate.getUrl())
                 .nowCount(boardCreate.getNowCount())
                 .user(user)
-                .recruitmentNumber(boardCreate.getRecruitmentNumber())
+                .totalCount(boardCreate.getQuantity()/divisor)
+                .category(category)
                 .build();
         boardRepository.save(board);
 
@@ -122,7 +128,7 @@ public class BoardService {
 
     public void createJoin(Long boardId, BoardJoin join, User user) {
         Board board = boardRepository.findById(boardId).orElseThrow(BoardNotFound::new);
-        if(board.getNowCount() + join.getQuantity() > board.getRecruitmentNumber()){
+        if(board.getNowCount() + join.getQuantity() > board.getTotalCount()){
             throw new BoardJoinFailed("구매 참여에 실패하였습니다.");
         }
         board.editCount(join.getQuantity() + board.getNowCount());
@@ -138,7 +144,7 @@ public class BoardService {
         Board board = boardRepository.findById(boardId).orElseThrow(BoardNotFound::new);
         BoardMember boardMember = boardMemberRepository.findByBoardAndUser(board, user);
         Integer afterCount = board.getNowCount() + join.getQuantity() - boardMember.getQuantity();
-        if(afterCount < 0 || afterCount > board.getRecruitmentNumber()){
+        if(afterCount < 0 || afterCount > board.getTotalCount()){
             throw new BoardJoinFailed("수량 변경에 실패하였습니다.");
         }
 

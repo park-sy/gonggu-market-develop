@@ -96,4 +96,5 @@ public class BoardController {
         userService.createUser(userCreate);
     }
 
+    //참여 시 채팅방 서버에 request
 }

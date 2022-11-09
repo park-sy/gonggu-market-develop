@@ -22,11 +22,15 @@ public class QBoard extends EntityPathBase<Board> {
 
     public static final QBoard board = new QBoard("board");
 
+    public final QCategory category;
+
     public final StringPath content = createString("content");
 
     public final DateTimePath<java.time.LocalDateTime> createTime = createDateTime("createTime", java.time.LocalDateTime.class);
 
     public final BooleanPath deletion = createBoolean("deletion");
+
+    public final DateTimePath<java.time.LocalDateTime> expireTime = createDateTime("expireTime", java.time.LocalDateTime.class);
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
@@ -42,9 +46,13 @@ public class QBoard extends EntityPathBase<Board> {
 
     public final NumberPath<Integer> quantity = createNumber("quantity", Integer.class);
 
-    public final NumberPath<Integer> recruitmentNumber = createNumber("recruitmentNumber", Integer.class);
-
     public final StringPath title = createString("title");
+
+    public final NumberPath<Integer> totalCount = createNumber("totalCount", Integer.class);
+
+    public final NumberPath<Long> unitPrice = createNumber("unitPrice", Long.class);
+
+    public final NumberPath<Integer> unitQuantity = createNumber("unitQuantity", Integer.class);
 
     public final StringPath url = createString("url");
 
@@ -70,6 +78,7 @@ public class QBoard extends EntityPathBase<Board> {
 
     public QBoard(Class<? extends Board> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
+        this.category = inits.isInitialized("category") ? new QCategory(forProperty("category")) : null;
         this.user = inits.isInitialized("user") ? new QUser(forProperty("user")) : null;
     }
 

@@ -20,7 +20,7 @@ public class BoardSearch {
 
     private String searchKey;
     private Integer order;
-
+    //제목검색만
     @Builder
     public BoardSearch(Integer page, Integer size, String title, String category,
                        Integer minPrice, Integer maxPrice, String searchKey, Integer order){

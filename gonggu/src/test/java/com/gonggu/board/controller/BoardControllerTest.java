@@ -3,9 +3,11 @@ package com.gonggu.board.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gonggu.board.domain.Board;
 import com.gonggu.board.domain.BoardMember;
+import com.gonggu.board.domain.Category;
 import com.gonggu.board.domain.User;
 import com.gonggu.board.repository.BoardMemberRepository;
 import com.gonggu.board.repository.BoardRepository;
+import com.gonggu.board.repository.CategoryRepository;
 import com.gonggu.board.repository.UserRepository;
 import com.gonggu.board.request.BoardCreate;
 import com.gonggu.board.request.BoardJoin;
@@ -17,6 +19,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -45,23 +48,35 @@ class BoardControllerTest {
     private UserRepository userRepository;
     @Autowired
     private BoardMemberRepository boardMemberRepository;
-
+    @Autowired
+    private CategoryRepository categoryRepository;
     @BeforeEach
     void clean(){
         boardMemberRepository.deleteAll();
         boardRepository.deleteAll();
         userRepository.deleteAll();
+        categoryRepository.deleteAll();
     }
 
     @Test
     @DisplayName("게시글 가져오기")
     void getBoard() throws Exception{
+        Category category = Category.builder()
+                .name("카테고리").build();
+        categoryRepository.save(category);
+        LocalDateTime date = LocalDateTime.now();
         List<Board> boards = IntStream.range(0,20)
                 .mapToObj(i -> Board.builder()
                         .title("제목" +i)
+                        .category(category)
                         .content("내용")
                         .price(1000L)
-                        .recruitmentNumber(i)
+                        .unitPrice(200L)
+                        .totalCount(i)
+                        .url("url/")
+                        .expireTime(date.plusDays(i%4))
+                        .quantity(10)
+                        .unitQuantity(2)
                         .nowCount(i)
                         .build()).collect(Collectors.toList());
         boardRepository.saveAll(boards);
@@ -76,18 +91,27 @@ class BoardControllerTest {
     @Test
     @DisplayName("게시글 상세보기")
     void getBoardDetail() throws Exception{
+        Category category = Category.builder()
+                .name("카테고리").build();
+        categoryRepository.save(category);
+        LocalDateTime date = LocalDateTime.now();
         Board board = Board.builder()
                 .title("제목")
+                .category(category)
                 .content("내용")
                 .price(1000L)
-                .recruitmentNumber(10)
+                .unitPrice(200L)
+                .totalCount(10)
+                .url("url/")
+                .expireTime(date.plusDays(2))
+                .quantity(10)
+                .unitQuantity(2)
                 .nowCount(2)
                 .build();
         boardRepository.save(board);
         mockMvc.perform(get("/board/{boardId}", board.getId())
                         .contentType(APPLICATION_JSON))
                 .andExpect(status().isOk())
-//                .andExpect(jsonPath("$[0].title").value("제목"))
                 .andDo(print());
     }
 
@@ -97,13 +121,21 @@ class BoardControllerTest {
         User user = User.builder()
                 .name("유저").build();
         userRepository.save(user);
+        Category category = Category.builder()
+                .name("카테고리").build();
+        categoryRepository.save(category);
 
+        LocalDateTime date = LocalDateTime.now();
         BoardCreate boardCreate = BoardCreate.builder()
                 .title("제목입니다.")
                 .content("내용입니다.")
                 .price(10000L)
-                .recruitmentNumber(10)
+                .quantity(10)
+                .unitQuantity(2)
+                .categoryId(category.getId())
                 .nowCount(2)
+                .url("url")
+                .expireTime(date.plusDays(3))
                 .build();
 
         mockMvc.perform(post("/board/post?id={id}",user.getId())
@@ -111,6 +143,7 @@ class BoardControllerTest {
                         .contentType(APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(print());
+
     }
 
     @Test
@@ -138,7 +171,7 @@ class BoardControllerTest {
                 .title("제목")
                 .content("내용")
                 .price(1000L)
-                .recruitmentNumber(10)
+                .totalCount(10)
                 .nowCount(2)
                 .build();
         boardRepository.save(board);
@@ -172,7 +205,7 @@ class BoardControllerTest {
                 .title("제목")
                 .content("내용")
                 .price(1000L)
-                .recruitmentNumber(10)
+                .totalCount(10)
                 .nowCount(2)
                 .build();
         boardRepository.save(board);
@@ -215,7 +248,7 @@ class BoardControllerTest {
                 .title("제목")
                 .content("내용")
                 .price(1000L)
-                .recruitmentNumber(10)
+                .totalCount(10)
                 .nowCount(2)
                 .build();
         boardRepository.save(board);
@@ -265,7 +298,7 @@ class BoardControllerTest {
                         .content("내용")
                         .price(1000L)
                         .user(users.get(0))
-                        .recruitmentNumber(i)
+                        .totalCount(i)
                         .nowCount(i)
                         .build()).collect(Collectors.toList());
         boardRepository.saveAll(boards);
@@ -291,7 +324,7 @@ class BoardControllerTest {
                         .content("내용")
                         .price(1000L)
                         .user(users.get(i))
-                        .recruitmentNumber(i)
+                        .totalCount(i)
                         .nowCount(i)
                         .build()).collect(Collectors.toList());
         boardRepository.saveAll(boards);

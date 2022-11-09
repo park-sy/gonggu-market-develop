@@ -29,9 +29,9 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
                         goePrice(boardSearch.getMinPrice()),
                         loePrice(boardSearch.getMaxPrice()),
                         containsTitle(boardSearch.getSearchKey()),
-                        containsContent(boardSearch.getSearchKey())
-
-
+                        containsContent(boardSearch.getSearchKey()),
+                        eqCategory(boardSearch.getCategory())
+                        //카테고리
                 )
                 .limit(boardSearch.getSize())
                 .offset(boardSearch.getOffset())
@@ -42,7 +42,7 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
     private OrderSpecifier<?> sortOrder(Integer order){
         if(order == null) return board.id.desc();
         else if(order == 1) return board.view.desc();
-        else if(order == 2) return board.recruitmentNumber.subtract(board.nowCount).desc();
+        else if(order == 2) return board.totalCount.subtract(board.nowCount).desc();
         return board.id.desc();
     }
     private BooleanExpression goePrice(Integer minPrice){
@@ -64,6 +64,10 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
     private BooleanExpression containsContent(String name){
         if(name == null) return null;
         return board.content.contains(name);
+    }
+    private BooleanExpression eqCategory(String category){
+        if(category == null) return null;
+        return board.category.name.eq(category);
     }
 
     @Override
