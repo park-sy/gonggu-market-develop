@@ -1,9 +1,7 @@
 package com.gonggu.board.request;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import lombok.*;
 
 @Setter
 @Getter
@@ -12,5 +10,9 @@ import lombok.ToString;
 public class BoardJoin {
 
     private Integer quantity;
-    private String name;
+
+    @JsonCreator
+    public BoardJoin(Integer quantity){
+        this.quantity = quantity;
+    }
 }

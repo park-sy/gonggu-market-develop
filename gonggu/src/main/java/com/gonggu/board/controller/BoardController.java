@@ -8,6 +8,7 @@ import com.gonggu.board.response.BoardResponse;
 import com.gonggu.board.service.BoardService;
 import com.gonggu.board.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -32,8 +33,12 @@ public class BoardController {
     }
     //게시글 작성
     @PostMapping("/board/post")
-    public void postBoard(@ModelAttribute UserTemp userTemp,@RequestBody BoardCreate boardCreate){
-        User user = boardService.findUserTemp(userTemp);
+    public void postBoard(@AuthenticationPrincipal User user,@RequestBody BoardCreate boardCreate){
+      //  User user = boardService.findUserTemp(userTemp);
+        boardService.createBoard(boardCreate, user);
+    }
+    @PostMapping("/board/temp")
+    public void tempBoard(@AuthenticationPrincipal User user,@RequestBody BoardCreate boardCreate){
         boardService.createBoard(boardCreate, user);
     }
     //게시글 이미지 업로드
@@ -55,18 +60,19 @@ public class BoardController {
 
     //구매 참가 요청
     @PostMapping("/board/{boardId}/join")
-    public void requestJoin(@PathVariable Long boardId, @ModelAttribute UserTemp userTemp,
+    public void requestJoin(@PathVariable Long boardId, @AuthenticationPrincipal User user,
                             @RequestBody BoardJoin join){
-        User user = boardService.findUserTemp(userTemp);
+        //User user = boardService.findUserTemp(userTemp);
         boardService.createJoin(boardId, join, user);
     }
     //구매 정보 수정
     @PatchMapping("/board/{boardId}/join")
-    public void editJoin(@PathVariable Long boardId,@ModelAttribute UserTemp userTemp,
+    public void editJoin(@PathVariable Long boardId,@AuthenticationPrincipal User user,
                          @RequestBody BoardJoin join){
-        User user = boardService.findUserTemp(userTemp);
+       // User user = boardService.findUserTemp(userTemp);
         boardService.editJoin(boardId,join,user);
     }
+
     //구매 철회
     @DeleteMapping("/board/{boardId}/join")
     public void deleteJoin(@PathVariable Long boardId, @ModelAttribute UserTemp userTemp){
@@ -91,10 +97,16 @@ public class BoardController {
         User user = boardService.findUserTemp(userTemp);
         return boardService.getMyJoinBoard(user);
     }
+
+    @GetMapping("/board/join-list/temp")
+    public List<BoardResponse> getMyJoinBoard(@AuthenticationPrincipal User user){
+        return boardService.getMyJoinBoard(user);
+    }
     @PostMapping("/board/user")
     public void createUser(@RequestBody UserCreate userCreate){
         userService.createUser(userCreate);
     }
+
 
     //참여 시 채팅방 서버에 request
 }

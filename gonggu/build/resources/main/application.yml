@@ -11,6 +11,8 @@ spring:
     hibernate:
       format_sql: true
       ddl-auto: create  #
+  jwt:
+    secret: govlepel@$&
   servlet:
     multipart:
       max-file-size: 10MB

@@ -25,6 +25,7 @@ public class Board {
     private Integer quantity;
     private Integer unitQuantity;
     private Integer totalCount;
+    private String unit;
     @Column(columnDefinition = "integer default 0", nullable = false)
     private Integer nowCount;
     private LocalDateTime createTime;

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gonggu.board.domain.*;
 import com.gonggu.board.repository.*;
 import com.gonggu.board.request.BoardCreate;
+import com.gonggu.board.request.BoardJoin;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,6 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
@@ -67,6 +69,11 @@ public class BoardControllerDocTest {
         boardRepository.deleteAll();
         userRepository.deleteAll();
         categoryRepository.deleteAll();
+    }
+
+    @BeforeEach
+    void getAccessToken() throws Exception{
+
     }
 
     @Test
@@ -199,9 +206,10 @@ public class BoardControllerDocTest {
                                 fieldWithPath("content").type(JsonFieldType.STRING).description("게시글 내용"),
                                 fieldWithPath("remainDate").description("남은 날짜"),
                                 fieldWithPath("price").description("가격"),
-                                fieldWithPath("unitPrice").description("가격"),
+                                fieldWithPath("unitPrice").description("단위 가격"),
                                 fieldWithPath("quantity").description("제품 수량"),
                                 fieldWithPath("unitQuantity").description("단위 수량"),
+                                fieldWithPath("unit").description("단위"),
                                 fieldWithPath("nowCount").description("현재 모집 수량"),
                                 fieldWithPath("totalCount").description("총 모집 수량"),
                                 fieldWithPath("url").description("상품 URL"),
@@ -221,10 +229,11 @@ public class BoardControllerDocTest {
 
     @Test
     @DisplayName("게시글 작성")
+    @WithMockUser
     void postBoard() throws Exception{
-        User user = User.builder()
-                .name("유저").build();
-        userRepository.save(user);
+//        User user = User.builder()
+//                .name("유저").build();
+//        userRepository.save(user);
 
         Category category = Category.builder()
                 .name("카테고리").build();
@@ -235,16 +244,17 @@ public class BoardControllerDocTest {
                 .title("제목입니다.")
                 .content("내용입니다.")
                 .price(10000L)
-                .quantity(20)
                 .unitQuantity(5)
+                .unit("단위")
                 .nowCount(1)
+                .totalCount(5)
                 .categoryId(category.getId())
                 .url("url 주소")
                 .keywords(keywords)
                 .expireTime(now.plusDays(2))
                 .build();
 
-        this.mockMvc.perform(post("/board/post?id={id}",user.getId())
+        this.mockMvc.perform(post("/board/post")
                         .content(objectMapper.writeValueAsString(boardCreate))
                         .contentType(APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -254,14 +264,70 @@ public class BoardControllerDocTest {
                                 fieldWithPath("title").type(JsonFieldType.STRING).description("게시글 제목"),
                                 fieldWithPath("content").type(JsonFieldType.STRING).description("센터 주소"),
                                 fieldWithPath("price").description("제품 가격"),
-                                fieldWithPath("quantity").description("제품 총 수량"),
-                                fieldWithPath("unitQuantity").description("단위 수량"),
-                                fieldWithPath("nowCount").description("현재 모집 수량(내가 살 수량)"),
+                                fieldWithPath("unitQuantity").description("제품 단위 수량"),
+                                fieldWithPath("unit").description("제품 단위"),
+                                fieldWithPath("nowCount").description("현재 모집 단위(내가 살 단위)"),
+                                fieldWithPath("totalCount").description("총 모집 단위(내가 살 단위)"),
                                 fieldWithPath("url").description("상품 URL"),
                                 fieldWithPath("categoryId").description("카테고리 ID"),
                                 fieldWithPath("keywords").description("키워드"),
                                 fieldWithPath("expireTime").description("게시글 만료 시간")
                         )
                 ));
+    }
+
+    @Test
+    @DisplayName("구매 참가")
+    @WithMockUser
+    void requestJoin() throws Exception{
+        List<User> users = IntStream.range(0,2)
+                .mapToObj(i -> User.builder()
+                        .name("이름" +i)
+                        .build()).collect(Collectors.toList());
+        userRepository.saveAll(users);
+
+        Category category = Category.builder()
+                .name("카테고리").build();
+        categoryRepository.save(category);
+
+        User user = User.builder()
+                .name("유저").build();
+        userRepository.save(user);
+
+        LocalDateTime now = LocalDateTime.now();
+        Board board = Board.builder()
+                .category(category)
+                .title("제목")
+                .content("내용")
+                .price(1000L)
+                .quantity(10)
+                .unitQuantity(2)
+                .unitPrice(200L)
+                .totalCount(10)
+                .url("url/")
+                .expireTime(now.plusDays(3))
+                .nowCount(2)
+                .user(users.get(0))
+                .build();
+        boardRepository.save(board);
+
+        BoardJoin boardJoin = BoardJoin.builder()
+                .quantity(5)
+                .build();
+
+        this.mockMvc.perform(post("/board/{boardId}/join", board.getId())
+                        .content(objectMapper.writeValueAsString(boardJoin))
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andDo(document("board/join"
+                        ,pathParameters(
+                                parameterWithName("boardId").description("게시글 ID")
+                        )
+                        , requestFields(
+                                fieldWithPath("quantity").description("구매 수량")
+                        )
+                ));
+
     }
 }

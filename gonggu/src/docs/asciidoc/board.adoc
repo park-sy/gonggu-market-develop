@@ -28,6 +28,13 @@ include::{snippets}/board/detail/curl-request.adoc[]
 
 == 게시글 작성
 include::{snippets}/board/create/http-request.adoc[]
-include::{snippets}/board/create/request-body.adoc[]
+include::{snippets}/board/create/request-fields.adoc[]
 === 응답
 include::{snippets}/board/create/http-response.adoc[]
+
+== 구매 참여
+include::{snippets}/board/join/http-request.adoc[]
+include::{snippets}/board/join/path-parameters.adoc[]
+include::{snippets}/board/join/request-fields.adoc[]
+=== 응답
+include::{snippets}/board/join/http-response.adoc[]

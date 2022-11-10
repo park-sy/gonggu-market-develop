@@ -17,9 +17,10 @@ public class BoardCreate {
     private String title;
     private String content;
     private Long price;
-    private Integer quantity;
     private Integer unitQuantity;
+    private String unit;
     private Integer nowCount;
+    private Integer totalCount;
     private String url;
     private Long categoryId;
     private List<String> keywords;

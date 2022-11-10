@@ -48,18 +48,17 @@ public class BoardService {
 
     public void createBoard(BoardCreate boardCreate, User user){
         Category category = categoryRepository.findById(boardCreate.getCategoryId()).orElseThrow();
-        Integer divisor = boardCreate.getQuantity() / boardCreate.getUnitQuantity();
         Board board = Board.builder()
                 .title(boardCreate.getTitle())
                 .content(boardCreate.getContent())
                 .price(boardCreate.getPrice())
-                .unitPrice(boardCreate.getPrice()/divisor)
-                .quantity(boardCreate.getQuantity())
+                .unitPrice(boardCreate.getPrice()/boardCreate.getUnitQuantity())
+                .quantity(boardCreate.getUnitQuantity()*boardCreate.getTotalCount())
                 .unitQuantity(boardCreate.getUnitQuantity())
                 .url(boardCreate.getUrl())
                 .nowCount(boardCreate.getNowCount())
                 .user(user)
-                .totalCount(boardCreate.getQuantity()/divisor)
+                .totalCount(boardCreate.getTotalCount())
                 .category(category)
                 .build();
         boardRepository.save(board);
@@ -68,7 +67,7 @@ public class BoardService {
                 .board(board)
                 .user(user)
                 .host(true)
-                .quantity(boardCreate.getQuantity())
+                .quantity(boardCreate.getNowCount())
                 .build();
         boardMemberRepository.save(boardMember);
 
@@ -132,6 +131,7 @@ public class BoardService {
             throw new BoardJoinFailed("구매 참여에 실패하였습니다.");
         }
         board.editCount(join.getQuantity() + board.getNowCount());
+
         BoardMember boardMember = BoardMember.builder()
                 .board(board)
                 .user(user)

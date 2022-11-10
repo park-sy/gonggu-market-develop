@@ -50,6 +50,8 @@ public class QBoard extends EntityPathBase<Board> {
 
     public final NumberPath<Integer> totalCount = createNumber("totalCount", Integer.class);
 
+    public final StringPath unit = createString("unit");
+
     public final NumberPath<Long> unitPrice = createNumber("unitPrice", Long.class);
 
     public final NumberPath<Integer> unitQuantity = createNumber("unitQuantity", Integer.class);
