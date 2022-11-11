@@ -32,7 +32,7 @@ public class BoardController {
         return boardService.get(boardId);
     }
     //게시글 작성
-    @PostMapping("/board/post")
+    @PostMapping("/board")
     public void postBoard(@AuthenticationPrincipal User user,@RequestBody BoardCreate boardCreate){
       //  User user = boardService.findUserTemp(userTemp);
         boardService.createBoard(boardCreate, user);
@@ -52,56 +52,48 @@ public class BoardController {
         boardService.editBoard(boardId,boardEdit);
     }
     //게시글 삭제
-    @DeleteMapping("/board/{boardId}/deletion")
+    @DeleteMapping("/board/{boardId}")
     public void deleteBoard(@PathVariable Long boardId){
         boardService.deleteBoard(boardId);
     }
 
 
     //구매 참가 요청
-    @PostMapping("/board/{boardId}/join")
+    @PostMapping("/board/{boardId}/enrollment")
     public void requestJoin(@PathVariable Long boardId, @AuthenticationPrincipal User user,
                             @RequestBody BoardJoin join){
         //User user = boardService.findUserTemp(userTemp);
         boardService.createJoin(boardId, join, user);
     }
     //구매 정보 수정
-    @PatchMapping("/board/{boardId}/join")
-    public void editJoin(@PathVariable Long boardId,@AuthenticationPrincipal User user,
+    @PatchMapping("/board/{boardId}/enrollment")
+    public void editJoin(@PathVariable Long boardId, @AuthenticationPrincipal User user,
                          @RequestBody BoardJoin join){
        // User user = boardService.findUserTemp(userTemp);
         boardService.editJoin(boardId,join,user);
     }
-
     //구매 철회
-    @DeleteMapping("/board/{boardId}/join")
-    public void deleteJoin(@PathVariable Long boardId, @ModelAttribute UserTemp userTemp){
-        User user = boardService.findUserTemp(userTemp);
+    @DeleteMapping("/board/{boardId}/enrollment")
+    public void deleteJoin(@PathVariable Long boardId, @AuthenticationPrincipal User user){
         boardService.deleteJoin(boardId,user);
     }
     //구매자 명단 가져오기
-    @GetMapping("/board/{boardId}/join")
+    @GetMapping("/board/{boardId}/enrollment")
     public List<BoardMemberResponse> getJoin(@PathVariable Long boardId){
         return boardService.getJoin(boardId);
     }
 
     //내 판매 내역
-    @GetMapping("/board/sell-list")
-    public List<BoardResponse> getMySellBoard(@ModelAttribute UserTemp userTemp){
-        User user = boardService.findUserTemp(userTemp);
-        return boardService.getMySellBoard(user);
+    @GetMapping("/board/sale/{userId}")
+    public List<BoardResponse> getMySellBoard(@PathVariable Long userId){
+        return boardService.getSellBoard(userId);
     }
     //내 구매 내역
-    @GetMapping("/board/join-list")
-    public List<BoardResponse> getMyJoinBoard(@ModelAttribute UserTemp userTemp){
-        User user = boardService.findUserTemp(userTemp);
-        return boardService.getMyJoinBoard(user);
+    @GetMapping("/board/enrollment/{userId}")
+    public List<BoardResponse> getMyJoinBoard(@PathVariable Long userId){
+        return boardService.getJoinBoard(userId);
     }
 
-    @GetMapping("/board/join-list/temp")
-    public List<BoardResponse> getMyJoinBoard(@AuthenticationPrincipal User user){
-        return boardService.getMyJoinBoard(user);
-    }
     @PostMapping("/board/user")
     public void createUser(@RequestBody UserCreate userCreate){
         userService.createUser(userCreate);

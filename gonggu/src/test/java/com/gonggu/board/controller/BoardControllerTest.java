@@ -8,6 +8,7 @@ import com.gonggu.board.repository.BoardRepository;
 import com.gonggu.board.repository.CategoryRepository;
 import com.gonggu.board.repository.UserRepository;
 import com.gonggu.board.request.BoardCreate;
+import com.gonggu.board.request.BoardEdit;
 import com.gonggu.board.request.BoardJoin;
 import com.gonggu.board.service.CustomUserDetailsService;
 import org.junit.jupiter.api.*;
@@ -60,17 +61,9 @@ class BoardControllerTest {
     private BoardMemberRepository boardMemberRepository;
     @Autowired
     private CategoryRepository categoryRepository;
-    @Autowired
-    private JwtTokenProvider jwtTokenProvider;
-    @Autowired
-    private CustomUserDetailsService customUserDetailsService;
+
     private User testUser;
 
-//    @BeforeEach
-//    public void setUp() {
-//        SecurityContextHolder.getContext()
-//                .setAuthentication(new UsernamePasswordAuthenticationToken("1", "password", Arrays.asList(new SimpleGrantedAuthority("ROLE_USER"))));
-//    }
     @BeforeEach
     void clean(){
         boardMemberRepository.deleteAll();
@@ -84,17 +77,6 @@ class BoardControllerTest {
     }
 
 
-//    @BeforeTransaction
-//    void createTestUser(){
-//        testUser = User.builder()
-//                .id(999L)
-//                .name("테스트유저").build();
-//        userRepository.save(testUser);
-//    }
-//    @AfterEach
-//    void cleanUser(){
-//
-//    }
     @Test
     @DisplayName("게시글 가져오기")
     void getBoard() throws Exception{
@@ -185,7 +167,7 @@ class BoardControllerTest {
                 .expireTime(date.plusDays(2))
                 .build();
 
-        mockMvc.perform(post("/board/post")
+        mockMvc.perform(post("/board")
                         .content(objectMapper.writeValueAsString(boardCreate))
                         .contentType(APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -195,14 +177,73 @@ class BoardControllerTest {
 
     @Test
     @DisplayName("게시글 수정")
-    @WithUserDetails(value = "1",  setupBefore = TestExecutionEvent.TEST_EXECUTION)
+    //@WithUserDetails(value = "1",  setupBefore = TestExecutionEvent.TEST_EXECUTION)
     void editBoard() throws Exception{
+        User user = User.builder()
+                .name("유저").build();
+        userRepository.save(user);
+
+        Category category = Category.builder()
+                .name("카테고리").build();
+        categoryRepository.save(category);
+
+        LocalDateTime now = LocalDateTime.now();
+        Board board = Board.builder()
+                .category(category)
+                .title("제목")
+                .content("내용")
+                .price(1000L)
+                .quantity(10)
+                .unitQuantity(2)
+                .unitPrice(200L)
+                .totalCount(10)
+                .url("url/")
+                .expireTime(now.plusDays(3))
+                .nowCount(2)
+                .user(user)
+                .build();
+        boardRepository.save(board);
+
+        BoardEdit boardEdit = BoardEdit.builder()
+                .content("내용변경")
+                .build();
+        mockMvc.perform(patch("/board/{boardId}",board.getId())
+                        .content(objectMapper.writeValueAsString(boardEdit))
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(print());
     }
 
     @Test
     @DisplayName("게시글 삭제")
+    //@WithUserDetails(value = "1",  setupBefore = TestExecutionEvent.TEST_EXECUTION)
     void deleteBoard() throws Exception{
+        Category category = Category.builder()
+                .name("카테고리").build();
+        categoryRepository.save(category);
 
+        LocalDateTime now = LocalDateTime.now();
+        Board board = Board.builder()
+                .category(category)
+                .title("제목")
+                .content("내용")
+                .price(1000L)
+                .quantity(10)
+                .unitQuantity(2)
+                .unitPrice(200L)
+                .totalCount(10)
+                .url("url/")
+                .expireTime(now.plusDays(3))
+                .nowCount(2)
+                .user(testUser)
+                .build();
+        boardRepository.save(board);
+
+
+        mockMvc.perform(delete("/board/{boardId}",board.getId())
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(print());
     }
 
     @Test
@@ -244,7 +285,7 @@ class BoardControllerTest {
                 .quantity(5)
                 .build();
 
-        mockMvc.perform(post("/board/{boardId}/join", board.getId())
+        mockMvc.perform(post("/board/{boardId}/enrollment", board.getId())
                         .content(objectMapper.writeValueAsString(boardJoin))
                         .contentType(APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -257,37 +298,48 @@ class BoardControllerTest {
     }
 
 //    @Test
-//    @DisplayName("구매 변경")
+//    @DisplayName("구매 정보 수정")
+//    @WithUserDetails(value = "1", setupBefore = TestExecutionEvent.TEST_EXECUTION)
 //    void editJoin() throws Exception{
-//        List<User> users = IntStream.range(0,2)
-//                .mapToObj(i -> User.builder()
-//                        .name("이름" +i)
-//                        .build()).collect(Collectors.toList());
-//        userRepository.saveAll(users);
+//        Category category = Category.builder()
+//                .name("카테고리").build();
+//        categoryRepository.save(category);
 //
+//        User user = User.builder()
+//                .name("유저").build();
+//        userRepository.save(user);
+//
+//        LocalDateTime now = LocalDateTime.now();
 //        Board board = Board.builder()
+//                .category(category)
 //                .title("제목")
 //                .content("내용")
 //                .price(1000L)
+//                .quantity(10)
+//                .unitQuantity(2)
+//                .unitPrice(200L)
 //                .totalCount(10)
+//                .url("url/")
+//                .expireTime(now.plusDays(3))
 //                .nowCount(2)
+//                .user(user)
 //                .build();
 //        boardRepository.save(board);
 //
 //        BoardJoin boardJoin = BoardJoin.builder()
 //                .quantity(5)
-//                .name("park").build();
+//                .build();
 //
 //        BoardJoin boardJoin2 = BoardJoin.builder()
 //                .quantity(2)
-//                .name("park").build();
+//                .build();
 //
-//        mockMvc.perform(post("/board/{boardId}/join?id={id}", board.getId(),users.get(1).getId())
+//        mockMvc.perform(post("/board/{boardId}/enrollment", board.getId())
 //                        .content(objectMapper.writeValueAsString(boardJoin))
 //                        .contentType(APPLICATION_JSON))
 //                .andExpect(status().isOk());
 //
-//        mockMvc.perform(patch("/board/{boardId}/join?id={id}", board.getId(),users.get(1).getId())
+//        mockMvc.perform(patch("/board/{boardId}/enrollment", board.getId())
 //                        .content(objectMapper.writeValueAsString(boardJoin2))
 //                        .contentType(APPLICATION_JSON))
 //                .andExpect(status().isOk())
@@ -298,39 +350,46 @@ class BoardControllerTest {
 //                .andExpect(status().isOk())
 //                .andDo(print());
 //    }
-
+//
 //    @Test
 //    @DisplayName("구매 취소")
+//    @WithUserDetails(value = "1", setupBefore = TestExecutionEvent.TEST_EXECUTION)
 //    void deleteJoin() throws Exception{
-//        List<User> users = IntStream.range(0,2)
-//                .mapToObj(i -> User.builder()
-//                        .name("이름" +i)
-//                        .build()).collect(Collectors.toList());
-//        userRepository.saveAll(users);
+//        Category category = Category.builder()
+//                .name("카테고리").build();
+//        categoryRepository.save(category);
 //
+//        User user = User.builder()
+//                .name("유저").build();
+//        userRepository.save(user);
+//
+//        LocalDateTime now = LocalDateTime.now();
 //        Board board = Board.builder()
+//                .category(category)
 //                .title("제목")
 //                .content("내용")
 //                .price(1000L)
+//                .quantity(10)
+//                .unitQuantity(2)
+//                .unitPrice(200L)
 //                .totalCount(10)
+//                .url("url/")
+//                .expireTime(now.plusDays(3))
 //                .nowCount(2)
+//                .user(user)
 //                .build();
 //        boardRepository.save(board);
 //
 //        BoardJoin boardJoin = BoardJoin.builder()
 //                .quantity(5)
-//                .name("park").build();
+//                .build();
 //
-//        BoardJoin boardJoin2 = BoardJoin.builder()
-//                .quantity(2)
-//                .name("park").build();
-//
-//        mockMvc.perform(post("/board/{boardId}/join?id={id}", board.getId(),users.get(1).getId())
+//        mockMvc.perform(post("/board/{boardId}/enrollment", board.getId())
 //                        .content(objectMapper.writeValueAsString(boardJoin))
 //                        .contentType(APPLICATION_JSON))
 //                .andExpect(status().isOk());
 //
-//        mockMvc.perform(delete("/board/{boardId}/join?id={id}", board.getId(),users.get(1).getId())
+//        mockMvc.perform(delete("/board/{boardId}/enrollment", board.getId())
 //                        .contentType(APPLICATION_JSON))
 //                .andExpect(status().isOk())
 //                .andDo(print());
@@ -347,35 +406,44 @@ class BoardControllerTest {
 
     }
 
-//    @Test
-//    @DisplayName("내 판매 내역 조회")
-//    void getMySellList() throws Exception{
-//        List<User> users = IntStream.range(0,2)
-//                .mapToObj(i -> User.builder()
-//                        .name("이름" +i)
-//                        .build()).collect(Collectors.toList());
-//        userRepository.saveAll(users);
-//
-//        List<Board> boards = IntStream.range(0,5)
-//                .mapToObj(i -> Board.builder()
-//                        .title("제목" +i)
-//                        .content("내용")
-//                        .price(1000L)
-//                        .user(users.get(0))
-//                        .totalCount(i)
-//                        .nowCount(i)
-//                        .build()).collect(Collectors.toList());
-//        boardRepository.saveAll(boards);
-//
-//        mockMvc.perform(get("/board/sell-list?id={id}", users.get(0).getId())
-//                        .contentType(APPLICATION_JSON))
-//                .andExpect(status().isOk())
-//                .andDo(print());
-//    }
+    @Test
+    @DisplayName("판매 내역 조회")
+    void getMySellList() throws Exception{
+        User user = User.builder()
+                .name("유저").build();
+        userRepository.save(user);
+
+        Category category = Category.builder()
+                .name("카테고리").build();
+        categoryRepository.save(category);
+        LocalDateTime date = LocalDateTime.now();
+        List<Board> boards = IntStream.range(0,5)
+                .mapToObj(i -> Board.builder()
+                        .title("제목" +i)
+                        .category(category)
+                        .content("내용")
+                        .price(1000L)
+                        .unitPrice(200L)
+                        .totalCount(i)
+                        .url("url/")
+                        .expireTime(date.plusDays(i%4))
+                        .quantity(10)
+                        .unitQuantity(2)
+                        .nowCount(i)
+                        .user(user)
+                        .build()).collect(Collectors.toList());
+        boardRepository.saveAll(boards);
+
+        mockMvc.perform(get("/board/sale/{userId}",user.getId())
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(print());
+    }
+
 
     @Test
-    @DisplayName("내 구매 내역 조회")
-    void getMyJoinList() throws Exception{
+    @DisplayName("구매 내역 조회")
+    void getMyJoinListTemp() throws Exception{
 
         List<User> users = IntStream.range(0,5)
                 .mapToObj(i -> User.builder()
@@ -413,54 +481,7 @@ class BoardControllerTest {
                         .build()).collect(Collectors.toList());
         boardMemberRepository.saveAll(boardMembers);
 
-        mockMvc.perform(get("/board/join-list?id={id}", users.get(0).getId())
-                        .contentType(APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andDo(print());
-    }
-
-    @Test
-    @DisplayName("내 구매 내역 조회")
-    @WithUserDetails(value = "1", setupBefore = TestExecutionEvent.TEST_EXECUTION)
-    void getMyJoinListTemp() throws Exception{
-
-        List<User> users = IntStream.range(0,5)
-                .mapToObj(i -> User.builder()
-                        .name("이름" +i)
-                        .build()).collect(Collectors.toList());
-        userRepository.saveAll(users);
-
-        Category category = Category.builder()
-                .name("카테고리").build();
-        categoryRepository.save(category);
-        LocalDateTime date = LocalDateTime.now();
-        List<Board> boards = IntStream.range(0,5)
-                .mapToObj(i -> Board.builder()
-                        .title("제목" +i)
-                        .category(category)
-                        .content("내용")
-                        .price(1000L)
-                        .unitPrice(200L)
-                        .totalCount(i)
-                        .url("url/")
-                        .expireTime(date.plusDays(i%4))
-                        .quantity(10)
-                        .unitQuantity(2)
-                        .nowCount(i)
-                        .user(users.get(i))
-                        .build()).collect(Collectors.toList());
-        boardRepository.saveAll(boards);
-
-        List<BoardMember> boardMembers = IntStream.range(1,5)
-                .mapToObj(i -> BoardMember.builder()
-                        .host(false)
-                        .board(boards.get(i%5))
-                        .user(testUser)
-                        .quantity(i%5)
-                        .build()).collect(Collectors.toList());
-        boardMemberRepository.saveAll(boardMembers);
-
-        mockMvc.perform(get("/board/join-list/temp")
+        mockMvc.perform(get("/board/sale/{userId}", users.get(0).getId())
                         .contentType(APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(print());

@@ -1,5 +1,6 @@
 package com.gonggu.board.request;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,8 +12,9 @@ import lombok.ToString;
 @Builder
 public class BoardEdit {
 
-    private long boardId;
     private String content;
-    private boolean deletion;
-
+    @JsonCreator
+    public BoardEdit(String content){
+        this.content = content;
+    }
 }

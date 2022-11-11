@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gonggu.board.domain.*;
 import com.gonggu.board.repository.*;
 import com.gonggu.board.request.BoardCreate;
+import com.gonggu.board.request.BoardEdit;
 import com.gonggu.board.request.BoardJoin;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -16,11 +17,16 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.security.test.context.support.TestExecutionEvent;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -30,10 +36,13 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.restdocs.snippet.Attributes.key;
+
 
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -60,22 +69,127 @@ public class BoardControllerDocTest {
     private BoardImageRepository boardImageRepository;
     @Autowired
     private BoardKeywordRepository boardKeywordRepository;
+    private User testUser;
+
 
     @BeforeEach
     void clean(){
-        boardKeywordRepository.deleteAll();
-        boardImageRepository.deleteAll();
         boardMemberRepository.deleteAll();
         boardRepository.deleteAll();
         userRepository.deleteAll();
         categoryRepository.deleteAll();
+        testUser = User.builder()
+                .name("테스트유저")
+                .roles(Collections.singletonList("ROLE_USER")).build();
+        userRepository.save(testUser);
     }
-
-    @BeforeEach
-    void getAccessToken() throws Exception{
-
-    }
-
+//    @Test
+//    @DisplayName("구매 정보 수정")
+//    @WithUserDetails(value = "1", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+//    void editJoin() throws Exception{
+//        Category category = Category.builder()
+//                .name("카테고리").build();
+//        categoryRepository.save(category);
+//
+//        User user = User.builder()
+//                .name("유저").build();
+//        userRepository.save(user);
+//
+//        LocalDateTime now = LocalDateTime.now();
+//        Board board = Board.builder()
+//                .category(category)
+//                .title("제목")
+//                .content("내용")
+//                .price(1000L)
+//                .quantity(10)
+//                .unitQuantity(2)
+//                .unitPrice(200L)
+//                .totalCount(10)
+//                .url("url/")
+//                .expireTime(now.plusDays(3))
+//                .nowCount(2)
+//                .user(user)
+//                .build();
+//        boardRepository.save(board);
+//
+//        BoardJoin boardJoin = BoardJoin.builder()
+//                .quantity(5)
+//                .build();
+//
+//        BoardJoin boardJoin2 = BoardJoin.builder()
+//                .quantity(2)
+//                .build();
+//
+//        this.mockMvc.perform(post("/board/{boardId}/enrollment", board.getId())
+//                        .content(objectMapper.writeValueAsString(boardJoin))
+//                        .contentType(APPLICATION_JSON))
+//                .andExpect(status().isOk());
+//
+//        this.mockMvc.perform(patch("/board/{boardId}/enrollment", board.getId())
+//                        .content(objectMapper.writeValueAsString(boardJoin2))
+//                        .contentType(APPLICATION_JSON))
+//                .andExpect(status().isOk())
+//                .andDo(print())
+//                .andDo(document("board/join-edit"
+//                        ,pathParameters(
+//                                parameterWithName("boardId").description("게시글 ID")
+//                        )
+//                        , requestFields(
+//                                fieldWithPath("quantity").description("구매 변경 수량")
+//                        )
+//                ));
+//
+//    }
+//
+//    @Test
+//    @DisplayName("구매 취소")
+//    @WithUserDetails(value = "3", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+//    void deleteJoin() throws Exception{
+//        Category category = Category.builder()
+//                .name("카테고리").build();
+//        categoryRepository.save(category);
+//
+//        User user = User.builder()
+//                .name("유저").build();
+//        userRepository.save(user);
+//
+//        LocalDateTime now = LocalDateTime.now();
+//        Board board = Board.builder()
+//                .category(category)
+//                .title("제목")
+//                .content("내용")
+//                .price(1000L)
+//                .quantity(10)
+//                .unitQuantity(2)
+//                .unitPrice(200L)
+//                .totalCount(10)
+//                .url("url/")
+//                .expireTime(now.plusDays(3))
+//                .nowCount(2)
+//                .user(user)
+//                .build();
+//        boardRepository.save(board);
+//
+//        BoardJoin boardJoin = BoardJoin.builder()
+//                .quantity(5)
+//                .build();
+//
+//        this.mockMvc.perform(post("/board/{boardId}/enrollment", board.getId())
+//                        .content(objectMapper.writeValueAsString(boardJoin))
+//                        .contentType(APPLICATION_JSON))
+//                .andExpect(status().isOk());
+//
+//        this.mockMvc.perform(delete("/board/{boardId}/enrollment", board.getId())
+//                        .contentType(APPLICATION_JSON))
+//                .andExpect(status().isOk())
+//                .andDo(print())
+//                .andDo(document("board/join-delete"
+//                        ,pathParameters(
+//                                parameterWithName("boardId").description("게시글 ID")
+//                        )
+//                ));
+//
+//    }
     @Test
     @DisplayName("게시글 가져오기")
     void getBoard() throws Exception{
@@ -146,7 +260,6 @@ public class BoardControllerDocTest {
                                 fieldWithPath("[].deletion").description("삭제여부")
                         )
                 ));
-
     }
 
     @Test
@@ -254,7 +367,7 @@ public class BoardControllerDocTest {
                 .expireTime(now.plusDays(2))
                 .build();
 
-        this.mockMvc.perform(post("/board/post")
+        this.mockMvc.perform(post("/board")
                         .content(objectMapper.writeValueAsString(boardCreate))
                         .contentType(APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -272,6 +385,91 @@ public class BoardControllerDocTest {
                                 fieldWithPath("categoryId").description("카테고리 ID"),
                                 fieldWithPath("keywords").description("키워드"),
                                 fieldWithPath("expireTime").description("게시글 만료 시간")
+                        )
+                ));
+    }
+
+
+    @Test
+    @DisplayName("게시글 수정")
+        //@WithUserDetails(value = "1",  setupBefore = TestExecutionEvent.TEST_EXECUTION)
+    void editBoard() throws Exception{
+        User user = User.builder()
+                .name("유저").build();
+        userRepository.save(user);
+
+        Category category = Category.builder()
+                .name("카테고리").build();
+        categoryRepository.save(category);
+
+        LocalDateTime now = LocalDateTime.now();
+        Board board = Board.builder()
+                .category(category)
+                .title("제목")
+                .content("내용")
+                .price(1000L)
+                .quantity(10)
+                .unitQuantity(2)
+                .unitPrice(200L)
+                .totalCount(10)
+                .url("url/")
+                .expireTime(now.plusDays(3))
+                .nowCount(2)
+                .user(user)
+                .build();
+        boardRepository.save(board);
+
+        BoardEdit boardEdit = BoardEdit.builder()
+                .content("내용변경")
+                .build();
+
+        this.mockMvc.perform(patch("/board/{boardId}",board.getId())
+                        .content(objectMapper.writeValueAsString(boardEdit))
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andDo(document("board/edit"
+                        , pathParameters(
+                                parameterWithName("boardId").description("게시글 ID")
+                        )
+                        , requestFields(
+                                fieldWithPath("content").type(JsonFieldType.STRING).description("변경 내용")
+                        )
+                ));
+    }
+
+    @Test
+    @DisplayName("게시글 삭제")
+    void deleteBoard() throws Exception{
+        Category category = Category.builder()
+                .name("카테고리").build();
+        categoryRepository.save(category);
+
+        LocalDateTime now = LocalDateTime.now();
+        Board board = Board.builder()
+                .category(category)
+                .title("제목")
+                .content("내용")
+                .price(1000L)
+                .quantity(10)
+                .unitQuantity(2)
+                .unitPrice(200L)
+                .totalCount(10)
+                .url("url/")
+                .expireTime(now.plusDays(3))
+                .nowCount(2)
+                .user(testUser)
+                .build();
+        boardRepository.save(board);
+
+
+        this.mockMvc.perform(delete("/board/{boardId}",board.getId())
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andDo(document("board/delete"
+                        , pathParameters(
+                                parameterWithName("boardId").description("게시글 ID")
                         )
                 ));
     }
@@ -315,7 +513,7 @@ public class BoardControllerDocTest {
                 .quantity(5)
                 .build();
 
-        this.mockMvc.perform(post("/board/{boardId}/join", board.getId())
+        this.mockMvc.perform(post("/board/{boardId}/enrollment", board.getId())
                         .content(objectMapper.writeValueAsString(boardJoin))
                         .contentType(APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -328,6 +526,151 @@ public class BoardControllerDocTest {
                                 fieldWithPath("quantity").description("구매 수량")
                         )
                 ));
+    }
 
+
+    @Test
+    @DisplayName("판매 내역 조회")
+    void getMySellList() throws Exception{
+        User user = User.builder()
+                .name("유저").build();
+        userRepository.save(user);
+
+        Category category = Category.builder()
+                .name("카테고리").build();
+        categoryRepository.save(category);
+        LocalDateTime date = LocalDateTime.now();
+        List<Board> boards = IntStream.range(0,5)
+                .mapToObj(i -> Board.builder()
+                        .title("제목" +i)
+                        .category(category)
+                        .content("내용")
+                        .price(1000L)
+                        .unitPrice(200L)
+                        .totalCount(i)
+                        .url("url/")
+                        .expireTime(date.plusDays(i%4))
+                        .quantity(10)
+                        .unitQuantity(2)
+                        .nowCount(i)
+                        .user(user)
+                        .build()).collect(Collectors.toList());
+        boardRepository.saveAll(boards);
+        List<BoardImage> images =  IntStream.range(0, 5)
+                .mapToObj(i -> BoardImage.builder()
+                        .board(boards.get(i))
+                        .originFileName("origin_name"+i)
+                        .newFileName("new_name"+i)
+                        .filePath("경로/"+i+"/img.png")
+                        .build()).collect(Collectors.toList());
+        boardImageRepository.saveAll(images);
+        List<BoardKeyword> keywords =  IntStream.range(0, 20)
+                .mapToObj(i -> BoardKeyword.builder()
+                        .board(boards.get(i%5))
+                        .keyword("키워드"+i)
+                        .build()).collect(Collectors.toList());
+        boardKeywordRepository.saveAll(keywords);
+
+        this.mockMvc.perform(get("/board/sale/{userId}",user.getId())
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andDo(document("board/sell-list"
+                        , pathParameters(
+                                parameterWithName("userId").description("유저 ID")
+                        )
+                        , responseFields(
+                                fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("게시글 ID"),
+                                fieldWithPath("[].category").description("제품 카테고리"),
+                                fieldWithPath("[].title").type(JsonFieldType.STRING).description("게시글 제목"),
+                                fieldWithPath("[].remainDate").description("남은 날짜"),
+                                fieldWithPath("[].unitPrice").description("단위 가격"),
+                                fieldWithPath("[].quantity").description("제품 수량"),
+                                fieldWithPath("[].nowCount").description("현재 모집 수량"),
+                                fieldWithPath("[].totalCount").description("총 모집 수량"),
+                                fieldWithPath("[].images[].local").description("이미지 경로"),
+                                fieldWithPath("[].images[].path").description("이미지 경로"),
+                                fieldWithPath("[].deletion").description("삭제여부")
+                        )
+                ));
+
+    }
+
+    @Test
+    @DisplayName("구매 내역 조회")
+    void getMyJoinListTemp() throws Exception{
+
+        List<User> users = IntStream.range(0,5)
+                .mapToObj(i -> User.builder()
+                        .name("이름" +i)
+                        .build()).collect(Collectors.toList());
+        userRepository.saveAll(users);
+
+        Category category = Category.builder()
+                .name("카테고리").build();
+        categoryRepository.save(category);
+        LocalDateTime date = LocalDateTime.now();
+        List<Board> boards = IntStream.range(0,5)
+                .mapToObj(i -> Board.builder()
+                        .title("제목" +i)
+                        .category(category)
+                        .content("내용")
+                        .price(1000L)
+                        .unitPrice(200L)
+                        .totalCount(i)
+                        .url("url/")
+                        .expireTime(date.plusDays(i%4))
+                        .quantity(10)
+                        .unitQuantity(2)
+                        .nowCount(i)
+                        .user(users.get(i))
+                        .build()).collect(Collectors.toList());
+        boardRepository.saveAll(boards);
+        List<BoardImage> images =  IntStream.range(0, 5)
+                .mapToObj(i -> BoardImage.builder()
+                        .board(boards.get(i))
+                        .originFileName("origin_name"+i)
+                        .newFileName("new_name"+i)
+                        .filePath("경로/"+i+"/img.png")
+                        .build()).collect(Collectors.toList());
+        boardImageRepository.saveAll(images);
+        List<BoardKeyword> keywords =  IntStream.range(0, 20)
+                .mapToObj(i -> BoardKeyword.builder()
+                        .board(boards.get(i%5))
+                        .keyword("키워드"+i)
+                        .build()).collect(Collectors.toList());
+        boardKeywordRepository.saveAll(keywords);
+
+        List<BoardMember> boardMembers = IntStream.range(1,5)
+                .mapToObj(i -> BoardMember.builder()
+                        .host(false)
+                        .board(boards.get(i%5))
+                        .user(users.get(0))
+                        .quantity(i%5)
+                        .build()).collect(Collectors.toList());
+        boardMemberRepository.saveAll(boardMembers);
+
+        this.mockMvc.perform(get("/board/sale/{userId}", users.get(0).getId())
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andDo(document("board/join-list"
+                        , pathParameters(
+                                parameterWithName("userId").description("유저 ID")
+                        )
+                        , responseFields(
+                                fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("게시글 ID"),
+                                fieldWithPath("[].category").description("제품 카테고리"),
+                                fieldWithPath("[].title").type(JsonFieldType.STRING).description("게시글 제목"),
+                                fieldWithPath("[].remainDate").description("남은 날짜"),
+                                fieldWithPath("[].unitPrice").description("단위 가격"),
+                                fieldWithPath("[].quantity").description("제품 수량"),
+                                fieldWithPath("[].nowCount").description("현재 모집 수량"),
+                                fieldWithPath("[].totalCount").description("총 모집 수량"),
+                                fieldWithPath("[].images[].local").description("이미지 경로"),
+                                fieldWithPath("[].images[].path").description("이미지 경로"),
+                                fieldWithPath("[].deletion").description("삭제여부")
+                        )
+                ));
     }
 }

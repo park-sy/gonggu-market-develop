@@ -3,6 +3,7 @@ package com.gonggu.board.service;
 import com.gonggu.board.domain.*;
 import com.gonggu.board.exception.BoardJoinFailed;
 import com.gonggu.board.exception.BoardNotFound;
+import com.gonggu.board.exception.UserNotFound;
 import com.gonggu.board.repository.*;
 import com.gonggu.board.request.*;
 import com.gonggu.board.response.BoardDetailResponse;
@@ -165,12 +166,14 @@ public class BoardService {
                .map(BoardMemberResponse::new).collect(Collectors.toList());
     }
 
-    public List<BoardResponse> getMySellBoard(User user) {
+    public List<BoardResponse> getSellBoard(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(UserNotFound::new);
         return boardRepository.findByUser(user).stream()
                 .map(BoardResponse::new).collect(Collectors.toList());
     }
 
-    public List<BoardResponse> getMyJoinBoard(User user){
+    public List<BoardResponse> getJoinBoard(Long userId){
+        User user = userRepository.findById(userId).orElseThrow(UserNotFound::new);
         return boardRepository.getJoinList(user).stream()
                 .map(BoardResponse::new).collect(Collectors.toList());
     }
