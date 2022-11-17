@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Main-Class: org.springframework.boot.loader.JarLauncher
-Start-Class: com.gonggu.board.GongguApplication
+Start-Class: com.gonggu.deal.GongguApplication
 Spring-Boot-Version: 2.7.5
 Spring-Boot-Classes: BOOT-INF/classes/
 Spring-Boot-Lib: BOOT-INF/lib/
