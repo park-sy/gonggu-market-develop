@@ -10,8 +10,7 @@ import lombok.Setter;
 public class TransactionRequest {
 
     private Integer order;
-    private Integer to;
-    private Integer from;
+    private Integer filter;
     private String start;
     private String end;
 }

@@ -25,8 +25,7 @@ public class TransactionRepositoryImpl implements TransactionRepositoryCustom{
     public List<Transaction> getList(User user, TransactionRequest request){
         return jpaQueryFactory.selectFrom(transaction)
                 .where(
-                        toEq(user, request.getTo()),
-                        fromEq(user, request.getFrom()),
+                        filter(user, request.getFilter()),
                         goeDate(request.getStart()),
                         loeDate(request.getEnd())
                 )
@@ -36,16 +35,13 @@ public class TransactionRepositoryImpl implements TransactionRepositoryCustom{
 
     private OrderSpecifier<?> sortOrder(Integer order){
         if(order == null) return transaction.id.desc();
-        else if(order == 2) return transaction.amount.desc();
+        else if(order == 1) return transaction.amount.desc();
         return transaction.id.desc();
     }
-    private BooleanExpression toEq(User user, Integer to){
-        if(to == null) return null;
+    private BooleanExpression filter(User user, Integer filter){
+        if(filter == null) return null;
+        else if(filter == 1) return transaction.from.eq(user);
         return transaction.to.eq(user);
-    }
-    private BooleanExpression fromEq(User user, Integer from){
-        if(from == null) return null;
-        return transaction.from.eq(user);
     }
     private BooleanExpression goeDate(String date){
         if(date == null) return null;

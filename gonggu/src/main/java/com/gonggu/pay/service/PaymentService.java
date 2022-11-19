@@ -6,6 +6,7 @@ import com.gonggu.pay.domain.Transaction;
 import com.gonggu.pay.domain.User;
 import com.gonggu.pay.exception.PayChargeFailed;
 import com.gonggu.pay.exception.PayRemitFailed;
+import com.gonggu.pay.exception.UserNotFound;
 import com.gonggu.pay.repository.AccountRepository;
 import com.gonggu.pay.repository.PaymentRepository;
 import com.gonggu.pay.repository.TransactionRepository;
@@ -68,9 +69,8 @@ public class PaymentService {
     }
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
-    public void remit(RemitRequest request) {
-        User from = userRepository.findById(request.getFrom()).orElseThrow();
-        User to = userRepository.findById(request.getTo()).orElseThrow();
+    public void remit(User from, RemitRequest request) {
+        User to = userRepository.findById(request.getTo()).orElseThrow(UserNotFound::new);
         Payment fromPayment = paymentRepository.findByUser(from);
         if(fromPayment.getBalance() < request.getAmount()) throw new PayRemitFailed();
         //송금 로직

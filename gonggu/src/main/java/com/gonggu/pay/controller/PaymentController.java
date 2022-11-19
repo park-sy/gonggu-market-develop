@@ -9,6 +9,7 @@ import com.gonggu.pay.response.PaymentInfo;
 import com.gonggu.pay.response.TransactionResponse;
 import com.gonggu.pay.service.PaymentService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,37 +20,28 @@ public class PaymentController {
     private final PaymentService paymentService;
     //페이 정보 불러오기
     @GetMapping("/payment")
-    public PaymentInfo getInfo(@ModelAttribute UserTemp userTemp){
-        //로그인 처리 위함, 나중에 삭제
-        User user = paymentService.findUserTemp(userTemp);
+    public PaymentInfo getInfo(@AuthenticationPrincipal User user){
         return paymentService.getInfo(user);
     }
     //코인 충전
     @PostMapping("/payment/charge")
-    public void chargeCoin(@ModelAttribute UserTemp userTemp, @RequestBody PaymentCharge paymentCharge){
-        //로그인 처리 위함, 나중에 삭제
-        User user = paymentService.findUserTemp(userTemp);
-
+    public void chargeCoin(@AuthenticationPrincipal User user, @RequestBody PaymentCharge paymentCharge){
         paymentService.charge(paymentCharge, user);
     }
     //코인 반환
     @PostMapping("/payment/discharge")
-    public void dischargeCoin(@ModelAttribute UserTemp userTemp, @RequestBody PaymentCharge paymentCharge){
-        //로그인 처리 위함, 나중에 삭제
-        User user = paymentService.findUserTemp(userTemp);
+    public void dischargeCoin(@AuthenticationPrincipal User user, @RequestBody PaymentCharge paymentCharge){
         paymentService.discharge(paymentCharge, user);
     }
     //코인 송금
     @PostMapping("/payment/remit")
-    public void remit(@RequestBody RemitRequest request){
-        //로그인 처리 위함, 나중에 삭제
-//        User user = paymentService.findUserTemp(userTemp);
-        paymentService.remit(request);
+    public void remit(@AuthenticationPrincipal User user,@RequestBody RemitRequest request){
+        paymentService.remit(user,request);
     }
 
     @GetMapping("/payment/transaction")
-    public List<TransactionResponse> getMyTransaction(@ModelAttribute TransactionRequest transactionRequest,
-                                                      @RequestBody User user){
+    public List<TransactionResponse> getMyTransaction(@AuthenticationPrincipal User user,
+                                                      @ModelAttribute TransactionRequest transactionRequest){
         return paymentService.getMyTransaction(transactionRequest, user);
     }
 

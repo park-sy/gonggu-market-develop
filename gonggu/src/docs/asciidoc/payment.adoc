@@ -1,0 +1,43 @@
+= Payment API
+:doctype: book
+:icons: font
+:source-highlighter: highlights
+:toc: left
+:toclevels: 2
+:sectlinks:
+
+== 지갑 정보 가져오기
+include::{snippets}/payment/info/http-request.adoc[]
+
+=== 응답
+include::{snippets}/payment/info/http-response.adoc[]
+include::{snippets}/payment/info/response-fields.adoc[]
+
+== 지갑 코인 충전
+include::{snippets}/payment/charge/http-request.adoc[]
+include::{snippets}/payment/charge/request-fields.adoc[]
+
+=== 응답
+include::{snippets}/payment/charge/http-response.adoc[]
+
+== 지갑 충전 반환
+include::{snippets}/payment/charge/http-request.adoc[]
+include::{snippets}/payment/charge/request-fields.adoc[]
+
+=== 응답
+include::{snippets}/payment/charge/http-response.adoc[]
+
+== 송금
+include::{snippets}/payment/remit/http-request.adoc[]
+include::{snippets}/payment/remit/request-fields.adoc[]
+
+=== 응답
+include::{snippets}/payment/remit/http-response.adoc[]
+
+== 거래내역 가져오기
+include::{snippets}/payment/transaction/http-request.adoc[]
+include::{snippets}/payment/transaction/path-parameters.adoc[]
+
+=== 응답
+include::{snippets}/payment/transaction/http-response.adoc[]
+include::{snippets}/payment/transaction/response-fields.adoc[]
