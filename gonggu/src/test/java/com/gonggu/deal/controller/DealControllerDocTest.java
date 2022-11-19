@@ -66,6 +66,8 @@ public class DealControllerDocTest {
     private DealImageRepository dealImageRepository;
     @Autowired
     private DealKeywordRepository dealKeywordRepository;
+    @Autowired
+    private KeywordRepository keywordRepository;
     private User testUser;
 
 
@@ -75,6 +77,7 @@ public class DealControllerDocTest {
         dealRepository.deleteAll();
         userRepository.deleteAll();
         categoryRepository.deleteAll();
+        keywordRepository.deleteAll();
         testUser = User.builder()
                 .nickname("테스트유저")
                 .roles(Collections.singletonList("ROLE_USER")).build();
@@ -220,10 +223,13 @@ public class DealControllerDocTest {
                         .filePath("경로/"+i+"/img.png")
                         .build()).collect(Collectors.toList());
         dealImageRepository.saveAll(images);
+
+        Keyword keyword = Keyword.builder().word("키워드").build();
+        keywordRepository.save(keyword);
         List<DealKeyword> keywords =  IntStream.range(0, 60)
                 .mapToObj(i -> DealKeyword.builder()
                         .deal(deals.get(i%20))
-                        .keyword("키워드"+i)
+                        .keyword(keyword)
                         .build()).collect(Collectors.toList());
         dealKeywordRepository.saveAll(keywords);
 
@@ -295,10 +301,12 @@ public class DealControllerDocTest {
                         .build();
         dealImageRepository.save(image);
 
+        Keyword keyword = Keyword.builder().word("키워드").build();
+        keywordRepository.save(keyword);
         List<DealKeyword> keywords =  IntStream.range(0,3)
                 .mapToObj(i -> DealKeyword.builder()
                         .deal(deal)
-                        .keyword("키워드"+i)
+                        .keyword(keyword)
                         .build()).collect(Collectors.toList());
         dealKeywordRepository.saveAll(keywords);
 
@@ -559,10 +567,13 @@ public class DealControllerDocTest {
                         .filePath("경로/"+i+"/img.png")
                         .build()).collect(Collectors.toList());
         dealImageRepository.saveAll(images);
+
+        Keyword keyword = Keyword.builder().word("키워드").build();
+        keywordRepository.save(keyword);
         List<DealKeyword> keywords =  IntStream.range(0, 20)
                 .mapToObj(i -> DealKeyword.builder()
                         .deal(deals.get(i%5))
-                        .keyword("키워드"+i)
+                        .keyword(keyword)
                         .build()).collect(Collectors.toList());
         dealKeywordRepository.saveAll(keywords);
 
@@ -629,10 +640,13 @@ public class DealControllerDocTest {
                         .filePath("경로/"+i+"/img.png")
                         .build()).collect(Collectors.toList());
         dealImageRepository.saveAll(images);
+
+        Keyword keyword = Keyword.builder().word("키워드").build();
+        keywordRepository.save(keyword);
         List<DealKeyword> keywords =  IntStream.range(0, 20)
                 .mapToObj(i -> DealKeyword.builder()
                         .deal(deals.get(i%5))
-                        .keyword("키워드"+i)
+                        .keyword(keyword)
                         .build()).collect(Collectors.toList());
         dealKeywordRepository.saveAll(keywords);
 

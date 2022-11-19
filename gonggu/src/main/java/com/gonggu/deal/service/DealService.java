@@ -75,10 +75,12 @@ public class DealService {
             DealKeyword bk;
 
             for(String keyword : dealCreate.getKeywords()){
-//                Keyword findKey = keywordRepository.findByWord(keyword);
-//                if (findKey == null) findKey = Keyword.builder()
-//                        .word(keyword).build();
-                bk = DealKeyword.builder().keyword(keyword).deal(deal).build();
+                Keyword findKey = keywordRepository.findByWord(keyword);
+                if (findKey == null) {
+                    findKey = Keyword.builder().word(keyword).build();
+                    keywordRepository.save(findKey);
+                }
+                bk = DealKeyword.builder().keyword(findKey).deal(deal).build();
                 dealKeywordRepository.save(bk);
             }
         }

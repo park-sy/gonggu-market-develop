@@ -15,6 +15,7 @@ public class Keyword {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "keyword_id")
     private Long id;
     private String word;
 
