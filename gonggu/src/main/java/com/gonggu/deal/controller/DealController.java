@@ -6,7 +6,6 @@ import com.gonggu.deal.response.DealDetailResponse;
 import com.gonggu.deal.response.DealMemberResponse;
 import com.gonggu.deal.response.DealResponse;
 import com.gonggu.deal.service.DealService;
-import com.gonggu.deal.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +18,6 @@ import java.util.List;
 public class DealController {
 
     private final DealService dealService;
-    private final UserService userService;
     //게시글 불러오기
     @GetMapping("/deal")
     public List<DealResponse> getDeal(@ModelAttribute DealSearch dealSearch){
@@ -79,19 +77,14 @@ public class DealController {
 
     //내 판매 내역
     @GetMapping("/deal/sale/{userId}")
-    public List<DealResponse> getMySellDeal(@PathVariable Long userId){
+    public List<DealResponse> getMySellDeal(@PathVariable String userId){
         return dealService.getSellDeal(userId);
     }
     //내 구매 내역
     @GetMapping("/deal/enrollment/{userId}")
-    public List<DealResponse> getMyJoinDeal(@PathVariable Long userId){
+    public List<DealResponse> getMyJoinDeal(@PathVariable String userId){
         return dealService.getJoinDeal(userId);
     }
-    @PostMapping("/deal/user")
-    public void createUser(@RequestBody UserCreate userCreate){
-        userService.createUser(userCreate);
-    }
-
 
     //참여 시 채팅방 서버에 request
 }

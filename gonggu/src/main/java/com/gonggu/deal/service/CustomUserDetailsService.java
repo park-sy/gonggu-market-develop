@@ -17,6 +17,6 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String userPk) {
-        return userRepository.findById(Long.valueOf(userPk)).orElseThrow(UserNotFound::new);
+        return userRepository.findByNickname(userPk).orElseThrow(UserNotFound::new);
     }
 }

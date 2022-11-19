@@ -54,7 +54,7 @@ public class Deal {
     private int view;
 
     @ManyToOne(fetch = FetchType.EAGER ,cascade = CascadeType.MERGE)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "nickname")
     private User user;
 
     @ManyToOne(fetch = FetchType.EAGER ,cascade = CascadeType.MERGE)

@@ -17,7 +17,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.security.test.context.support.TestExecutionEvent;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
@@ -74,117 +76,117 @@ public class DealControllerDocTest {
         userRepository.deleteAll();
         categoryRepository.deleteAll();
         testUser = User.builder()
-                .name("테스트유저")
+                .nickname("테스트유저")
                 .roles(Collections.singletonList("ROLE_USER")).build();
         userRepository.save(testUser);
     }
-//    @Test
-//    @DisplayName("구매 정보 수정")
-//    @WithUserDetails(value = "1", setupBefore = TestExecutionEvent.TEST_EXECUTION)
-//    void editJoin() throws Exception{
-//        Category category = Category.builder()
-//                .name("카테고리").build();
-//        categoryRepository.save(category);
-//
-//        User user = User.builder()
-//                .name("유저").build();
-//        userRepository.save(user);
-//
-//        LocalDateTime now = LocalDateTime.now();
-//        Deal deal = Deal.builder()
-//                .category(category)
-//                .title("제목")
-//                .content("내용")
-//                .price(1000L)
-//                .quantity(10)
-//                .unitQuantity(2)
-//                .unitPrice(200L)
-//                .totalCount(10)
-//                .url("url/")
-//                .expireTime(now.plusDays(3))
-//                .nowCount(2)
-//                .user(user)
-//                .build();
-//        dealRepository.save(deal);
-//
-//        DealJoin dealJoin = DealJoin.builder()
-//                .quantity(5)
-//                .build();
-//
-//        DealJoin dealJoin2 = DealJoin.builder()
-//                .quantity(2)
-//                .build();
-//
-//        this.mockMvc.perform(post("/deal/{dealId}/enrollment", deal.getId())
-//                        .content(objectMapper.writeValueAsString(dealJoin))
-//                        .contentType(APPLICATION_JSON))
-//                .andExpect(status().isOk());
-//
-//        this.mockMvc.perform(patch("/deal/{dealId}/enrollment", deal.getId())
-//                        .content(objectMapper.writeValueAsString(dealJoin2))
-//                        .contentType(APPLICATION_JSON))
-//                .andExpect(status().isOk())
-//                .andDo(print())
-//                .andDo(document("deal/join-edit"
-//                        ,pathParameters(
-//                                parameterWithName("dealId").description("게시글 ID")
-//                        )
-//                        , requestFields(
-//                                fieldWithPath("quantity").description("구매 변경 수량")
-//                        )
-//                ));
-//
-//    }
-//
-//    @Test
-//    @DisplayName("구매 취소")
-//    @WithUserDetails(value = "3", setupBefore = TestExecutionEvent.TEST_EXECUTION)
-//    void deleteJoin() throws Exception{
-//        Category category = Category.builder()
-//                .name("카테고리").build();
-//        categoryRepository.save(category);
-//
-//        User user = User.builder()
-//                .name("유저").build();
-//        userRepository.save(user);
-//
-//        LocalDateTime now = LocalDateTime.now();
-//        Deal deal = Deal.builder()
-//                .category(category)
-//                .title("제목")
-//                .content("내용")
-//                .price(1000L)
-//                .quantity(10)
-//                .unitQuantity(2)
-//                .unitPrice(200L)
-//                .totalCount(10)
-//                .url("url/")
-//                .expireTime(now.plusDays(3))
-//                .nowCount(2)
-//                .user(user)
-//                .build();
-//        dealRepository.save(deal);
-//
-//        DealJoin dealJoin = DealJoin.builder()
-//                .quantity(5)
-//                .build();
-//
-//        this.mockMvc.perform(post("/deal/{dealId}/enrollment", deal.getId())
-//                        .content(objectMapper.writeValueAsString(dealJoin))
-//                        .contentType(APPLICATION_JSON))
-//                .andExpect(status().isOk());
-//
-//        this.mockMvc.perform(delete("/deal/{dealId}/enrollment", deal.getId())
-//                        .contentType(APPLICATION_JSON))
-//                .andExpect(status().isOk())
-//                .andDo(print())
-//                .andDo(document("deal/join-delete"
-//                        ,pathParameters(
-//                                parameterWithName("dealId").description("게시글 ID")
-//                        )
-//                ));
-//
-//    }
+    @Test
+    @DisplayName("구매 정보 수정")
+    @WithUserDetails(value = "테스트유저", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+    void editJoin() throws Exception{
+        Category category = Category.builder()
+                .name("카테고리").build();
+        categoryRepository.save(category);
+
+        User user = User.builder()
+                .nickname("호스트").build();
+        userRepository.save(user);
+
+        LocalDateTime now = LocalDateTime.now();
+        Deal deal = Deal.builder()
+                .category(category)
+                .title("제목")
+                .content("내용")
+                .price(1000L)
+                .quantity(10)
+                .unitQuantity(2)
+                .unitPrice(200L)
+                .totalCount(10)
+                .url("url/")
+                .expireTime(now.plusDays(3))
+                .nowCount(2)
+                .user(user)
+                .build();
+        dealRepository.save(deal);
+
+        DealJoin dealJoin = DealJoin.builder()
+                .quantity(5)
+                .build();
+
+        DealJoin dealJoin2 = DealJoin.builder()
+                .quantity(2)
+                .build();
+
+        this.mockMvc.perform(post("/deal/{dealId}/enrollment", deal.getId())
+                        .content(objectMapper.writeValueAsString(dealJoin))
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+        this.mockMvc.perform(patch("/deal/{dealId}/enrollment", deal.getId())
+                        .content(objectMapper.writeValueAsString(dealJoin2))
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andDo(document("deal/join-edit"
+                        ,pathParameters(
+                                parameterWithName("dealId").description("게시글 ID")
+                        )
+                        , requestFields(
+                                fieldWithPath("quantity").description("구매 변경 수량")
+                        )
+                ));
+
+    }
+
+    @Test
+    @DisplayName("구매 취소")
+    @WithUserDetails(value = "테스트유저", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+    void deleteJoin() throws Exception{
+        Category category = Category.builder()
+                .name("카테고리").build();
+        categoryRepository.save(category);
+
+        User user = User.builder()
+                .nickname("호스트").build();
+        userRepository.save(user);
+
+        LocalDateTime now = LocalDateTime.now();
+        Deal deal = Deal.builder()
+                .category(category)
+                .title("제목")
+                .content("내용")
+                .price(1000L)
+                .quantity(10)
+                .unitQuantity(2)
+                .unitPrice(200L)
+                .totalCount(10)
+                .url("url/")
+                .expireTime(now.plusDays(3))
+                .nowCount(2)
+                .user(user)
+                .build();
+        dealRepository.save(deal);
+
+        DealJoin dealJoin = DealJoin.builder()
+                .quantity(5)
+                .build();
+
+        this.mockMvc.perform(post("/deal/{dealId}/enrollment", deal.getId())
+                        .content(objectMapper.writeValueAsString(dealJoin))
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+        this.mockMvc.perform(delete("/deal/{dealId}/enrollment", deal.getId())
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andDo(document("deal/join-delete"
+                        ,pathParameters(
+                                parameterWithName("dealId").description("게시글 ID")
+                        )
+                ));
+
+    }
     @Test
     @DisplayName("게시글 가져오기")
     void getDeal() throws Exception{
@@ -192,7 +194,7 @@ public class DealControllerDocTest {
                 .name("카테고리").build();
         categoryRepository.save(category);
         User user = User.builder()
-                .name("유저").build();
+                .nickname("유저").build();
         LocalDateTime date = LocalDateTime.now();
         List<Deal> deals = IntStream.range(0,20)
                 .mapToObj(i -> Deal.builder()
@@ -265,7 +267,7 @@ public class DealControllerDocTest {
         categoryRepository.save(category);
 
         User user = User.builder()
-                .name("유저").build();
+                .nickname("유저").build();
 
         userRepository.save(user);
         LocalDateTime now = LocalDateTime.now();
@@ -325,8 +327,8 @@ public class DealControllerDocTest {
                                 fieldWithPath("images[].local").description("이미지 경로"),
                                 fieldWithPath("images[].path").description("이미지 경로"),
                                 fieldWithPath("deletion").description("삭제여부"),
-                                fieldWithPath("user.id").description("게시글 작성 유저 ID"),
-                                fieldWithPath("user.name").description("게시글 작성 유저 이름"),
+                                fieldWithPath("user").description("게시글 작성 유저 닉네임"),
+                                //fieldWithPath("user.name").description("게시글 작성 유저 이름"),
                                 fieldWithPath("category.id").description("게시글 카테고리 ID"),
                                 fieldWithPath("category.name").description("게시글 카테고리 이름")
                         )
@@ -388,7 +390,7 @@ public class DealControllerDocTest {
         //@WithUserDetails(value = "1",  setupBefore = TestExecutionEvent.TEST_EXECUTION)
     void editDeal() throws Exception{
         User user = User.builder()
-                .name("유저").build();
+                .nickname("유저").build();
         userRepository.save(user);
 
         Category category = Category.builder()
@@ -473,7 +475,7 @@ public class DealControllerDocTest {
     void requestJoin() throws Exception{
         List<User> users = IntStream.range(0,2)
                 .mapToObj(i -> User.builder()
-                        .name("이름" +i)
+                        .nickname("이름" +i)
                         .build()).collect(Collectors.toList());
         userRepository.saveAll(users);
 
@@ -482,7 +484,7 @@ public class DealControllerDocTest {
         categoryRepository.save(category);
 
         User user = User.builder()
-                .name("유저").build();
+                .nickname("유저").build();
         userRepository.save(user);
 
         LocalDateTime now = LocalDateTime.now();
@@ -522,148 +524,148 @@ public class DealControllerDocTest {
     }
 
 
-//    @Test
-//    @DisplayName("판매 내역 조회")
-//    void getMySellList() throws Exception{
-//        User user = User.builder()
-//                .name("유저").build();
-//        userRepository.save(user);
-//
-//        Category category = Category.builder()
-//                .name("카테고리").build();
-//        categoryRepository.save(category);
-//        LocalDateTime date = LocalDateTime.now();
-//        List<Deal> deals = IntStream.range(0,5)
-//                .mapToObj(i -> Deal.builder()
-//                        .title("제목" +i)
-//                        .category(category)
-//                        .content("내용")
-//                        .price(1000L)
-//                        .unitPrice(200L)
-//                        .totalCount(i)
-//                        .url("url/")
-//                        .expireTime(date.plusDays(i%4))
-//                        .quantity(10)
-//                        .unitQuantity(2)
-//                        .nowCount(i)
-//                        .user(user)
-//                        .build()).collect(Collectors.toList());
-//        dealRepository.saveAll(deals);
-//        List<DealImage> images =  IntStream.range(0, 5)
-//                .mapToObj(i -> DealImage.builder()
-//                        .deal(deals.get(i))
-//                        .originFileName("origin_name"+i)
-//                        .newFileName("new_name"+i)
-//                        .filePath("경로/"+i+"/img.png")
-//                        .build()).collect(Collectors.toList());
-//        dealImageRepository.saveAll(images);
-//        List<DealKeyword> keywords =  IntStream.range(0, 20)
-//                .mapToObj(i -> DealKeyword.builder()
-//                        .deal(deals.get(i%5))
-//                        .keyword("키워드"+i)
-//                        .build()).collect(Collectors.toList());
-//        dealKeywordRepository.saveAll(keywords);
-//
-//        this.mockMvc.perform(get("/deal/sale/{userId}",user.getId())
-//                        .contentType(APPLICATION_JSON))
-//                .andExpect(status().isOk())
-//                .andDo(print())
-//                .andDo(document("deal/sell-list"
-//                        , pathParameters(
-//                                parameterWithName("userId").description("유저 ID")
-//                        )
-//                        , responseFields(
-//                                fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("게시글 ID"),
-//                                fieldWithPath("[].category").description("제품 카테고리"),
-//                                fieldWithPath("[].title").type(JsonFieldType.STRING).description("게시글 제목"),
-//                                fieldWithPath("[].remainDate").description("남은 날짜"),
-//                                fieldWithPath("[].unitPrice").description("단위 가격"),
-//                                fieldWithPath("[].quantity").description("제품 수량"),
-//                                fieldWithPath("[].nowCount").description("현재 모집 수량"),
-//                                fieldWithPath("[].totalCount").description("총 모집 수량"),
-//                                fieldWithPath("[].images[].local").description("이미지 경로"),
-//                                fieldWithPath("[].images[].path").description("이미지 경로"),
-//                                fieldWithPath("[].deletion").description("삭제여부")
-//                        )
-//                ));
-//
-//    }
-//
-//    @Test
-//    @DisplayName("구매 내역 조회")
-//    void getMyJoinListTemp() throws Exception{
-//
-//        List<User> users = IntStream.range(0,5)
-//                .mapToObj(i -> User.builder()
-//                        .name("이름" +i)
-//                        .build()).collect(Collectors.toList());
-//        userRepository.saveAll(users);
-//
-//        Category category = Category.builder()
-//                .name("카테고리").build();
-//        categoryRepository.save(category);
-//        LocalDateTime date = LocalDateTime.now();
-//        List<Deal> deals = IntStream.range(0,5)
-//                .mapToObj(i -> Deal.builder()
-//                        .title("제목" +i)
-//                        .category(category)
-//                        .content("내용")
-//                        .price(1000L)
-//                        .unitPrice(200L)
-//                        .totalCount(i)
-//                        .url("url/")
-//                        .expireTime(date.plusDays(i%4))
-//                        .quantity(10)
-//                        .unitQuantity(2)
-//                        .nowCount(i)
-//                        .user(users.get(i))
-//                        .build()).collect(Collectors.toList());
-//        dealRepository.saveAll(deals);
-//        List<DealImage> images =  IntStream.range(0, 5)
-//                .mapToObj(i -> DealImage.builder()
-//                        .deal(deals.get(i))
-//                        .originFileName("origin_name"+i)
-//                        .newFileName("new_name"+i)
-//                        .filePath("경로/"+i+"/img.png")
-//                        .build()).collect(Collectors.toList());
-//        dealImageRepository.saveAll(images);
-//        List<DealKeyword> keywords =  IntStream.range(0, 20)
-//                .mapToObj(i -> DealKeyword.builder()
-//                        .deal(deals.get(i%5))
-//                        .keyword("키워드"+i)
-//                        .build()).collect(Collectors.toList());
-//        dealKeywordRepository.saveAll(keywords);
-//
-//        List<DealMember> dealMembers = IntStream.range(1,5)
-//                .mapToObj(i -> DealMember.builder()
-//                        .host(false)
-//                        .deal(deals.get(i%5))
-//                        .user(users.get(0))
-//                        .quantity(i%5)
-//                        .build()).collect(Collectors.toList());
-//        dealMemberRepository.saveAll(dealMembers);
-//
-//        this.mockMvc.perform(get("/deal/sale/{userId}", users.get(0).getId())
-//                        .contentType(APPLICATION_JSON))
-//                .andExpect(status().isOk())
-//                .andDo(print())
-//                .andDo(document("deal/join-list"
-//                        , pathParameters(
-//                                parameterWithName("userId").description("유저 ID")
-//                        )
-//                        , responseFields(
-//                                fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("게시글 ID"),
-//                                fieldWithPath("[].category").description("제품 카테고리"),
-//                                fieldWithPath("[].title").type(JsonFieldType.STRING).description("게시글 제목"),
-//                                fieldWithPath("[].remainDate").description("남은 날짜"),
-//                                fieldWithPath("[].unitPrice").description("단위 가격"),
-//                                fieldWithPath("[].quantity").description("제품 수량"),
-//                                fieldWithPath("[].nowCount").description("현재 모집 수량"),
-//                                fieldWithPath("[].totalCount").description("총 모집 수량"),
-//                                fieldWithPath("[].images[].local").description("이미지 경로"),
-//                                fieldWithPath("[].images[].path").description("이미지 경로"),
-//                                fieldWithPath("[].deletion").description("삭제여부")
-//                        )
-//                ));
-//    }
+    @Test
+    @DisplayName("판매 내역 조회")
+    void getMySellList() throws Exception{
+        User user = User.builder()
+                .nickname("유저").build();
+        userRepository.save(user);
+
+        Category category = Category.builder()
+                .name("카테고리").build();
+        categoryRepository.save(category);
+        LocalDateTime date = LocalDateTime.now();
+        List<Deal> deals = IntStream.range(0,5)
+                .mapToObj(i -> Deal.builder()
+                        .title("제목" +i)
+                        .category(category)
+                        .content("내용")
+                        .price(1000L)
+                        .unitPrice(200L)
+                        .totalCount(i)
+                        .url("url/")
+                        .expireTime(date.plusDays(i%4))
+                        .quantity(10)
+                        .unitQuantity(2)
+                        .nowCount(i)
+                        .user(user)
+                        .build()).collect(Collectors.toList());
+        dealRepository.saveAll(deals);
+        List<DealImage> images =  IntStream.range(0, 5)
+                .mapToObj(i -> DealImage.builder()
+                        .deal(deals.get(i))
+                        .originFileName("origin_name"+i)
+                        .newFileName("new_name"+i)
+                        .filePath("경로/"+i+"/img.png")
+                        .build()).collect(Collectors.toList());
+        dealImageRepository.saveAll(images);
+        List<DealKeyword> keywords =  IntStream.range(0, 20)
+                .mapToObj(i -> DealKeyword.builder()
+                        .deal(deals.get(i%5))
+                        .keyword("키워드"+i)
+                        .build()).collect(Collectors.toList());
+        dealKeywordRepository.saveAll(keywords);
+
+        this.mockMvc.perform(get("/deal/sale/{userId}",user.getNickname())
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andDo(document("deal/sell-list"
+                        , pathParameters(
+                                parameterWithName("userId").description("유저 ID")
+                        )
+                        , responseFields(
+                                fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("게시글 ID"),
+                                fieldWithPath("[].category").description("제품 카테고리"),
+                                fieldWithPath("[].title").type(JsonFieldType.STRING).description("게시글 제목"),
+                                fieldWithPath("[].remainDate").description("남은 날짜"),
+                                fieldWithPath("[].unitPrice").description("단위 가격"),
+                                fieldWithPath("[].quantity").description("제품 수량"),
+                                fieldWithPath("[].nowCount").description("현재 모집 수량"),
+                                fieldWithPath("[].totalCount").description("총 모집 수량"),
+                                fieldWithPath("[].image.local").description("이미지 경로"),
+                                fieldWithPath("[].image.path").description("이미지 경로"),
+                                fieldWithPath("[].deletion").description("삭제여부")
+                        )
+                ));
+
+    }
+
+    @Test
+    @DisplayName("구매 내역 조회")
+    void getMyJoinListTemp() throws Exception{
+
+        List<User> users = IntStream.range(0,5)
+                .mapToObj(i -> User.builder()
+                        .nickname("이름" +i)
+                        .build()).collect(Collectors.toList());
+        userRepository.saveAll(users);
+
+        Category category = Category.builder()
+                .name("카테고리").build();
+        categoryRepository.save(category);
+        LocalDateTime date = LocalDateTime.now();
+        List<Deal> deals = IntStream.range(0,5)
+                .mapToObj(i -> Deal.builder()
+                        .title("제목" +i)
+                        .category(category)
+                        .content("내용")
+                        .price(1000L)
+                        .unitPrice(200L)
+                        .totalCount(i)
+                        .url("url/")
+                        .expireTime(date.plusDays(i%4))
+                        .quantity(10)
+                        .unitQuantity(2)
+                        .nowCount(i)
+                        .user(users.get(i))
+                        .build()).collect(Collectors.toList());
+        dealRepository.saveAll(deals);
+        List<DealImage> images =  IntStream.range(0, 5)
+                .mapToObj(i -> DealImage.builder()
+                        .deal(deals.get(i))
+                        .originFileName("origin_name"+i)
+                        .newFileName("new_name"+i)
+                        .filePath("경로/"+i+"/img.png")
+                        .build()).collect(Collectors.toList());
+        dealImageRepository.saveAll(images);
+        List<DealKeyword> keywords =  IntStream.range(0, 20)
+                .mapToObj(i -> DealKeyword.builder()
+                        .deal(deals.get(i%5))
+                        .keyword("키워드"+i)
+                        .build()).collect(Collectors.toList());
+        dealKeywordRepository.saveAll(keywords);
+
+        List<DealMember> dealMembers = IntStream.range(1,5)
+                .mapToObj(i -> DealMember.builder()
+                        .host(false)
+                        .deal(deals.get(i%5))
+                        .user(users.get(0))
+                        .quantity(i%5)
+                        .build()).collect(Collectors.toList());
+        dealMemberRepository.saveAll(dealMembers);
+
+        this.mockMvc.perform(get("/deal/enrollment/{userId}", users.get(0).getNickname())
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andDo(document("deal/join-list"
+                        , pathParameters(
+                                parameterWithName("userId").description("유저 ID")
+                        )
+                        , responseFields(
+                                fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("게시글 ID"),
+                                fieldWithPath("[].category").description("제품 카테고리"),
+                                fieldWithPath("[].title").type(JsonFieldType.STRING).description("게시글 제목"),
+                                fieldWithPath("[].remainDate").description("남은 날짜"),
+                                fieldWithPath("[].unitPrice").description("단위 가격"),
+                                fieldWithPath("[].quantity").description("제품 수량"),
+                                fieldWithPath("[].nowCount").description("현재 모집 수량"),
+                                fieldWithPath("[].totalCount").description("총 모집 수량"),
+                                fieldWithPath("[].image.local").description("이미지 경로"),
+                                fieldWithPath("[].image.path").description("이미지 경로"),
+                                fieldWithPath("[].deletion").description("삭제여부")
+                        )
+                ));
+    }
 }

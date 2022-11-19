@@ -21,7 +21,7 @@ public class DealMember {
     private Deal deal;
 
     @ManyToOne(fetch = FetchType.LAZY ,cascade = CascadeType.MERGE)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "nickname")
     private User user;
     private Integer quantity;
 

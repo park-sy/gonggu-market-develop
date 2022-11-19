@@ -5,11 +5,11 @@ import lombok.Getter;
 
 @Getter
 public class DealMemberResponse {
-    private Long userId;
+    private String userId;
     private String name;
 
     public DealMemberResponse(DealMember dealMember) {
-        this.userId = dealMember.getUser().getId();
-        this.name = dealMember.getUser().getName();
+        this.userId = dealMember.getUser().getNickname();
+        this.name = dealMember.getUser().getNickname();
     }
 }

@@ -32,10 +32,9 @@ public class DealService {
     private final DealMemberRepository dealMemberRepository;
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
+    private final KeywordRepository keywordRepository;
 
-    public User findUserTemp(UserTemp userTemp){
-        return userRepository.findById(userTemp.getId()).orElseThrow();
-    }
+
 
     public List<DealResponse> getList(DealSearch dealSearch) {
         return dealRepository.getList(dealSearch).stream()
@@ -74,7 +73,11 @@ public class DealService {
 
         if(dealCreate.getKeywords() != null){
             DealKeyword bk;
+
             for(String keyword : dealCreate.getKeywords()){
+//                Keyword findKey = keywordRepository.findByWord(keyword);
+//                if (findKey == null) findKey = Keyword.builder()
+//                        .word(keyword).build();
                 bk = DealKeyword.builder().keyword(keyword).deal(deal).build();
                 dealKeywordRepository.save(bk);
             }
@@ -167,14 +170,14 @@ public class DealService {
                .map(DealMemberResponse::new).collect(Collectors.toList());
     }
 
-    public List<DealResponse> getSellDeal(Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(UserNotFound::new);
+    public List<DealResponse> getSellDeal(String userId) {
+        User user = userRepository.findByNickname(userId).orElseThrow(UserNotFound::new);
         return dealRepository.findByUser(user).stream()
                 .map(DealResponse::new).collect(Collectors.toList());
     }
 
-    public List<DealResponse> getJoinDeal(Long userId){
-        User user = userRepository.findById(userId).orElseThrow(UserNotFound::new);
+    public List<DealResponse> getJoinDeal(String userId){
+        User user = userRepository.findByNickname(userId).orElseThrow(UserNotFound::new);
         return dealRepository.getJoinList(user).stream()
                 .map(DealResponse::new).collect(Collectors.toList());
     }

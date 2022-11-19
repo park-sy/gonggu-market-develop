@@ -28,7 +28,7 @@ public class DealDetailResponse {
     private final List<DealImageResponse> images;
     private final int view;
     private final boolean deletion;
-    private final UserResponse user;
+    private final String user;
     private final Category category;
     public DealDetailResponse(Deal deal){
         LocalDateTime now = LocalDateTime.now();
@@ -47,7 +47,7 @@ public class DealDetailResponse {
         this.view = deal.getView();
         this.images = deal.getImages().stream().map(DealImageResponse::new).collect(Collectors.toList());
         this.deletion = deal.isDeletion();
-        this.user = new UserResponse(deal.getUser());
+        this.user = deal.getUser().getNickname();
         this.category = deal.getCategory();
     }
 }

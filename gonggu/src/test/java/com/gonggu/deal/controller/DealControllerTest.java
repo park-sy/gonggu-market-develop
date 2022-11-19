@@ -13,7 +13,9 @@ import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.test.context.support.TestExecutionEvent;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
@@ -57,41 +59,12 @@ class DealControllerTest {
         userRepository.deleteAll();
         categoryRepository.deleteAll();
         testUser = User.builder()
-                .name("테스트유저")
+                .nickname("테스트유저")
                 .roles(Collections.singletonList("ROLE_USER")).build();
         userRepository.save(testUser);
     }
 
 
-//    @Test
-//    @DisplayName("게시글 가져오기")
-//    void getDeal() throws Exception{
-//        Category category = Category.builder()
-//                .name("카테고리").build();
-//        categoryRepository.save(category);
-//        LocalDateTime date = LocalDateTime.now();
-//        List<Deal> deals = IntStream.range(0,20)
-//                .mapToObj(i -> Deal.builder()
-//                        .title("제목" +i)
-//                        .category(category)
-//                        .content("내용")
-//                        .price(1000L)
-//                        .unitPrice(200L)
-//                        .totalCount(i)
-//                        .url("url/")
-//                        .expireTime(date.plusDays(i%4))
-//                        .quantity(10)
-//                        .unitQuantity(2)
-//                        .nowCount(i)
-//                        .build()).collect(Collectors.toList());
-//        dealRepository.saveAll(deals);
-//        mockMvc.perform(get("/deal")
-//                        .contentType(APPLICATION_JSON))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.length()",is(10)))
-//                .andExpect(jsonPath("$[0].title").value("제목19"))
-//                .andDo(print());
-//    }
 
     @Test
     @DisplayName("게시글 상세보기")
@@ -101,7 +74,7 @@ class DealControllerTest {
         categoryRepository.save(category);
 
         User user = User.builder()
-                .name("유저").build();
+                .nickname("유저").build();
 
         userRepository.save(user);
         LocalDateTime now = LocalDateTime.now();
@@ -133,7 +106,7 @@ class DealControllerTest {
     @WithMockUser
     void postDeal() throws Exception{
         User user = User.builder()
-                .name("유저").build();
+                .nickname("유저").build();
         userRepository.save(user);
         Category category = Category.builder()
                 .name("카테고리").build();
@@ -166,7 +139,7 @@ class DealControllerTest {
     //@WithUserDetails(value = "1",  setupBefore = TestExecutionEvent.TEST_EXECUTION)
     void editDeal() throws Exception{
         User user = User.builder()
-                .name("유저").build();
+                .nickname("유저").build();
         userRepository.save(user);
 
         Category category = Category.builder()
@@ -238,7 +211,7 @@ class DealControllerTest {
     void requestJoin() throws Exception{
         List<User> users = IntStream.range(0,2)
                 .mapToObj(i -> User.builder()
-                        .name("이름" +i)
+                        .nickname("이름" +i)
                         .build()).collect(Collectors.toList());
         userRepository.saveAll(users);
 
@@ -247,7 +220,7 @@ class DealControllerTest {
         categoryRepository.save(category);
 
         User user = User.builder()
-                .name("유저").build();
+                .nickname("유저").build();
         userRepository.save(user);
 
         LocalDateTime now = LocalDateTime.now();
@@ -283,108 +256,108 @@ class DealControllerTest {
                 .andDo(print());
     }
 
-//    @Test
-//    @DisplayName("구매 정보 수정")
-//    @WithUserDetails(value = "1", setupBefore = TestExecutionEvent.TEST_EXECUTION)
-//    void editJoin() throws Exception{
-//        Category category = Category.builder()
-//                .name("카테고리").build();
-//        categoryRepository.save(category);
-//
-//        User user = User.builder()
-//                .name("유저").build();
-//        userRepository.save(user);
-//
-//        LocalDateTime now = LocalDateTime.now();
-//        Deal deal = Deal.builder()
-//                .category(category)
-//                .title("제목")
-//                .content("내용")
-//                .price(1000L)
-//                .quantity(10)
-//                .unitQuantity(2)
-//                .unitPrice(200L)
-//                .totalCount(10)
-//                .url("url/")
-//                .expireTime(now.plusDays(3))
-//                .nowCount(2)
-//                .user(user)
-//                .build();
-//        dealRepository.save(deal);
-//
-//        DealJoin dealJoin = DealJoin.builder()
-//                .quantity(5)
-//                .build();
-//
-//        DealJoin dealJoin2 = DealJoin.builder()
-//                .quantity(2)
-//                .build();
-//
-//        mockMvc.perform(post("/deal/{dealId}/enrollment", deal.getId())
-//                        .content(objectMapper.writeValueAsString(dealJoin))
-//                        .contentType(APPLICATION_JSON))
-//                .andExpect(status().isOk());
-//
-//        mockMvc.perform(patch("/deal/{dealId}/enrollment", deal.getId())
-//                        .content(objectMapper.writeValueAsString(dealJoin2))
-//                        .contentType(APPLICATION_JSON))
-//                .andExpect(status().isOk())
-//                .andDo(print());
-//
-//        mockMvc.perform(get("/deal/{dealId}", deal.getId())
-//                        .contentType(APPLICATION_JSON))
-//                .andExpect(status().isOk())
-//                .andDo(print());
-//    }
-//
-//    @Test
-//    @DisplayName("구매 취소")
-//    @WithUserDetails(value = "1", setupBefore = TestExecutionEvent.TEST_EXECUTION)
-//    void deleteJoin() throws Exception{
-//        Category category = Category.builder()
-//                .name("카테고리").build();
-//        categoryRepository.save(category);
-//
-//        User user = User.builder()
-//                .name("유저").build();
-//        userRepository.save(user);
-//
-//        LocalDateTime now = LocalDateTime.now();
-//        Deal deal = Deal.builder()
-//                .category(category)
-//                .title("제목")
-//                .content("내용")
-//                .price(1000L)
-//                .quantity(10)
-//                .unitQuantity(2)
-//                .unitPrice(200L)
-//                .totalCount(10)
-//                .url("url/")
-//                .expireTime(now.plusDays(3))
-//                .nowCount(2)
-//                .user(user)
-//                .build();
-//        dealRepository.save(deal);
-//
-//        DealJoin dealJoin = DealJoin.builder()
-//                .quantity(5)
-//                .build();
-//
-//        mockMvc.perform(post("/deal/{dealId}/enrollment", deal.getId())
-//                        .content(objectMapper.writeValueAsString(dealJoin))
-//                        .contentType(APPLICATION_JSON))
-//                .andExpect(status().isOk());
-//
-//        mockMvc.perform(delete("/deal/{dealId}/enrollment", deal.getId())
-//                        .contentType(APPLICATION_JSON))
-//                .andExpect(status().isOk())
-//                .andDo(print());
-//
-//        mockMvc.perform(get("/deal/{dealId}", deal.getId())
-//                        .contentType(APPLICATION_JSON))
-//                .andExpect(status().isOk())
-//                .andDo(print());
-//    }
+    @Test
+    @DisplayName("구매 정보 수정")
+    @WithUserDetails(value = "테스트유저", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+    void editJoin() throws Exception{
+        Category category = Category.builder()
+                .name("카테고리").build();
+        categoryRepository.save(category);
+
+        User user = User.builder()
+                .nickname("유저").build();
+        userRepository.save(user);
+
+        LocalDateTime now = LocalDateTime.now();
+        Deal deal = Deal.builder()
+                .category(category)
+                .title("제목")
+                .content("내용")
+                .price(1000L)
+                .quantity(10)
+                .unitQuantity(2)
+                .unitPrice(200L)
+                .totalCount(10)
+                .url("url/")
+                .expireTime(now.plusDays(3))
+                .nowCount(2)
+                .user(user)
+                .build();
+        dealRepository.save(deal);
+
+        DealJoin dealJoin = DealJoin.builder()
+                .quantity(5)
+                .build();
+
+        DealJoin dealJoin2 = DealJoin.builder()
+                .quantity(2)
+                .build();
+
+        mockMvc.perform(post("/deal/{dealId}/enrollment", deal.getId())
+                        .content(objectMapper.writeValueAsString(dealJoin))
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(patch("/deal/{dealId}/enrollment", deal.getId())
+                        .content(objectMapper.writeValueAsString(dealJoin2))
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(print());
+
+        mockMvc.perform(get("/deal/{dealId}", deal.getId())
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("구매 취소")
+    @WithUserDetails(value = "테스트유저", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+    void deleteJoin() throws Exception{
+        Category category = Category.builder()
+                .name("카테고리").build();
+        categoryRepository.save(category);
+
+        User user = User.builder()
+                .nickname("유저").build();
+        userRepository.save(user);
+
+        LocalDateTime now = LocalDateTime.now();
+        Deal deal = Deal.builder()
+                .category(category)
+                .title("제목")
+                .content("내용")
+                .price(1000L)
+                .quantity(10)
+                .unitQuantity(2)
+                .unitPrice(200L)
+                .totalCount(10)
+                .url("url/")
+                .expireTime(now.plusDays(3))
+                .nowCount(2)
+                .user(user)
+                .build();
+        dealRepository.save(deal);
+
+        DealJoin dealJoin = DealJoin.builder()
+                .quantity(5)
+                .build();
+
+        mockMvc.perform(post("/deal/{dealId}/enrollment", deal.getId())
+                        .content(objectMapper.writeValueAsString(dealJoin))
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(delete("/deal/{dealId}/enrollment", deal.getId())
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(print());
+
+        mockMvc.perform(get("/deal/{dealId}", deal.getId())
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(print());
+    }
 
     @Test
     @DisplayName("구매자 명단")
@@ -396,7 +369,7 @@ class DealControllerTest {
 //    @DisplayName("판매 내역 조회")
 //    void getMySellList() throws Exception{
 //        User user = User.builder()
-//                .name("유저").build();
+//                .nickname("유저").build();
 //        userRepository.save(user);
 //
 //        Category category = Category.builder()
@@ -420,7 +393,7 @@ class DealControllerTest {
 //                        .build()).collect(Collectors.toList());
 //        dealRepository.saveAll(deals);
 //
-//        mockMvc.perform(get("/deal/sale/{userId}",user.getId())
+//        mockMvc.perform(get("/deal/sale/{userId}",user.getNickname())
 //                        .contentType(APPLICATION_JSON))
 //                .andExpect(status().isOk())
 //                .andDo(print());
@@ -433,7 +406,7 @@ class DealControllerTest {
 //
 //        List<User> users = IntStream.range(0,5)
 //                .mapToObj(i -> User.builder()
-//                        .name("이름" +i)
+//                        .nickname("이름" +i)
 //                        .build()).collect(Collectors.toList());
 //        userRepository.saveAll(users);
 //
@@ -467,9 +440,43 @@ class DealControllerTest {
 //                        .build()).collect(Collectors.toList());
 //        dealMemberRepository.saveAll(dealMembers);
 //
-//        mockMvc.perform(get("/deal/sale/{userId}", users.get(0).getId())
+//        mockMvc.perform(get("/deal/sale/{userId}", users.get(0).getNickname())
 //                        .contentType(APPLICATION_JSON))
 //                .andExpect(status().isOk())
 //                .andDo(print());
 //    }
+//
+//    @Test
+//    @DisplayName("게시글 가져오기")
+//    void getDeal() throws Exception{
+//        Category category = Category.builder()
+//                .name("카테고리").build();
+//        categoryRepository.save(category);
+//
+//        User user = User.builder()
+//                .nickname("유저").build();
+//        LocalDateTime date = LocalDateTime.now();
+//
+//        List<Deal> deals = IntStream.range(0,20)
+//                .mapToObj(i -> Deal.builder()
+//                        .title("제목" +i)
+//                        .category(category)
+//                        .content("내용")
+//                        .price(1000L)
+//                        .unitPrice(200L)
+//                        .totalCount(i)
+//                        .url("url/")
+//                        .expireTime(date.plusDays(i%4))
+//                        .quantity(10)
+//                        .unitQuantity(2)
+//                        .nowCount(i/2)
+//                        .build()).collect(Collectors.toList());
+//        dealRepository.saveAll(deals);
+//
+//        mockMvc.perform(get("/deal")
+//                        .contentType(APPLICATION_JSON))
+//                .andExpect(status().isOk())
+//                .andDo(print());
+//    }
+
 }

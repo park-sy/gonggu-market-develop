@@ -19,11 +19,15 @@ import java.util.stream.Collectors;
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 @Setter
 public class User implements UserDetails {
+    //@Column(length = 100, nullable = false)
+    private String email;
+
+    //@Column(length = 100, nullable = false)
+    private String password;
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
-    private Long id;
-    private String name;
+    @Column(length = 100, nullable = false, unique = true)
+    private String nickname;
     //유저 성사율
     //유저 이미지
     @ElementCollection(fetch = FetchType.EAGER)
@@ -42,7 +46,7 @@ public class User implements UserDetails {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Override
     public String getUsername() {
-        return this.name;
+        return this.nickname;
     }
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
