@@ -14,8 +14,8 @@ public class TransactionResponse {
 
     public TransactionResponse(Transaction transaction){
         this.id = transaction.getId();
-        this.fromName = transaction.getFrom().getName();
-        this.toName = transaction.getTo().getName();
+        this.fromName = transaction.getFrom().getNickname();
+        this.toName = transaction.getTo().getNickname();
         this.amount = transaction.getAmount();
         this.time = transaction.getDate().toString();
     }

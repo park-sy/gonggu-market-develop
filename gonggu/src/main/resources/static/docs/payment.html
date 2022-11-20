@@ -503,7 +503,7 @@ Strict-Transport-Security: max-age=31536000 ; includeSubDomains
 X-Frame-Options: DENY
 Content-Length: 31
 
-{"walletId":1,"balance":100000}</code></pre>
+{"walletId":2,"balance":100000}</code></pre>
 </div>
 </div>
 <table class="tableblock frame-all grid-all stretch">
@@ -676,10 +676,10 @@ X-Frame-Options: DENY</code></pre>
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">POST /payment/remit HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Content-Length: 23
+Content-Length: 30
 Host: api.gonngu.com
 
-{"to":2,"amount":30000}</code></pre>
+{"to":"유저","amount":30000}</code></pre>
 </div>
 </div>
 <table class="tableblock frame-all grid-all stretch">
@@ -702,7 +702,7 @@ Host: api.gonngu.com
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">to</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Number</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">송금 상대 유저 ID</p></td>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"></td>
@@ -741,7 +741,7 @@ X-Frame-Options: DENY</code></pre>
 <div class="sectionbody">
 <div class="listingblock">
 <div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">GET /payment/transaction?filter=1&amp;order=1&amp;start=2022-11-08T11:43:47.480302100&amp;end=2022-11-11T11:43:47.480302100 HTTP/1.1
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">GET /payment/transaction?filter=1&amp;order=1&amp;start=2022-11-16T23:22:48.698996500&amp;end=2022-11-19T23:22:48.698996500 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
 Host: api.gonngu.com</code></pre>
 </div>
@@ -798,9 +798,9 @@ Pragma: no-cache
 Expires: 0
 Strict-Transport-Security: max-age=31536000 ; includeSubDomains
 X-Frame-Options: DENY
-Content-Length: 993
+Content-Length: 994
 
-[{"id":10,"fromName":"테스트유저","toName":"유저","amount":10000,"time":"2022-11-11T11:43:47"},{"id":9,"fromName":"테스트유저","toName":"유저","amount":9000,"time":"2022-11-11T11:43:47"},{"id":8,"fromName":"테스트유저","toName":"유저","amount":8000,"time":"2022-11-11T11:43:47"},{"id":7,"fromName":"테스트유저","toName":"유저","amount":7000,"time":"2022-11-11T11:43:47"},{"id":6,"fromName":"테스트유저","toName":"유저","amount":6000,"time":"2022-11-11T11:43:47"},{"id":5,"fromName":"테스트유저","toName":"유저","amount":5000,"time":"2022-11-11T11:43:47"},{"id":4,"fromName":"테스트유저","toName":"유저","amount":4000,"time":"2022-11-11T11:43:47"},{"id":3,"fromName":"테스트유저","toName":"유저","amount":3000,"time":"2022-11-11T11:43:47"},{"id":2,"fromName":"테스트유저","toName":"유저","amount":2000,"time":"2022-11-11T11:43:47"},{"id":1,"fromName":"테스트유저","toName":"유저","amount":1000,"time":"2022-11-11T11:43:47"}]</code></pre>
+[{"id":11,"fromName":"테스트유저","toName":"유저","amount":10000,"time":"2022-11-18T23:22:49"},{"id":10,"fromName":"테스트유저","toName":"유저","amount":9000,"time":"2022-11-18T23:22:49"},{"id":9,"fromName":"테스트유저","toName":"유저","amount":8000,"time":"2022-11-18T23:22:49"},{"id":8,"fromName":"테스트유저","toName":"유저","amount":7000,"time":"2022-11-18T23:22:49"},{"id":7,"fromName":"테스트유저","toName":"유저","amount":6000,"time":"2022-11-18T23:22:49"},{"id":6,"fromName":"테스트유저","toName":"유저","amount":5000,"time":"2022-11-18T23:22:49"},{"id":5,"fromName":"테스트유저","toName":"유저","amount":4000,"time":"2022-11-18T23:22:49"},{"id":4,"fromName":"테스트유저","toName":"유저","amount":3000,"time":"2022-11-18T23:22:49"},{"id":3,"fromName":"테스트유저","toName":"유저","amount":2000,"time":"2022-11-18T23:22:49"},{"id":2,"fromName":"테스트유저","toName":"유저","amount":1000,"time":"2022-11-18T23:22:49"}]</code></pre>
 </div>
 </div>
 <table class="tableblock frame-all grid-all stretch">

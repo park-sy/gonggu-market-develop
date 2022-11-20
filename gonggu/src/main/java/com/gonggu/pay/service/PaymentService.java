@@ -70,7 +70,7 @@ public class PaymentService {
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     public void remit(User from, RemitRequest request) {
-        User to = userRepository.findById(request.getTo()).orElseThrow(UserNotFound::new);
+        User to = userRepository.findByNickname(request.getTo()).orElseThrow(UserNotFound::new);
         Payment fromPayment = paymentRepository.findByUser(from);
         if(fromPayment.getBalance() < request.getAmount()) throw new PayRemitFailed();
         //송금 로직

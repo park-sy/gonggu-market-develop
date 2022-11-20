@@ -18,11 +18,11 @@ public class Transaction {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(referencedColumnName = "user_id", name="from_id")
+    @JoinColumn(referencedColumnName = "nickname", name="from_id")
     private User from;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(referencedColumnName = "user_id", name="to_id")
+    @JoinColumn(referencedColumnName = "nickname", name="to_id")
     private User to;
 
     private LocalDateTime date;

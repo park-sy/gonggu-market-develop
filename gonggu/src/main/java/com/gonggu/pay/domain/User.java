@@ -19,18 +19,27 @@ import java.util.stream.Collectors;
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 public class User implements UserDetails {
 
+    @Column(length = 100, nullable = false)
+    private String email;
+
+    @Column(length = 100, nullable = false)
+    private String password;
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
-    private Long id;
-    private String name;
+    @Column(length = 100, nullable = false, unique = true)
+    private String nickname;
+
     @ElementCollection(fetch = FetchType.EAGER)
     @Builder.Default
     private List<String> roles = new ArrayList<>();
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return this.roles.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+        return this.roles.stream()
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toList());
     }
+
     @Override
     public String getPassword() {
         return null;
@@ -38,7 +47,7 @@ public class User implements UserDetails {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Override
     public String getUsername() {
-        return this.name;
+        return this.nickname;
     }
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)

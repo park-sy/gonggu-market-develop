@@ -17,7 +17,7 @@ public class Payment {
     private Long id;
 
     @OneToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "nickname")
     private User user;
 
     private Long balance;

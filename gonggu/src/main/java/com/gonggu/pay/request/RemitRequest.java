@@ -10,6 +10,6 @@ import lombok.Setter;
 @Builder
 public class RemitRequest {
 
-    private Long to;
+    private String to;
     private Long amount;
 }

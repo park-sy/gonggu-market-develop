@@ -17,7 +17,7 @@ public class Account {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY ,cascade = CascadeType.MERGE)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "nickname")
     private User user;
     private Long balance;
 
