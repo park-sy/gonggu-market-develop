@@ -19,6 +19,7 @@ public class Deal {
     @Column(name = "deal_id")
     private Long id;
     private String title;
+    @Lob
     private String content;
     private Long price;
     private Long unitPrice;

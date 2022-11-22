@@ -80,6 +80,8 @@ public class DealControllerDocTest {
         keywordRepository.deleteAll();
         testUser = User.builder()
                 .nickname("테스트유저")
+                .email("test@test.com")
+                .password("password")
                 .roles(Collections.singletonList("ROLE_USER")).build();
         userRepository.save(testUser);
     }
@@ -92,7 +94,9 @@ public class DealControllerDocTest {
         categoryRepository.save(category);
 
         User user = User.builder()
-                .nickname("호스트").build();
+                .nickname("유저")
+                .email("user@test.com")
+                .password("password").build();
         userRepository.save(user);
 
         LocalDateTime now = LocalDateTime.now();
@@ -150,7 +154,9 @@ public class DealControllerDocTest {
         categoryRepository.save(category);
 
         User user = User.builder()
-                .nickname("호스트").build();
+                .nickname("유저")
+                .email("user@test.com")
+                .password("password").build();
         userRepository.save(user);
 
         LocalDateTime now = LocalDateTime.now();
@@ -196,8 +202,7 @@ public class DealControllerDocTest {
         Category category = Category.builder()
                 .name("카테고리").build();
         categoryRepository.save(category);
-        User user = User.builder()
-                .nickname("유저").build();
+
         LocalDateTime date = LocalDateTime.now();
         List<Deal> deals = IntStream.range(0,20)
                 .mapToObj(i -> Deal.builder()
@@ -273,9 +278,11 @@ public class DealControllerDocTest {
         categoryRepository.save(category);
 
         User user = User.builder()
-                .nickname("유저").build();
-
+                .nickname("유저")
+                .email("user@test.com")
+                .password("password").build();
         userRepository.save(user);
+
         LocalDateTime now = LocalDateTime.now();
         Deal deal = Deal.builder()
                 .category(category)
@@ -285,8 +292,10 @@ public class DealControllerDocTest {
                 .quantity(10)
                 .unitQuantity(2)
                 .unitPrice(200L)
+                .unit("단위")
                 .totalCount(10)
                 .url("url/")
+                .createTime(now)
                 .expireTime(now.plusDays(3))
                 .nowCount(2)
                 .user(user)
@@ -347,9 +356,6 @@ public class DealControllerDocTest {
     @DisplayName("게시글 작성")
     @WithMockUser
     void postDeal() throws Exception{
-//        User user = User.builder()
-//                .name("유저").build();
-//        userRepository.save(user);
 
         Category category = Category.builder()
                 .name("카테고리").build();
@@ -395,10 +401,11 @@ public class DealControllerDocTest {
 
     @Test
     @DisplayName("게시글 수정")
-        //@WithUserDetails(value = "1",  setupBefore = TestExecutionEvent.TEST_EXECUTION)
     void editDeal() throws Exception{
         User user = User.builder()
-                .nickname("유저").build();
+                .nickname("유저")
+                .email("user@test.com")
+                .password("password").build();
         userRepository.save(user);
 
         Category category = Category.builder()
@@ -484,6 +491,8 @@ public class DealControllerDocTest {
         List<User> users = IntStream.range(0,2)
                 .mapToObj(i -> User.builder()
                         .nickname("이름" +i)
+                        .email("test@test.com")
+                        .password("password")
                         .build()).collect(Collectors.toList());
         userRepository.saveAll(users);
 
@@ -492,7 +501,9 @@ public class DealControllerDocTest {
         categoryRepository.save(category);
 
         User user = User.builder()
-                .nickname("유저").build();
+                .nickname("유저")
+                .email("test@test.com")
+                .password("password").build();
         userRepository.save(user);
 
         LocalDateTime now = LocalDateTime.now();
@@ -536,7 +547,9 @@ public class DealControllerDocTest {
     @DisplayName("판매 내역 조회")
     void getMySellList() throws Exception{
         User user = User.builder()
-                .nickname("유저").build();
+                .nickname("유저")
+                .email("user@test.com")
+                .password("password").build();
         userRepository.save(user);
 
         Category category = Category.builder()
@@ -609,6 +622,8 @@ public class DealControllerDocTest {
         List<User> users = IntStream.range(0,5)
                 .mapToObj(i -> User.builder()
                         .nickname("이름" +i)
+                        .email("email.com")
+                        .password("password")
                         .build()).collect(Collectors.toList());
         userRepository.saveAll(users);
 

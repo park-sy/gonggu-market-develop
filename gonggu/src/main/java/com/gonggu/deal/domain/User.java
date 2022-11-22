@@ -19,10 +19,10 @@ import java.util.stream.Collectors;
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 @Setter
 public class User implements UserDetails {
-    //@Column(length = 100, nullable = false)
+    @Column(length = 100, nullable = false)
     private String email;
 
-    //@Column(length = 100, nullable = false)
+    @Column(length = 100, nullable = false)
     private String password;
 
     @Id

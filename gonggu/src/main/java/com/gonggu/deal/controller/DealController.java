@@ -1,16 +1,21 @@
 package com.gonggu.deal.controller;
 
+import com.gonggu.deal.domain.Deal;
 import com.gonggu.deal.domain.User;
+import com.gonggu.deal.exception.DealNotFound;
+import com.gonggu.deal.repository.DealRepository;
 import com.gonggu.deal.request.*;
 import com.gonggu.deal.response.DealDetailResponse;
 import com.gonggu.deal.response.DealMemberResponse;
 import com.gonggu.deal.response.DealResponse;
 import com.gonggu.deal.service.DealService;
+import com.gonggu.deal.service.S3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -18,6 +23,8 @@ import java.util.List;
 public class DealController {
 
     private final DealService dealService;
+    private final S3Service s3Service;
+    private final DealRepository dealRepository;
     //게시글 불러오기
     @GetMapping("/deal")
     public List<DealResponse> getDeal(@ModelAttribute DealSearch dealSearch){
@@ -37,8 +44,15 @@ public class DealController {
     }
     //게시글 이미지 업로드
     @PostMapping("/deal/{dealId}/image")
-    public void uploadImage(@PathVariable Long dealId, @RequestParam  MultipartFile[] files){
+    public void uploadImage(@PathVariable Long dealId, @RequestParam(value = "file", required = false)  MultipartFile[] files){
         dealService.uploadImage(dealId, files);
+    }
+    @PostMapping("/deal/{dealId}/image/aws")
+    public void awsUploadImage(@PathVariable Long dealId,
+                               @RequestParam(value = "file", required = false)  MultipartFile[] files)
+            throws IOException {
+        Deal deal = dealRepository.findById(dealId).orElseThrow(DealNotFound::new);
+        s3Service.upload(files, deal);
     }
     //게시글 수정
     @PatchMapping("/deal/{dealId}")

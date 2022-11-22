@@ -55,9 +55,12 @@ public class DealService {
                 .unitPrice(dealCreate.getPrice()/dealCreate.getUnitQuantity())
                 .quantity(dealCreate.getUnitQuantity()*dealCreate.getTotalCount())
                 .unitQuantity(dealCreate.getUnitQuantity())
+                .unit(dealCreate.getUnit())
                 .url(dealCreate.getUrl())
                 .nowCount(dealCreate.getNowCount())
                 .user(user)
+                .createTime(LocalDateTime.now())
+                .expireTime(dealCreate.getExpireTime())
                 .totalCount(dealCreate.getTotalCount())
                 .category(category)
                 .build();
@@ -105,29 +108,57 @@ public class DealService {
         Deal deal = dealRepository.findById(id).orElseThrow(DealNotFound::new);
         LocalDateTime localDateTime = LocalDateTime.now();
         String now = localDateTime.format(DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS"));
-        String basicPath = System.getProperty("deal.dri")+"/files";
-        String savePath = basicPath + "\\deal";
-        if (!new File(basicPath).exists()) new File(basicPath).mkdir();
-        if (!new File(savePath).exists()) new File(savePath).mkdir();
-        for (MultipartFile file : files) {
-            String filename = file.getOriginalFilename();
-            String newFilename = now +"_"+ filename;
-            String filePath = savePath + "\\" + newFilename;
+        try{
+            String basicPath = System.getProperty("user.dir")+"/files";
+            if (!new File(basicPath).exists()) new File(basicPath).mkdir();
 
-            try {
+            String savePath = basicPath + "\\deal";
+            if (!new File(savePath).exists()) new File(savePath).mkdir();
+
+            for (MultipartFile file : files) {
+                String filename = file.getOriginalFilename();
+                String newFilename = now +"_"+ filename;
+                String filePath = savePath + "\\" + newFilename;
                 file.transferTo(new File(filePath));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+                DealImage dealImage = DealImage.builder()
+                        .originFileName(filename)
+                        .newFileName(newFilename)
+                        .filePath("deal/" + newFilename)
+                        .deal(deal).build();
+                dealImageRepository.save(dealImage);
             }
-            DealImage dealImage = DealImage.builder()
-                    .originFileName(filename)
-                    .newFileName(newFilename)
-                    .filePath("deal/" + newFilename)
-                    .deal(deal).build();
-            dealImageRepository.save(dealImage);
+        } catch (Exception e) {
+                throw new RuntimeException(e);
+        }
+
+    }
+    public void s3ImageUpload(Long id, MultipartFile[] files, List<String> path){
+        Deal deal = dealRepository.findById(id).orElseThrow(DealNotFound::new);
+        LocalDateTime localDateTime = LocalDateTime.now();
+        String now = localDateTime.format(DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS"));
+        try{
+            String basicPath = System.getProperty("user.dir")+"/files";
+            if (!new File(basicPath).exists()) new File(basicPath).mkdir();
+
+            String savePath = basicPath + "\\deal";
+            if (!new File(savePath).exists()) new File(savePath).mkdir();
+
+            for (MultipartFile file : files) {
+                String filename = file.getOriginalFilename();
+                String newFilename = now +"_"+ filename;
+                String filePath = savePath + "\\" + newFilename;
+                file.transferTo(new File(filePath));
+                DealImage dealImage = DealImage.builder()
+                        .originFileName(filename)
+                        .newFileName(newFilename)
+                        .filePath("deal/" + newFilename)
+                        .deal(deal).build();
+                dealImageRepository.save(dealImage);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
-
     public void updateView(Long dealId) {
         dealRepository.updateView(dealId);
     }
