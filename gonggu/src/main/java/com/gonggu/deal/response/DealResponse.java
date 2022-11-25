@@ -18,7 +18,8 @@ public class DealResponse {
     private final Integer nowCount;
     private final Integer totalCount;
     private final DealImageResponse image;
-    private final boolean deletion;
+    private final boolean deleted;
+    private final boolean expired;
     public DealResponse(Deal deal){
         LocalDateTime now = LocalDateTime.now();
         this.id = deal.getId();
@@ -30,7 +31,7 @@ public class DealResponse {
         this.nowCount = deal.getNowCount();
         this.totalCount = deal.getTotalCount();
         this.image = new DealImageResponse(deal.getImages().get(0));
-        this.deletion = deal.isDeletion();
-
+        this.deleted = deal.isDeletion();
+        this.expired = deal.getExpireTime().isAfter(now.minusDays(1));
     }
 }

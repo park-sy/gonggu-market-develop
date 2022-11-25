@@ -5,11 +5,11 @@ import lombok.Getter;
 
 @Getter
 public class DealImageResponse {
-    private final String path;
-    private final String local;
+    private final String fileName;
+    private final boolean isThumbnail;
 
     public DealImageResponse(DealImage dealImage){
-        this.local = "";
-        this.path = dealImage.getFilePath();
+        this.fileName = dealImage.getFileName();
+        this.isThumbnail = dealImage.isThumbnail();
     }
 }

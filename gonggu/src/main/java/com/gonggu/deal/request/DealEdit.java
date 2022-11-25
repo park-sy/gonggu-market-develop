@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.List;
+
 @Setter
 @Getter
 @ToString
@@ -13,8 +15,10 @@ import lombok.ToString;
 public class DealEdit {
 
     private String content;
-    @JsonCreator
-    public DealEdit(String content){
-        this.content = content;
-    }
+    private List<String> keywords;
+    private List<String> images;
+//    @JsonCreator
+//    public DealEdit(String content){
+//        this.content = content;
+//    }
 }

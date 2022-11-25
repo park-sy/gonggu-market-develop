@@ -13,9 +13,7 @@ public class DealDetailResponse {
 
     private final Long id;
     private final String title;
-    //삭제
     private final String content;
-    //단위 가격으로
     private final Long price;
     private final Long unitPrice;
     private final Long remainDate;
@@ -27,9 +25,11 @@ public class DealDetailResponse {
     private final String url;
     private final List<DealImageResponse> images;
     private final int view;
-    private final boolean deletion;
     private final String user;
     private final Category category;
+    private final boolean deleted;
+    private final boolean expired;
+
     public DealDetailResponse(Deal deal){
         LocalDateTime now = LocalDateTime.now();
         this.id = deal.getId();
@@ -46,8 +46,9 @@ public class DealDetailResponse {
         this.url = deal.getUrl();
         this.view = deal.getView();
         this.images = deal.getImages().stream().map(DealImageResponse::new).collect(Collectors.toList());
-        this.deletion = deal.isDeletion();
         this.user = deal.getUser().getNickname();
         this.category = deal.getCategory();
+        this.deleted = deal.isDeletion();
+        this.expired = deal.getExpireTime().isAfter(now.minusDays(1));
     }
 }

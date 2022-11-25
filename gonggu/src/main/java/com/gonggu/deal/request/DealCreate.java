@@ -23,12 +23,8 @@ public class DealCreate {
     private Integer totalCount;
     private String url;
     private Long categoryId;
-    private List<String> keywords;
     private LocalDateTime expireTime;
-
-    //썸네일
-    //이미지
-    //거래 성사율
-    //
+    private List<String> keywords;
+    private List<String> images;
 
 }

@@ -2,10 +2,7 @@ package com.gonggu.deal.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gonggu.deal.domain.*;
-import com.gonggu.deal.repository.DealMemberRepository;
-import com.gonggu.deal.repository.DealRepository;
-import com.gonggu.deal.repository.CategoryRepository;
-import com.gonggu.deal.repository.UserRepository;
+import com.gonggu.deal.repository.*;
 import com.gonggu.deal.request.DealCreate;
 import com.gonggu.deal.request.DealEdit;
 import com.gonggu.deal.request.DealJoin;
@@ -49,7 +46,8 @@ class DealControllerTest {
     private DealMemberRepository dealMemberRepository;
     @Autowired
     private CategoryRepository categoryRepository;
-
+    @Autowired
+    private DealImageRepository dealImageRepository;
     private User testUser;
 
     @BeforeEach
@@ -58,6 +56,7 @@ class DealControllerTest {
         dealRepository.deleteAll();
         userRepository.deleteAll();
         categoryRepository.deleteAll();
+        dealImageRepository.deleteAll();
         testUser = User.builder()
                 .nickname("테스트유저")
                 .email("test@test.com")
@@ -66,6 +65,41 @@ class DealControllerTest {
         userRepository.save(testUser);
     }
 
+    @Test
+    @DisplayName("게시글 가져오기")
+    void getDeal() throws Exception{
+        Category category = Category.builder()
+                .name("카테고리").build();
+        categoryRepository.save(category);
+
+        LocalDateTime date = LocalDateTime.now();
+//        List<Deal> deals = IntStream.range(0,20)
+//                .mapToObj(i -> Deal.builder()
+//                        .title("제목" +i)
+//                        .category(category)
+//                        .content("내용")
+//                        .price(1000L)
+//                        .unitPrice(200L)
+//                        .totalCount(i)
+//                        .url("url/")
+//                        .expireTime(date)
+//                        .quantity(10)
+//                        .unitQuantity(2)
+//                        .nowCount(i/2)
+//                        .build()).collect(Collectors.toList());
+//        dealRepository.saveAll(deals);
+//
+//        List<DealImage> images =  IntStream.range(0, 20)
+//                .mapToObj(i -> DealImage.builder()
+//                        .deal(deals.get(i))
+//                        .build()).collect(Collectors.toList());
+//        dealImageRepository.saveAll(images);
+
+        mockMvc.perform(get("/deal")
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(print());
+    }
 
 
     @Test

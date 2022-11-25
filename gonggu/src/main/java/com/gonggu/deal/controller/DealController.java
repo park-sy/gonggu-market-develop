@@ -1,21 +1,15 @@
 package com.gonggu.deal.controller;
 
-import com.gonggu.deal.domain.Deal;
 import com.gonggu.deal.domain.User;
-import com.gonggu.deal.exception.DealNotFound;
-import com.gonggu.deal.repository.DealRepository;
 import com.gonggu.deal.request.*;
 import com.gonggu.deal.response.DealDetailResponse;
 import com.gonggu.deal.response.DealMemberResponse;
 import com.gonggu.deal.response.DealResponse;
 import com.gonggu.deal.service.DealService;
-import com.gonggu.deal.service.S3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -23,8 +17,6 @@ import java.util.List;
 public class DealController {
 
     private final DealService dealService;
-    private final S3Service s3Service;
-    private final DealRepository dealRepository;
     //게시글 불러오기
     @GetMapping("/deal")
     public List<DealResponse> getDeal(@ModelAttribute DealSearch dealSearch){
@@ -43,20 +35,14 @@ public class DealController {
         dealService.createDeal(dealCreate, user);
     }
     //게시글 이미지 업로드
-    @PostMapping("/deal/{dealId}/image")
-    public void uploadImage(@PathVariable Long dealId, @RequestParam(value = "file", required = false)  MultipartFile[] files){
-        dealService.uploadImage(dealId, files);
-    }
-    @PostMapping("/deal/{dealId}/image/aws")
-    public void awsUploadImage(@PathVariable Long dealId,
-                               @RequestParam(value = "file", required = false)  MultipartFile[] files)
-            throws IOException {
-        Deal deal = dealRepository.findById(dealId).orElseThrow(DealNotFound::new);
-        s3Service.upload(files, deal);
-    }
-    //게시글 수정
+//    @PostMapping("/deal/{dealId}/image")
+//    public void uploadImage(@PathVariable Long dealId,
+//                            @RequestParam(value = "file", required = false)  MultipartFile[] files){
+//        dealService.uploadImage(dealId, files);
+//    }
+   //게시글 수정
     @PatchMapping("/deal/{dealId}")
-    public void editDeal(@PathVariable Long dealId, @ModelAttribute DealEdit dealEdit){
+    public void editDeal(@PathVariable Long dealId, @RequestBody DealEdit dealEdit){
         dealService.editDeal(dealId,dealEdit);
     }
     //게시글 삭제
@@ -71,6 +57,7 @@ public class DealController {
         //User user = dealService.findUserTemp(userTemp);
         dealService.createJoin(dealId, join, user);
     }
+
     //구매 정보 수정
     @PatchMapping("/deal/{dealId}/enrollment")
     public void editJoin(@PathVariable Long dealId, @AuthenticationPrincipal User user,
@@ -100,5 +87,17 @@ public class DealController {
         return dealService.getJoinDeal(userId);
     }
 
+    @GetMapping("/deal/health")
+    public String getHealth(){
+        return "good";
+    }
+    @GetMapping("/health")
+    public String getHealth2(){
+        return "good";
+    }
+    @GetMapping("/user")
+    public User userinfo(@AuthenticationPrincipal User user){
+        return user;
+    }
     //참여 시 채팅방 서버에 request
 }
