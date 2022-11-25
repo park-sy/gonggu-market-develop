@@ -6,6 +6,7 @@ import com.gonggu.pay.domain.Transaction;
 import com.gonggu.pay.domain.User;
 import com.gonggu.pay.exception.PayChargeFailed;
 import com.gonggu.pay.exception.PayRemitFailed;
+import com.gonggu.pay.exception.PaymentNotFound;
 import com.gonggu.pay.exception.UserNotFound;
 import com.gonggu.pay.repository.AccountRepository;
 import com.gonggu.pay.repository.PaymentRepository;
@@ -43,7 +44,7 @@ public class PaymentService {
     }
 
     public PaymentInfo getInfo(User user) {
-        Payment payment = paymentRepository.findByUser(user);
+        Payment payment = paymentRepository.findByUser(user).orElseThrow(() -> new PaymentNotFound("지갑을 생성해주세요."));
         PaymentInfo paymentInfo = new PaymentInfo(payment);
 
         return paymentInfo;
@@ -53,14 +54,14 @@ public class PaymentService {
         Account account = accountRepository.findByUser(user);
         if(account.getBalance() < paymentCharge.getRequestCoin()) throw new PayChargeFailed("충전에 실패하였습니다.");
         //거래 업데이트
-        Payment payment = paymentRepository.findByUser(user);
+        Payment payment = paymentRepository.findByUser(user).orElseThrow(PaymentNotFound::new);
         account.minusBalance(paymentCharge.getRequestCoin());
         payment.plusBalance(paymentCharge.getRequestCoin());
 
     }
 
     public void discharge(PaymentCharge paymentCharge, User user) {
-        Payment payment = paymentRepository.findByUser(user);
+        Payment payment = paymentRepository.findByUser(user).orElseThrow(PaymentNotFound::new);
         if(payment.getBalance() < paymentCharge.getRequestCoin()) throw new PayChargeFailed("인출에 실패하였습니다.");
         //거래 업데이트
         Account account = accountRepository.findByUser(user);
@@ -71,11 +72,11 @@ public class PaymentService {
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     public void remit(User from, RemitRequest request) {
         User to = userRepository.findByNickname(request.getTo()).orElseThrow(UserNotFound::new);
-        Payment fromPayment = paymentRepository.findByUser(from);
+        Payment fromPayment = paymentRepository.findByUser(from).orElseThrow(PaymentNotFound::new);
         if(fromPayment.getBalance() < request.getAmount()) throw new PayRemitFailed();
         //송금 로직
 
-        Payment toPayment = paymentRepository.findByUser(to);
+        Payment toPayment = paymentRepository.findByUser(to).orElseThrow(PaymentNotFound::new);
 
         fromPayment.minusBalance(request.getAmount());
         toPayment.plusBalance(request.getAmount());
@@ -93,5 +94,16 @@ public class PaymentService {
     public List<TransactionResponse> getMyTransaction(TransactionRequest transactionRequest, User user){
         return transactionRepository.getList(user, transactionRequest).stream()
                 .map(TransactionResponse::new).collect(Collectors.toList());
+    }
+
+    public void createPayment(User user) {
+        Payment payment = Payment.builder()
+                .user(user)
+                .balance(0L).build();
+        Account account = Account.builder()
+                .user(user)
+                .balance(100000L).build();
+        paymentRepository.save(payment);
+        accountRepository.save(account);
     }
 }

@@ -44,5 +44,12 @@ public class PaymentController {
                                                       @ModelAttribute TransactionRequest transactionRequest){
         return paymentService.getMyTransaction(transactionRequest, user);
     }
-
+    @PostMapping("/payment")
+    public void createPayment(@AuthenticationPrincipal User user){
+        paymentService.createPayment(user);
+    }
+    @GetMapping("/hello")
+    public String hello(){
+        return "hello world";
+    }
 }

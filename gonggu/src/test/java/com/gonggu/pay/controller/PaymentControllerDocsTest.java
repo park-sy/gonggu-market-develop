@@ -98,6 +98,34 @@ public class PaymentControllerDocsTest {
                 ));
     }
     @Test
+    @DisplayName("페이 정보 없을 때")
+    @WithUserDetails(value = "테스트유저", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+    void getPaymentWithNoPayment() throws Exception{
+
+
+        this.mockMvc.perform(get("/payment")
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andDo(print())
+                .andDo(document("payment/infoNotFound"
+                        , responseFields(
+                                fieldWithPath("code").description("에러 코드"),
+                                fieldWithPath("message").description("에러 메세지"),
+                                fieldWithPath("validation").description("validation")
+                        )
+                ));
+    }
+    @Test
+    @DisplayName("지갑 생성")
+    @WithUserDetails(value = "테스트유저", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+    void createPayment() throws Exception{
+        this.mockMvc.perform(post("/payment")
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andDo(document("payment/create"));
+    }
+    @Test
     @DisplayName("페이 충전")
     @WithUserDetails(value = "테스트유저", setupBefore = TestExecutionEvent.TEST_EXECUTION)
     void chargePayment() throws Exception{
@@ -249,4 +277,5 @@ public class PaymentControllerDocsTest {
                         )
                 ));
     }
+
 }

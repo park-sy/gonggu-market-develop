@@ -13,6 +13,18 @@ include::{snippets}/payment/info/http-request.adoc[]
 include::{snippets}/payment/info/http-response.adoc[]
 include::{snippets}/payment/info/response-fields.adoc[]
 
+== 지갑 정보 가져오기 실패
+include::{snippets}/payment/infoNotFound/http-request.adoc[]
+
+=== 응답
+include::{snippets}/payment/infoNotFound/http-response.adoc[]
+include::{snippets}/payment/infoNotFound/response-fields.adoc[]
+
+== 지갑 만들기
+include::{snippets}/payment/create/http-request.adoc[]
+=== 응답
+include::{snippets}/payment/create/http-response.adoc[]
+
 == 지갑 코인 충전
 include::{snippets}/payment/charge/http-request.adoc[]
 include::{snippets}/payment/charge/request-fields.adoc[]

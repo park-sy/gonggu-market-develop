@@ -219,5 +219,14 @@ class PaymentControllerTest {
                 .andDo(print());
     }
 
+    @Test
+    @DisplayName("지갑 생성")
+    @WithUserDetails(value = "테스트유저", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+    void createPayment() throws Exception{
 
+        mockMvc.perform(post("/payment")
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(print());
+    }
 }

@@ -1,5 +1,37 @@
-
 spring:
+  profiles:
+    active: aws
+
+---
+spring:
+  profiles:
+    - docker
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://db-mysql:3306/gonggupay?serverTimezone=Asia/Seoul
+    username: user
+    password: user
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    open-in-view: false
+    show-sql: true
+    hibernate:
+      format_sql: true
+      ddl-auto: update  #update / create
+  jwt:
+    secret: govlepel@$&
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+      location: c:\\temp\\upload
+server:
+  port: 8080
+
+---
+spring:
+  profiles:
+    - local
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/gonggupay?serverTimezone=Asia/Seoul
@@ -11,7 +43,9 @@ spring:
     show-sql: true
     hibernate:
       format_sql: true
-      ddl-auto: create
+      ddl-auto: create  #
+  jwt:
+    secret: govlepel@$&
   servlet:
     multipart:
       max-file-size: 10MB
