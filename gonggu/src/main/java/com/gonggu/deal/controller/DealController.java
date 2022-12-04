@@ -11,7 +11,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
+@CrossOrigin(origins = "http://localhost:8080",allowedHeaders = "*")
 @RestController
 @RequiredArgsConstructor
 public class DealController {
@@ -31,15 +31,8 @@ public class DealController {
     //게시글 작성
     @PostMapping("/deal")
     public void postDeal(@AuthenticationPrincipal User user,@RequestBody DealCreate dealCreate){
-      //  User user = dealService.findUserTemp(userTemp);
         dealService.createDeal(dealCreate, user);
     }
-    //게시글 이미지 업로드
-//    @PostMapping("/deal/{dealId}/image")
-//    public void uploadImage(@PathVariable Long dealId,
-//                            @RequestParam(value = "file", required = false)  MultipartFile[] files){
-//        dealService.uploadImage(dealId, files);
-//    }
    //게시글 수정
     @PatchMapping("/deal/{dealId}")
     public void editDeal(@PathVariable Long dealId, @RequestBody DealEdit dealEdit){
@@ -54,7 +47,6 @@ public class DealController {
     @PostMapping("/deal/{dealId}/enrollment")
     public void requestJoin(@PathVariable Long dealId, @AuthenticationPrincipal User user,
                             @RequestBody DealJoin join){
-        //User user = dealService.findUserTemp(userTemp);
         dealService.createJoin(dealId, join, user);
     }
 
@@ -62,7 +54,6 @@ public class DealController {
     @PatchMapping("/deal/{dealId}/enrollment")
     public void editJoin(@PathVariable Long dealId, @AuthenticationPrincipal User user,
                          @RequestBody DealJoin join){
-       // User user = dealService.findUserTemp(userTemp);
         dealService.editJoin(dealId,join,user);
     }
     //구매 철회
@@ -85,11 +76,6 @@ public class DealController {
     @GetMapping("/deal/enrollment/{userId}")
     public List<DealResponse> getMyJoinDeal(@PathVariable String userId){
         return dealService.getJoinDeal(userId);
-    }
-
-    @GetMapping("/deal/health")
-    public String getHealth(){
-        return "good";
     }
     @GetMapping("/health")
     public String getHealth2(){

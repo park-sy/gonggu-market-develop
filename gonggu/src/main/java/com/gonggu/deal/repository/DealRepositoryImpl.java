@@ -29,7 +29,6 @@ public class DealRepositoryImpl implements DealRepositoryCustom {
                         containsTitle(dealSearch.getSearchKey()),
                         containsContent(dealSearch.getSearchKey()),
                         eqCategory(dealSearch.getCategory())
-                        //카테고리
                 )
                 .limit(dealSearch.getSize())
                 .offset(dealSearch.getOffset())
@@ -51,10 +50,6 @@ public class DealRepositoryImpl implements DealRepositoryCustom {
         if(maxPrice == null) return null;
         return deal.price.loe(maxPrice);
     }
-//    private BooleanExpression eqCategory(String category){
-//        if(category == null) return null;
-//        return deal.cate
-//    }
     private BooleanExpression containsTitle(String name){
         if(name == null) return null;
         return deal.title.contains(name);
