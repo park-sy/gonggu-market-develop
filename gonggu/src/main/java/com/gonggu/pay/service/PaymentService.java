@@ -39,10 +39,6 @@ public class PaymentService {
     private final TransactionRepository transactionRepository;
     private final UserRepository userRepository;
 
-    public User findUserTemp(UserTemp userTemp){
-        return userRepository.findById(userTemp.getId()).orElseThrow();
-    }
-
     public PaymentInfo getInfo(User user) {
         Payment payment = paymentRepository.findByUser(user).orElseThrow(() -> new PaymentNotFound("지갑을 생성해주세요."));
         PaymentInfo paymentInfo = new PaymentInfo(payment);
