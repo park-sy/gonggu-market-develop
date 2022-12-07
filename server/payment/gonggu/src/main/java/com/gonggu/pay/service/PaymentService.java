@@ -93,6 +93,9 @@ public class PaymentService {
     }
 
     public void createPayment(User user) {
+        if(paymentRepository.findByUser(user).isPresent()){
+            throw new PayChargeFailed("이미 생성된 지갑이 있습니다.");
+        }
         Payment payment = Payment.builder()
                 .user(user)
                 .balance(0L).build();

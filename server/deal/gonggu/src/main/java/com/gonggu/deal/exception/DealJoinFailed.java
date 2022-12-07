@@ -8,7 +8,7 @@ public class DealJoinFailed extends DealException{
 
     @Override
     public int getStatusCode(){
-        return 404;
+        return 415;
     }
 
     public DealJoinFailed(String message){

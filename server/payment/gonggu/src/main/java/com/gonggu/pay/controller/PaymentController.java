@@ -24,7 +24,7 @@ public class PaymentController {
         return paymentService.getInfo(user);
     }
     //코인 충전
-    @PostMapping("/payment/charge")
+        @PostMapping("/payment/charge")
     public void chargeCoin(@AuthenticationPrincipal User user, @RequestBody PaymentCharge paymentCharge){
         paymentService.charge(paymentCharge, user);
     }
@@ -38,7 +38,7 @@ public class PaymentController {
     public void remit(@AuthenticationPrincipal User user,@RequestBody RemitRequest request){
         paymentService.remit(user,request);
     }
-
+    //거래내역 조회
     @GetMapping("/payment/transaction")
     public List<TransactionResponse> getMyTransaction(@AuthenticationPrincipal User user,
                                                       @ModelAttribute TransactionRequest transactionRequest){
