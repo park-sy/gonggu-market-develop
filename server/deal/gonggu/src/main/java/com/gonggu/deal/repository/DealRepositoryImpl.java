@@ -26,8 +26,8 @@ public class DealRepositoryImpl implements DealRepositoryCustom {
                 .where(
                         goePrice(dealSearch.getMinPrice()),
                         loePrice(dealSearch.getMaxPrice()),
-                        containsTitle(dealSearch.getSearchKey()),
-                        containsContent(dealSearch.getSearchKey()),
+                        containsTitle(dealSearch.getTitle()),
+                        //containsContent(dealSearch.getSearchKey()),
                         eqCategory(dealSearch.getCategory())
                 )
                 .limit(dealSearch.getSize())
