@@ -18,8 +18,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-//                .allowedOrigins("http://localhost:3000",
-//                        "http://gonggu-alb-test-333249785.ap-northeast-2.elb.amazonaws.com:8080")
+//                .allowedOrigins("http://localhost:3000")
                 .allowedOriginPatterns("*")
                 .exposedHeaders("Set-Cookie")
                 .allowCredentials(true);

@@ -25,13 +25,14 @@ public class DealResponse {
         this.id = deal.getId();
         this.category = deal.getCategory().getName();
         this.title = deal.getTitle();
-        this.remainDate = ChronoUnit.DAYS.between(now,deal.getExpireTime());
+        this.remainDate = ChronoUnit.DAYS
+                .between(now.toLocalDate(),deal.getExpireTime().toLocalDate());
         this.unitPrice = deal.getUnitPrice();
         this.quantity = deal.getQuantity();
         this.nowCount = deal.getNowCount();
         this.totalCount = deal.getTotalCount();
         this.image = new DealImageResponse(deal.getImages().get(0));
         this.deleted = deal.isDeletion();
-        this.expired = deal.getExpireTime().isAfter(now.minusDays(1));
+        this.expired = deal.getExpireTime().toLocalDate().isBefore(now.toLocalDate());
     }
 }

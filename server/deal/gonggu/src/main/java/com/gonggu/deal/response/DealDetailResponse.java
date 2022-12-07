@@ -35,7 +35,8 @@ public class DealDetailResponse {
         this.id = deal.getId();
         this.title = deal.getTitle();
         this.content = deal.getContent();
-        this.remainDate = ChronoUnit.DAYS.between(now,deal.getExpireTime());
+        this.remainDate = ChronoUnit.DAYS
+                .between(now.toLocalDate(),deal.getExpireTime().toLocalDate());
         this.price = deal.getPrice();
         this.unitPrice = deal.getUnitPrice();
         this.quantity = deal.getQuantity();
@@ -49,6 +50,6 @@ public class DealDetailResponse {
         this.user = deal.getUser().getNickname();
         this.category = deal.getCategory();
         this.deleted = deal.isDeletion();
-        this.expired = deal.getExpireTime().isAfter(now.minusDays(1));
+        this.expired = deal.getExpireTime().toLocalDate().isBefore(now.toLocalDate());
     }
 }
