@@ -155,7 +155,8 @@ public class DealControllerDocTest {
                                 fieldWithPath("[].deleted").description("삭제여부"),
                                 fieldWithPath("[].expired").description("만료여부")
                         )
-                ));
+                )
+        );
     }
 
     @Test
@@ -234,9 +235,12 @@ public class DealControllerDocTest {
                                 fieldWithPath("expired").description("만료 여부"),
                                 fieldWithPath("user").description("게시글 작성 유저 닉네임"),
                                 fieldWithPath("category.id").description("게시글 카테고리 ID"),
-                                fieldWithPath("category.name").description("게시글 카테고리 이름")
+                                fieldWithPath("category.name").description("게시글 카테고리 이름"),
+                                fieldWithPath("keywords").description("게시글 키워드"),
+                                fieldWithPath("expiredDate").description("게시글 만료일")
                         )
-                ));
+                )
+        );
     }
 
     @Test
@@ -419,7 +423,7 @@ public class DealControllerDocTest {
 
     @Test
     @DisplayName("구매 참가")
-    @WithMockUser
+    @WithUserDetails(value = "테스트유저", setupBefore = TestExecutionEvent.TEST_EXECUTION)
     void requestJoin() throws Exception{
         List<User> users = IntStream.range(0,2)
                 .mapToObj(i -> User.builder()
@@ -455,7 +459,12 @@ public class DealControllerDocTest {
                 .user(users.get(0))
                 .build();
         dealRepository.save(deal);
-
+        DealMember dealMember = DealMember.builder()
+                .deal(deal)
+                .user(testUser)
+                .quantity(2)
+                .build();
+        dealMemberRepository.save(dealMember);
         DealJoin dealJoin = DealJoin.builder()
                 .quantity(5)
                 .build();

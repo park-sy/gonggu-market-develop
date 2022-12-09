@@ -56,6 +56,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	//aws 관련
 	implementation "com.amazonaws:aws-java-sdk-s3:1.12.281"
+	//카프카
+	implementation 'org.springframework.kafka:spring-kafka'
 }
 
 tasks.named('test') {

@@ -10,4 +10,6 @@ import java.util.List;
 public interface DealMemberRepository extends JpaRepository<DealMember, Long> {
     DealMember findByDealAndUser(Deal deal, User user);
     List<DealMember> findByDeal(Deal deal);
+    List<DealMember> findByDealId(Long dealId);
+
 }

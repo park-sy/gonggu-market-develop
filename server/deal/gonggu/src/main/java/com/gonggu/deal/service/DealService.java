@@ -96,7 +96,7 @@ public class DealService {
     public void deleteDeal(Long id){
         Deal deal = dealRepository.findById(id).orElseThrow(DealNotFound::new);
         DealEditor.DealEditorBuilder editorBuilder = deal.toEditor();
-        DealEditor dealEditor = editorBuilder.deletion(false).build();
+        DealEditor dealEditor = editorBuilder.deletion(true).build();
         deal.edit(dealEditor);
     }
     public DealDetailResponse editDeal(Long id, DealEdit dealEdit){
@@ -134,7 +134,7 @@ public class DealService {
         dealRepository.updateView(dealId);
     }
 
-    public void createJoin(Long dealId, DealJoin join, User user) {
+    public boolean createJoin(Long dealId, DealJoin join, User user) {
         Deal deal = dealRepository.findById(dealId).orElseThrow(DealNotFound::new);
         if(deal.getNowCount() + join.getQuantity() > deal.getTotalCount()){
             throw new DealJoinFailed("구매 참여에 실패하였습니다.");
@@ -147,9 +147,11 @@ public class DealService {
                 .quantity(join.getQuantity())
                 .build();
         dealMemberRepository.save(dealMember);
+        if(deal.getNowCount() + join.getQuantity() == deal.getTotalCount()) return true;
+        else return false;
     }
 
-    public void editJoin(Long dealId, DealJoin join, User user){
+    public boolean editJoin(Long dealId, DealJoin join, User user){
         Deal deal = dealRepository.findById(dealId).orElseThrow(DealNotFound::new);
         DealMember dealMember = dealMemberRepository.findByDealAndUser(deal, user);
         Integer afterCount = deal.getNowCount() + join.getQuantity() - dealMember.getQuantity();
@@ -159,6 +161,8 @@ public class DealService {
 
         deal.editCount(afterCount);
         dealMember.editQuantity(join.getQuantity());
+        if(afterCount == deal.getTotalCount()) return true;
+        else return false;
     }
 
     public void deleteJoin(Long dealId, User user){
