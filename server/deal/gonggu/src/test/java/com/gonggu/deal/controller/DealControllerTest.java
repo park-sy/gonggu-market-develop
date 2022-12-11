@@ -177,6 +177,7 @@ class DealControllerTest {
 
     @Test
     @DisplayName("게시글 수정")
+    @WithMockUser
     void editDeal() throws Exception{
         User user = User.builder()
                 .nickname("유저")
@@ -217,6 +218,7 @@ class DealControllerTest {
 
     @Test
     @DisplayName("게시글 삭제")
+    @WithMockUser
     void deleteDeal() throws Exception{
         Category category = Category.builder()
                 .name("카테고리").build();

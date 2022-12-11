@@ -26,9 +26,9 @@ public class DealController {
     }
     //게시글 상세 보기
     @GetMapping("/deal/{dealId}")
-    public DealDetailResponse requestDeal(@PathVariable Long dealId){
+    public DealDetailResponse getDealDetail(@PathVariable Long dealId){
         dealService.updateView(dealId);
-        return dealService.get(dealId);
+        return dealService.getDealDetail(dealId);
     }
     //게시글 작성
     @PostMapping("/deal")

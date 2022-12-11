@@ -25,17 +25,17 @@ public class KafkaProducer {
                 .map(o->new DealMemberToPush(o.getUser().getNickname())).collect(Collectors.toList());
 
         HashMap<String, Object> pros = new HashMap<>();
-        pros.put("topicName", member);
+        pros.put(topicName, member);
         kafkaTemplate.send(topicName,member);
     }
     public void sendDealAndUser(String topicName, Long dealId, User user){
         DealUserToChat dealUserToChat = new DealUserToChat(dealId, user.getNickname());
         HashMap<String, Object> pros = new HashMap<>();
-        pros.put("topicName", dealUserToChat);
+        pros.put(topicName, dealUserToChat);
         kafkaTemplate.send(topicName,dealUserToChat);
     }
 
-//    @KafkaListener(topics = "chatJoin", groupId = "testgroup")
+//    @KafkaListener(topics = "test", groupId = "testgroup")
 //    public void consumeTest(String message) throws IOException {
 //        System.out.println(String.format("Consumed message : %s", message));
 //    }

@@ -6,9 +6,10 @@ import com.gonggu.deal.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
-public interface DealMemberRepository extends JpaRepository<DealMember, Long> {
-    DealMember findByDealAndUser(Deal deal, User user);
+public interface DealMemberRepository extends JpaRepository<DealMember, Long>, DealMemberRepositoryCustom {
+    Optional<DealMember> findByDealAndUser(Deal deal, User user);
     List<DealMember> findByDeal(Deal deal);
     List<DealMember> findByDealId(Long dealId);
 
