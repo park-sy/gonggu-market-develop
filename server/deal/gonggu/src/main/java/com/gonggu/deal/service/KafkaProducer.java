@@ -1,9 +1,12 @@
 package com.gonggu.deal.service;
 
+import com.gonggu.deal.domain.Deal;
 import com.gonggu.deal.domain.User;
+import com.gonggu.deal.exception.DealNotFound;
 import com.gonggu.deal.kafka.DealMemberToPush;
 import com.gonggu.deal.repository.DealMemberRepository;
 import com.gonggu.deal.kafka.DealUserToChat;
+import com.gonggu.deal.repository.DealRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -17,19 +20,24 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class KafkaProducer {
-
+    private final DealRepository dealRepository;
     private final DealMemberRepository dealMemberRepository;
+
     private final KafkaTemplate<String, Object> kafkaTemplate;
     public void sendDealMember(String topicName, Long dealId){
-        List<DealMemberToPush> member = dealMemberRepository.findByDealId(dealId).stream()
-                .map(o->new DealMemberToPush(o.getUser().getNickname())).collect(Collectors.toList());
+        Deal deal = dealRepository.findById(dealId).orElseThrow(DealNotFound::new);
+        List<String> members = dealMemberRepository.findByDeal(deal).stream()
+                .map(o->o.getUser().getNickname()).collect(Collectors.toList());
+        DealMemberToPush dealMemberToPush = new DealMemberToPush(dealId,deal.getTitle(),members);
 
         HashMap<String, Object> pros = new HashMap<>();
-        pros.put(topicName, member);
-        kafkaTemplate.send(topicName,member);
+        pros.put(topicName, dealMemberToPush);
+        kafkaTemplate.send(topicName,dealMemberToPush);
     }
     public void sendDealAndUser(String topicName, Long dealId, User user){
-        DealUserToChat dealUserToChat = new DealUserToChat(dealId, user.getNickname());
+        Deal deal = dealRepository.findById(dealId).orElseThrow(DealNotFound::new);
+        DealUserToChat dealUserToChat = new DealUserToChat(dealId,deal.getTitle(), user.getNickname());
+
         HashMap<String, Object> pros = new HashMap<>();
         pros.put(topicName, dealUserToChat);
         kafkaTemplate.send(topicName,dealUserToChat);

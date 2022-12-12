@@ -93,7 +93,7 @@ public class DealControllerDocTest {
                 .name("카테고리").build();
         categoryRepository.save(category);
 
-        LocalDateTime date = LocalDateTime.now();
+        LocalDateTime now  = LocalDateTime.of(2022,12,12,0,0,0);
         List<Deal> deals = IntStream.range(0,20)
                 .mapToObj(i -> Deal.builder()
                         .title("제목" +i)
@@ -103,7 +103,7 @@ public class DealControllerDocTest {
                         .unitPrice(200L)
                         .totalCount(i)
                         .url("url/")
-                        .expireTime(date)
+                        .expireTime(now)
                         .quantity(10)
                         .unitQuantity(2)
                         .nowCount(i/2)

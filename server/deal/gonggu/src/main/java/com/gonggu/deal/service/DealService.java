@@ -137,7 +137,7 @@ public class DealService {
 
     public boolean createJoin(Long dealId, DealJoin join, User user) {
         Deal deal = dealRepository.findById(dealId).orElseThrow(DealNotFound::new);
-        if(dealMemberRepository.findByDealAndUser(deal,user) == null) throw new DealJoinFailed("이미 참여한 공구입니다.");
+        if(dealMemberRepository.findByDealAndUser(deal,user).isPresent()) throw new DealJoinFailed("이미 참여한 공구입니다.");
         if(deal.getNowCount() + join.getQuantity() > deal.getTotalCount()) throw new DealJoinFailed("구매 참여에 실패하였습니다.");
 
         deal.editCount(join.getQuantity() + deal.getNowCount());
@@ -147,7 +147,7 @@ public class DealService {
                 .quantity(join.getQuantity())
                 .build();
         dealMemberRepository.save(dealMember);
-        if(deal.getNowCount() + join.getQuantity() == deal.getTotalCount()) return true;
+        if(deal.getNowCount() == deal.getTotalCount()) return true;
         else return false;
     }
 

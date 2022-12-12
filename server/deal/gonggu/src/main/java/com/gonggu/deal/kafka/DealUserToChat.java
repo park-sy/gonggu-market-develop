@@ -7,5 +7,6 @@ import lombok.Getter;
 @AllArgsConstructor
 public class DealUserToChat {
     private final Long dealId;
+    private final String title;
     private final String nickName;
 }

@@ -3,11 +3,20 @@ package com.gonggu.deal;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import javax.annotation.PostConstruct;
+import java.util.TimeZone;
+
 @SpringBootApplication
 public class GongguApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(GongguApplication.class, args);
+	}
+
+	@PostConstruct
+	public void init(){
+		// Setting Spring Boot SetTimeZone
+		TimeZone.setDefault(TimeZone.getTimeZone("UTC+09:00"));
 	}
 
 }

@@ -57,5 +57,6 @@ public class DealDetailResponse {
         this.expiredDate = deal.getExpireTime();
         this.deleted = deal.isDeletion();
         this.expired = deal.getExpireTime().toLocalDate().isBefore(now.toLocalDate());
+
     }
 }
