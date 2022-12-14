@@ -63,12 +63,12 @@ public class Deal {
     private Category category;
 
     public DealEditor.DealEditorBuilder toEditor(){
-        return DealEditor.builder().content(content);
+        return DealEditor.builder().content(content).deletion(deletion);
     }
 
     public void edit(DealEditor dealEditor){
-        content = builder().content;
-        deletion = builder().deletion;
+        content = dealEditor.getContent();
+        deletion = dealEditor.isDeletion();
     }
 
     public void editCount(Integer amount){

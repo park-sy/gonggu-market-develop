@@ -10,6 +10,7 @@ import com.gonggu.deal.repository.DealRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -24,7 +25,8 @@ public class KafkaProducer {
     private final DealMemberRepository dealMemberRepository;
 
     private final KafkaTemplate<String, Object> kafkaTemplate;
-    public void sendDealMember(String topicName, Long dealId){
+    @Async
+    public void sendDealMemberToPush(String topicName, Long dealId){
         Deal deal = dealRepository.findById(dealId).orElseThrow(DealNotFound::new);
         List<String> members = dealMemberRepository.findByDeal(deal).stream()
                 .map(o->o.getUser().getNickname()).collect(Collectors.toList());
@@ -34,7 +36,8 @@ public class KafkaProducer {
         pros.put(topicName, dealMemberToPush);
         kafkaTemplate.send(topicName,dealMemberToPush);
     }
-    public void sendDealAndUser(String topicName, Long dealId, User user){
+    @Async
+    public void sendDealAndUserToChat(String topicName, Long dealId, User user){
         Deal deal = dealRepository.findById(dealId).orElseThrow(DealNotFound::new);
         DealUserToChat dealUserToChat = new DealUserToChat(dealId,deal.getTitle(), user.getNickname());
 

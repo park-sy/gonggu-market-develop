@@ -421,6 +421,10 @@ public class DealControllerDocTest {
                                 parameterWithName("dealId").description("게시글 ID")
                         )
                 ));
+        this.mockMvc.perform(get("/deal/{dealId}",deal.getId())
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(print());
     }
 
     @Test
