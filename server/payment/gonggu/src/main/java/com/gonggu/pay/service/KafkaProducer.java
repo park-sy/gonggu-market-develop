@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -20,6 +21,7 @@ public class KafkaProducer {
 
     private final KafkaTemplate<String, Object> kafkaTemplate;
     private final PaymentRepository paymentRepository;
+    @Async
     public void sendPushRemitInfo(String topicName, User user, Long amount) {
         LocalDateTime now = LocalDateTime.now();
         PaymentToPush paymentToPush = new PaymentToPush(user.getNickname(),amount,now);
