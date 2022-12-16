@@ -1,26 +1,32 @@
 package com.example.demo.controller;
 
+import com.example.demo.entity.Device;
 import com.example.demo.entity.User;
 import com.example.demo.jwt.JwtTokenProvider;
+import com.example.demo.repository.DeviceRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.CustomUserDetailService;
+import com.example.demo.service.RedisService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -31,13 +37,31 @@ public class UserController {
     private final JwtTokenProvider jwtTokenProvider;
     private final UserRepository userRepository;
     private final CustomUserDetailService customUserDetailService;
-    //private final EmailService emailService;
-    //private final ResponseEntity response;
+    private final RedisService redisService;
+    private final DeviceRepository deviceRepository;
 
     //테스트 용
     @RequestMapping("/test")
     public String test(){
         return "test";
+    }
+
+    //test
+    @RequestMapping("/testa")
+    public String testa(HttpServletRequest request) throws ServletException, ParseException {
+        try{
+            Cookie[] cookies = request.getCookies();
+            //if(cookies.)
+            for(Cookie cookie : cookies){
+                String str = URLDecoder.decode(cookie.getValue(), "UTF-8");
+                if(cookie.getName().equals("refreshtoken")){
+                    //System.out.println(str);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "abc";
     }
 
     // 회원가입
@@ -69,7 +93,6 @@ public class UserController {
         Optional<User> member = userRepository.findByNickname(user.get("id"));
         if(member.isPresent()) {
             String str = String.format("{\"ok\":\"false\", \"error\":\"id already used\"}");
-            //JSONParser parser = new JSONParser();
             JSONObject jsonObject = (JSONObject) parser.parse(str);
             return jsonObject;
         }
@@ -80,7 +103,6 @@ public class UserController {
                 .roles(Collections.singletonList("ROLE_USER")) // 최초 가입시 USER 로 설정
                 .build());
         String str = String.format("{\"ok\":\"true\"}");
-        //JSONParser parser = new JSONParser();
         JSONObject jsonObject = (JSONObject) parser.parse(str);
         return jsonObject;
     }
@@ -90,6 +112,7 @@ public class UserController {
         JSONParser parser = new JSONParser();
         //JSONObject jsonObject = (JSONObject) parser.parse(strget);
         //Map<String, String> user = jsonObject;
+
         //뭐를 받는지?
         Optional<User> member = userRepository.findByNickname(user.get("id"));
         if(member.isPresent()){
@@ -104,7 +127,7 @@ public class UserController {
 
     // 로그인
     @PostMapping("/login")
-    public JSONObject login(@RequestBody Map<String, String> user) throws ParseException {
+    public JSONObject login(@RequestBody Map<String, String> user, HttpServletResponse httpServletResponse) throws ParseException {
     //public JSONObject login(@RequestBody String strget) throws ParseException {
         JSONParser parser = new JSONParser();
         //JSONObject jsonObject = (JSONObject) parser.parse(strget);
@@ -112,13 +135,11 @@ public class UserController {
 
         if(!user.containsKey("id")){
             String str = String.format("{\"ok\":\"false\", \"error\":\"enter id\"}");
-            //JSONParser parser = new JSONParser();
             JSONObject jsonObject = (JSONObject) parser.parse(str);
             return jsonObject;
         }
         if(!user.containsKey("password")){
             String str = String.format("{\"ok\":\"false\", \"error\":\"enter password\"}");
-            //JSONParser parser = new JSONParser();
             JSONObject jsonObject = (JSONObject) parser.parse(str);
             return jsonObject;
         }
@@ -137,6 +158,27 @@ public class UserController {
         }
 
         String token = jwtTokenProvider.createToken(member.get().getUsername(), member.get().getRoles());
+        String refreshtoken = jwtTokenProvider.createRefreshToken(member.get().getUsername(), member.get().getRoles());
+        redisService.setDataExpire(refreshtoken, member.get().getUsername(), jwtTokenProvider.refreshtokenValidTime);
+
+        /*
+        Cookie newcookie = new Cookie("refreshtoken", refreshtoken);
+        newcookie.setHttpOnly(false);
+        newcookie.setMaxAge((int)jwtTokenProvider.accesstokenValidTime);
+        newcookie.setPath("/");
+        newcookie.setDomain("localhost");
+        httpServletResponse.addCookie(newcookie);
+        */
+        ResponseCookie newcookie = ResponseCookie.from("refreshtoken", refreshtoken) // key & value
+                .httpOnly(true)
+                //.secure(true)
+                .domain(".09market.site")
+                .path("/")
+                .maxAge((int)jwtTokenProvider.accesstokenValidTime)
+                //.sameSite("None")
+                .build();
+        httpServletResponse.setHeader("Set-Cookie", newcookie.toString());
+
         String str = String.format("{\"ok\" : \"true\", \"accesstoken\":\"%s\"}", token);
         JSONObject jsonObject = (JSONObject) parser.parse(str);
         return jsonObject;
@@ -157,57 +199,163 @@ public class UserController {
         return jsonObject;
     }*/
 
+    //device 등록
+    @PostMapping("/user/register")
+    public JSONObject register(Authentication authentication, @RequestBody String str) throws ParseException {
+        JSONParser parser = new JSONParser();
+        JSONObject jsonObject = (JSONObject) parser.parse(str);
+        if(!jsonObject.containsKey("endpoint")){
+            String ret = String.format("{\"ok\":\"false\", \"error\":\"enter endpoint\"}");
+            JSONObject jsonObject1 = (JSONObject) parser.parse(ret);
+            return jsonObject1;
+        }
+        if(!jsonObject.containsKey("keys")){
+            String ret = String.format("{\"ok\":\"false\", \"error\":\"enter keys\"}");
+            JSONObject jsonObject1 = (JSONObject) parser.parse(ret);
+            return jsonObject1;
+        }
+        else{
+            String endpoint = (String) jsonObject.get("endpoint");
+            JSONObject keys = (JSONObject) jsonObject.get("keys");
+            if(!keys.containsKey("auth")){
+                String ret = String.format("{\"ok\":\"false\", \"error\":\"enter auth\"}");
+                JSONObject jsonObject1 = (JSONObject) parser.parse(ret);
+                return jsonObject1;
+            }
+            if(!keys.containsKey("p256dh")){
+                String ret = String.format("{\"ok\":\"false\", \"error\":\"enter p256dh\"}");
+                JSONObject jsonObject1 = (JSONObject) parser.parse(ret);
+                return jsonObject1;
+            }
+            String auth = (String) keys.get("auth");
+            String p256dh = (String) keys.get("p256dh");
+
+            Optional<Device> device = deviceRepository.findByEndpoint(endpoint);
+            if(device.isPresent()){
+                String ret = String.format("{\"ok\":\"false\", \"error\":\"device already registered\"}");
+                JSONObject jsonObject1 = (JSONObject) parser.parse(ret);
+                return jsonObject1;
+            }
+            Optional<User> user= userRepository.findByNickname(authentication.getName());
+
+            deviceRepository.save(Device.builder()
+                    .user(user.get())
+                    .auth(auth)
+                    .p256dh(p256dh)
+                    .endpoint(endpoint)
+                    .build());
+
+            String ret = String.format("{\"ok\" : \"true\"}");
+            JSONObject jsonObject1 = (JSONObject) parser.parse(ret);
+            return jsonObject1;
+        }
+
+    }
+
+    //device 해제
+    @PostMapping("/user/unregister")
+    public JSONObject unregister(Authentication authentication, @RequestBody String str) throws ParseException {
+        JSONParser parser = new JSONParser();
+        JSONObject jsonObject = (JSONObject) parser.parse(str);
+
+        if(!jsonObject.containsKey("endpoint")){
+            String ret = String.format("{\"ok\":\"false\", \"error\":\"enter endpoint\"}");
+            JSONObject jsonObject1 = (JSONObject) parser.parse(ret);
+            return jsonObject1;
+        }
+        String endpoint = (String) jsonObject.get("endpoint");
+
+        //Optional<User> user= userRepository.findByNickname(authentication.getName());
+
+        Optional<Device> device = deviceRepository.findByEndpoint(endpoint);
+        if(device.isEmpty()){
+            String ret = String.format("{\"ok\":\"false\", \"error\":\"device is not registered\"}");
+            JSONObject jsonObject1 = (JSONObject) parser.parse(ret);
+            return jsonObject1;
+        }
+        deviceRepository.delete(device.get());
+
+        String ret = String.format("{\"ok\" : \"true\"}");
+        JSONObject jsonObject1 = (JSONObject) parser.parse(ret);
+        return jsonObject1;
+    }
+
     //유저 마이페이지
     @PostMapping("/user/mypage")
-    public JSONObject mypage(Authentication authentication) throws ParseException {
+    public JSONObject mypage(Authentication authentication, HttpServletRequest httpServletRequest) throws ParseException, UnsupportedEncodingException {
         Optional<User> user= userRepository.findByNickname(authentication.getName());
+        /*
+        Cookie[] cookies = httpServletRequest.getCookies();
+        for (Cookie cookie : cookies) {
+            String str = URLDecoder.decode(cookie.getValue(), "UTF-8");
+            if(cookie.getName().equals("accesstoken"))    System.out.println(str);
+        }*/
 
-        String obj = String.format("{\"email\" : \"%s\", \"id\" : \"%s\", \"keyword\" : %s}",
-                user.get().getEmail(), user.get().getNickname(), customUserDetailService.getKeyword(user.get()));
+        String newtoken = (String) httpServletRequest.getAttribute("accesstoken");
+        //System.out.println(newtoken);
+        String obj;
+        if(newtoken == null){
+            obj = String.format("{\"email\" : \"%s\", \"id\" : \"%s\", \"keyword\" : %s}",
+                    user.get().getEmail(), user.get().getNickname(), customUserDetailService.getKeyword(user.get()));
+        }
+        else{
+            obj = String.format("{\"email\" : \"%s\", \"id\" : \"%s\", \"keyword\" : %s, \"accesstoken\" : \"%s\"}",
+                    user.get().getEmail(), user.get().getNickname(), customUserDetailService.getKeyword(user.get()), newtoken);
+        }
+
         JSONParser parser = new JSONParser();
         JSONObject jsonObject = (JSONObject) parser.parse(obj);
         return jsonObject;
     }
-    /*
-    @PostMapping("temp")
-    public void temp(@RequestBody String strget) throws ParseException {
-        JSONParser parser = new JSONParser();
-        JSONObject jsonObject = (JSONObject) parser.parse(strget);
-        JSONArray jsonArray = (JSONArray) jsonObject.get("keyword");
-        System.out.println(jsonArray.get(1));
-    }*/
 
     //키워드 변경하기
     @PostMapping("user/updatekeyword")
-    public JSONObject updatekeyword(Authentication authentication, @RequestBody String strget) throws ParseException {
+    public JSONObject updatekeyword(Authentication authentication, @RequestBody String str, HttpServletRequest httpServletRequest) throws ParseException {
+        str = str.replace("\'", "\"");
         JSONParser parser = new JSONParser();
-        JSONObject jsonObject = (JSONObject) parser.parse(strget);
+        JSONObject jsonObject = (JSONObject) parser.parse(str);
 
         if(!jsonObject.containsKey("keyword")){
-            String str = String.format("{\"ok\":\"false\", \"error\":\"enter keyword\"}");
-            jsonObject = (JSONObject) parser.parse(str);
+            String str2 = String.format("{\"ok\":\"false\", \"error\":\"enter keyword\"}");
+            jsonObject = (JSONObject) parser.parse(str2);
             return jsonObject;
         }
 
         List<String> memberArray = (List<String>) jsonObject.get("keyword");
-
-        //System.out.println(memberArray.get(1));
         customUserDetailService.updateKeywords(authentication.getName(), memberArray);
 
-        String str = String.format("{\"ok\" : \"true\"}");
-        jsonObject = (JSONObject) parser.parse(str);
+        String newtoken = (String) httpServletRequest.getAttribute("accesstoken");
+        String str2;
+        if(newtoken == null){
+            str2 = String.format("{\"ok\" : \"true\"}");
+        }
+        else{
+            str2 = String.format("{\"ok\" : \"true\", \"accesstoken\" : \"%s\"}", newtoken);
+        }
+        jsonObject = (JSONObject) parser.parse(str2);
         return jsonObject;
 
     }
 
+    //test
+    @PostMapping("updatekeyword1")
+    public void updatekeyword1(@RequestBody String str) throws ParseException {
+        str = str.replace("\'", "\"");
+        JSONParser parser = new JSONParser();
+        JSONObject jsonObject = (JSONObject) parser.parse(str);
+        List<String> memberArray = (List<String>)jsonObject.get("keyword");
+        for(String k : memberArray){
+            //System.out.println(k);
+        }
+
+
+    }
     //이메일 변경
     @PostMapping("user/changeemail")
     //public JSONObject changeemail(Authentication authentication, @RequestBody String strget) throws ParseException {
-    public JSONObject changeemail(Authentication authentication, @RequestBody Map<String, String> user) throws ParseException {
+    public JSONObject changeemail(Authentication authentication, @RequestBody Map<String, String> user, HttpServletRequest httpServletRequest) throws ParseException {
 
         JSONParser parser = new JSONParser();
-        //JSONObject jsonObject = (JSONObject) parser.parse(strget);
-        //Map<String, String> user = jsonObject;
 
         if(!user.containsKey("email")){
             String str = String.format("{\"ok\":\"false\", \"error\":\"enter new email\"}");
@@ -222,14 +370,22 @@ public class UserController {
             return jsonObject;
         }
         customUserDetailService.updateEmail(member.get(), user.get("email"));
-        String str = String.format("{\"ok\" : \"true\"}");
+
+        String newtoken = (String) httpServletRequest.getAttribute("accesstoken");
+        String str;
+        if(newtoken == null){
+            str = String.format("{\"ok\" : \"true\"}");
+        }
+        else{
+            str = String.format("{\"ok\" : \"true\", \"accesstoken\" : \"%s\"}", newtoken);
+        }
         JSONObject jsonObject = (JSONObject) parser.parse(str);
         return jsonObject;
     }
 
     //비밀번호 변경
    @PostMapping("user/changepassword")
-    public JSONObject changepassword(Authentication authentication, @RequestBody Map<String, String> user) throws ParseException {
+    public JSONObject changepassword(Authentication authentication, @RequestBody Map<String, String> user, HttpServletRequest httpServletRequest) throws ParseException {
         JSONParser parser = new JSONParser();
         //JSONObject jsonObject = (JSONObject) parser.parse(strget);
         //Map<String, String> user = jsonObject;
@@ -247,36 +403,15 @@ public class UserController {
             return jsonObject;
         }
         customUserDetailService.updatePassword(member.get(), passwordEncoder.encode(user.get("password")));
-        String str = String.format("{\"ok\" : \"true\"}");
+       String newtoken = (String) httpServletRequest.getAttribute("accesstoken");
+       String str;
+       if(newtoken == null){
+           str = String.format("{\"ok\" : \"true\"}");
+       }
+       else{
+           str = String.format("{\"ok\" : \"true\", \"accesstoken\" : \"%s\"}", newtoken);
+       }
         JSONObject jsonObject = (JSONObject) parser.parse(str);
         return jsonObject;
     }
-
-        /*
-    @PostMapping("/user/verify")
-    public Response verify(@RequestBody RequestVerifyEmail requestVerifyEmail, HttpServletRequest req, HttpServletResponse res) {
-        Response response;
-        try {
-            User user = userRepository.findByEmail(requestVerifyEmail.getUsername()).get();
-            emailService.sendVerificationMail(user);
-            response = new Response("success", "성공적으로 인증메일을 보냈습니다.", null);
-        } catch (Exception exception) {
-            response = new Response("error", "인증메일을 보내는데 문제가 발생했습니다.", exception);
-        }
-        return response;
-    }
-
-    @GetMapping("/verify/{key}")
-    public Response getVerify(@PathVariable String key) {
-        Response response;
-        try {
-            emailService.verifyEmail(key);
-            response = new Response("success", "성공적으로 인증메일을 확인했습니다.", null);
-
-        } catch (Exception e) {
-            response = new Response("error", "인증메일을 확인하는데 실패했습니다.", null);
-        }
-        return response;
-    }
-     */
 }
