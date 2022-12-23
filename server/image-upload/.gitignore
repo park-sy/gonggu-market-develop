@@ -1,5 +1,0 @@
-aws.txt
-tools/awsconfig.json
-node_modules
-.env
-Dockerfile
