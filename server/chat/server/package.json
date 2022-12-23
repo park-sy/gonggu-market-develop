@@ -1,0 +1,44 @@
+{
+  "name": "gongu-chatting",
+  "version": "1.0.0",
+  "description": "서강대학교 캡스톤디자인1",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon --exec babel-node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shinjh0305-jhshin/CapstoneDegin1_Chatting.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/shinjh0305-jhshin/CapstoneDegin1_Chatting/issues"
+  },
+  "homepage": "https://github.com/shinjh0305-jhshin/CapstoneDegin1_Chatting#readme",
+  "dependencies": {
+    "@prisma/client": "^4.5.0",
+    "@socket.io/redis-adapter": "^8.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^8.5.1",
+    "kafkajs": "^2.2.3",
+    "mongoose": "^6.6.5",
+    "morgan": "^1.10.0",
+    "mysql2": "^2.3.3",
+    "nodemon": "^2.0.20",
+    "promisify": "^0.0.3",
+    "redis": "^4.5.1",
+    "socket.io": "^4.5.3",
+    "web-push": "^3.5.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.19.6",
+    "@babel/node": "^7.20.0",
+    "@babel/preset-env": "^7.19.4",
+    "@volar/vue-language-plugin-pug": "^1.0.9"
+  }
+}
