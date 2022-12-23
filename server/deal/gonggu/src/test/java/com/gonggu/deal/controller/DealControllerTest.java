@@ -177,6 +177,7 @@ class DealControllerTest {
 
     @Test
     @DisplayName("게시글 수정")
+    @WithMockUser
     void editDeal() throws Exception{
         User user = User.builder()
                 .nickname("유저")
@@ -217,6 +218,7 @@ class DealControllerTest {
 
     @Test
     @DisplayName("게시글 삭제")
+    @WithMockUser
     void deleteDeal() throws Exception{
         Category category = Category.builder()
                 .name("카테고리").build();
@@ -248,7 +250,7 @@ class DealControllerTest {
 
     @Test
     @DisplayName("구매 참가")
-    @WithMockUser
+    @WithUserDetails(value = "테스트유저", setupBefore = TestExecutionEvent.TEST_EXECUTION)
     void requestJoin() throws Exception{
         List<User> users = IntStream.range(0,2)
                 .mapToObj(i -> User.builder()
@@ -407,125 +409,5 @@ class DealControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print());
     }
-
-    @Test
-    @DisplayName("구매자 명단")
-    void getJoin() throws Exception{
-
-    }
-
-//    @Test
-//    @DisplayName("판매 내역 조회")
-//    void getMySellList() throws Exception{
-//        User user = User.builder()
-//                .nickname("유저").build();
-//        userRepository.save(user);
-//
-//        Category category = Category.builder()
-//                .name("카테고리").build();
-//        categoryRepository.save(category);
-//        LocalDateTime date = LocalDateTime.now();
-//        List<Deal> deals = IntStream.range(0,5)
-//                .mapToObj(i -> Deal.builder()
-//                        .title("제목" +i)
-//                        .category(category)
-//                        .content("내용")
-//                        .price(1000L)
-//                        .unitPrice(200L)
-//                        .totalCount(i)
-//                        .url("url/")
-//                        .expireTime(date.plusDays(i%4))
-//                        .quantity(10)
-//                        .unitQuantity(2)
-//                        .nowCount(i)
-//                        .user(user)
-//                        .build()).collect(Collectors.toList());
-//        dealRepository.saveAll(deals);
-//
-//        mockMvc.perform(get("/deal/sale/{userId}",user.getNickname())
-//                        .contentType(APPLICATION_JSON))
-//                .andExpect(status().isOk())
-//                .andDo(print());
-//    }
-//
-//
-//    @Test
-//    @DisplayName("구매 내역 조회")
-//    void getMyJoinListTemp() throws Exception{
-//
-//        List<User> users = IntStream.range(0,5)
-//                .mapToObj(i -> User.builder()
-//                        .nickname("이름" +i)
-//                        .build()).collect(Collectors.toList());
-//        userRepository.saveAll(users);
-//
-//        Category category = Category.builder()
-//                .name("카테고리").build();
-//        categoryRepository.save(category);
-//        LocalDateTime date = LocalDateTime.now();
-//        List<Deal> deals = IntStream.range(0,5)
-//                .mapToObj(i -> Deal.builder()
-//                        .title("제목" +i)
-//                        .category(category)
-//                        .content("내용")
-//                        .price(1000L)
-//                        .unitPrice(200L)
-//                        .totalCount(i)
-//                        .url("url/")
-//                        .expireTime(date.plusDays(i%4))
-//                        .quantity(10)
-//                        .unitQuantity(2)
-//                        .nowCount(i)
-//                        .user(users.get(i))
-//                        .build()).collect(Collectors.toList());
-//        dealRepository.saveAll(deals);
-//
-//        List<DealMember> dealMembers = IntStream.range(1,5)
-//                .mapToObj(i -> DealMember.builder()
-//                        .host(false)
-//                        .deal(deals.get(i%5))
-//                        .user(users.get(0))
-//                        .quantity(i%5)
-//                        .build()).collect(Collectors.toList());
-//        dealMemberRepository.saveAll(dealMembers);
-//
-//        mockMvc.perform(get("/deal/sale/{userId}", users.get(0).getNickname())
-//                        .contentType(APPLICATION_JSON))
-//                .andExpect(status().isOk())
-//                .andDo(print());
-//    }
-//
-//    @Test
-//    @DisplayName("게시글 가져오기")
-//    void getDeal() throws Exception{
-//        Category category = Category.builder()
-//                .name("카테고리").build();
-//        categoryRepository.save(category);
-//
-//        User user = User.builder()
-//                .nickname("유저").build();
-//        LocalDateTime date = LocalDateTime.now();
-//
-//        List<Deal> deals = IntStream.range(0,20)
-//                .mapToObj(i -> Deal.builder()
-//                        .title("제목" +i)
-//                        .category(category)
-//                        .content("내용")
-//                        .price(1000L)
-//                        .unitPrice(200L)
-//                        .totalCount(i)
-//                        .url("url/")
-//                        .expireTime(date.plusDays(i%4))
-//                        .quantity(10)
-//                        .unitQuantity(2)
-//                        .nowCount(i/2)
-//                        .build()).collect(Collectors.toList());
-//        dealRepository.saveAll(deals);
-//
-//        mockMvc.perform(get("/deal")
-//                        .contentType(APPLICATION_JSON))
-//                .andExpect(status().isOk())
-//                .andDo(print());
-//    }
 
 }

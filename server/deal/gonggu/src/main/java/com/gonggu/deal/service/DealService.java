@@ -1,6 +1,7 @@
 package com.gonggu.deal.service;
 
 import com.gonggu.deal.domain.*;
+import com.gonggu.deal.exception.CategoryNotFound;
 import com.gonggu.deal.exception.DealJoinFailed;
 import com.gonggu.deal.exception.DealNotFound;
 import com.gonggu.deal.exception.UserNotFound;
@@ -41,14 +42,14 @@ public class DealService {
         return dealRepository.getList(dealSearch).stream()
                 .map(DealResponse::new).collect(Collectors.toList());
     }
-    public DealDetailResponse get(Long id){
+    public DealDetailResponse getDealDetail(Long id){
         Deal deal = dealRepository.findById(id).orElseThrow(DealNotFound::new);
         DealDetailResponse dealDetailResponse = new DealDetailResponse(deal);
         return dealDetailResponse;
     }
 
     public void createDeal(DealCreate dealCreate, User user){
-        Category category = categoryRepository.findById(dealCreate.getCategoryId()).orElseThrow();
+        Category category = categoryRepository.findById(dealCreate.getCategoryId()).orElseThrow(CategoryNotFound::new);
         Deal deal = Deal.builder()
                 .title(dealCreate.getTitle())
                 .content(dealCreate.getContent())
@@ -96,7 +97,7 @@ public class DealService {
     public void deleteDeal(Long id){
         Deal deal = dealRepository.findById(id).orElseThrow(DealNotFound::new);
         DealEditor.DealEditorBuilder editorBuilder = deal.toEditor();
-        DealEditor dealEditor = editorBuilder.deletion(false).build();
+        DealEditor dealEditor = editorBuilder.deletion(true).build();
         deal.edit(dealEditor);
     }
     public DealDetailResponse editDeal(Long id, DealEdit dealEdit){
@@ -134,36 +135,37 @@ public class DealService {
         dealRepository.updateView(dealId);
     }
 
-    public void createJoin(Long dealId, DealJoin join, User user) {
+    public boolean createJoin(Long dealId, DealJoin join, User user) {
         Deal deal = dealRepository.findById(dealId).orElseThrow(DealNotFound::new);
-        if(deal.getNowCount() + join.getQuantity() > deal.getTotalCount()){
-            throw new DealJoinFailed("구매 참여에 실패하였습니다.");
-        }
-        deal.editCount(join.getQuantity() + deal.getNowCount());
+        if(dealMemberRepository.findByDealAndUser(deal,user).isPresent()) throw new DealJoinFailed("이미 참여한 공구입니다.");
+        if(deal.getNowCount() + join.getQuantity() > deal.getTotalCount()) throw new DealJoinFailed("구매 참여에 실패하였습니다.");
 
+        deal.editCount(join.getQuantity() + deal.getNowCount());
         DealMember dealMember = DealMember.builder()
                 .deal(deal)
                 .user(user)
                 .quantity(join.getQuantity())
                 .build();
         dealMemberRepository.save(dealMember);
+        if(deal.getNowCount() == deal.getTotalCount()) return true;
+        else return false;
     }
 
-    public void editJoin(Long dealId, DealJoin join, User user){
+    public boolean editJoin(Long dealId, DealJoin join, User user){
         Deal deal = dealRepository.findById(dealId).orElseThrow(DealNotFound::new);
-        DealMember dealMember = dealMemberRepository.findByDealAndUser(deal, user);
+        DealMember dealMember = dealMemberRepository.findByDealAndUser(deal, user).orElseThrow(UserNotFound::new);
         Integer afterCount = deal.getNowCount() + join.getQuantity() - dealMember.getQuantity();
-        if(afterCount < 0 || afterCount > deal.getTotalCount()){
-            throw new DealJoinFailed("수량 변경에 실패하였습니다.");
-        }
+        if(afterCount < 0 || afterCount > deal.getTotalCount()) throw new DealJoinFailed("수량 변경에 실패하였습니다.");
 
         deal.editCount(afterCount);
         dealMember.editQuantity(join.getQuantity());
+        if(afterCount == deal.getTotalCount()) return true;
+        else return false;
     }
 
     public void deleteJoin(Long dealId, User user){
         Deal deal = dealRepository.findById(dealId).orElseThrow(DealNotFound::new);
-        DealMember dealMember = dealMemberRepository.findByDealAndUser(deal, user);
+        DealMember dealMember = dealMemberRepository.findByDealAndUser(deal, user).orElseThrow(UserNotFound::new);
         deal.editCount(deal.getNowCount()-dealMember.getQuantity());
         dealMemberRepository.delete(dealMember);
     }
@@ -176,13 +178,13 @@ public class DealService {
 
     public List<DealResponse> getSellDeal(String userId) {
         User user = userRepository.findByNickname(userId).orElseThrow(UserNotFound::new);
-        return dealRepository.findByUser(user).stream()
-                .map(DealResponse::new).collect(Collectors.toList());
+        return dealMemberRepository.getByUser(user,true).stream()
+                .map(o-> new DealResponse(o.getDeal(), o.getQuantity())).collect(Collectors.toList());
     }
 
     public List<DealResponse> getJoinDeal(String userId){
         User user = userRepository.findByNickname(userId).orElseThrow(UserNotFound::new);
-        return dealRepository.getJoinList(user).stream()
-                .map(DealResponse::new).collect(Collectors.toList());
+        return dealMemberRepository.getByUser(user,false).stream()
+                .map(o-> new DealResponse(o.getDeal(), o.getQuantity())).collect(Collectors.toList());
     }
 }

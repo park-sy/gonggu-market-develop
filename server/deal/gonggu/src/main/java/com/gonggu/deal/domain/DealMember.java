@@ -1,8 +1,10 @@
 package com.gonggu.deal.domain;
 
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
+
 
 @Builder
 @Entity
@@ -15,6 +17,7 @@ public class DealMember {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "deal_member_id")
     private Long id;
+
 
     @ManyToOne(fetch = FetchType.LAZY ,cascade = CascadeType.MERGE)
     @JoinColumn(name = "deal_id")

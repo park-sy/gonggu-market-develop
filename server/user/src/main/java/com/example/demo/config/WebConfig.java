@@ -16,8 +16,15 @@ public class WebConfig implements WebMvcConfigurer {
                         "https://localhost:5173",
                         "https://127.0.0.1:5173"
                 )*/
-                .allowedOrigins("*")
-                .allowedMethods("GET", "POST", "PUT", "DELETE")
+                //.allowedOrigins("*")
+                .allowedOriginPatterns("*")
+                //allowedOriginPatterns("https://spiffy-sopapillas-9175f7.netlify.app")
+                //.allowedOriginPatterns("https://09market.site")
+                .allowCredentials(true)
+                .allowedMethods("*")
+                //.allowedHeaders("Content-Type", "X-AUTH-TOKEN", "Authorization", "Access-Control-Allow-Origin", "Access-Control-Allow-Credentials")
+                .allowedHeaders("*")
+                .exposedHeaders("Set-Cookie")
         ;
 
     }

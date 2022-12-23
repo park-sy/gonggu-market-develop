@@ -1,5 +1,6 @@
 package com.gonggu.deal.response;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.gonggu.deal.domain.Deal;
 import lombok.Getter;
 
@@ -7,6 +8,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
 @Getter
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class DealResponse {
 
     private final Long id;
@@ -20,6 +22,11 @@ public class DealResponse {
     private final DealImageResponse image;
     private final boolean deleted;
     private final boolean expired;
+    private Integer userCount;
+    private String unit;
+    private LocalDateTime expiredDate;
+    private String hostName;
+
     public DealResponse(Deal deal){
         LocalDateTime now = LocalDateTime.now();
         this.id = deal.getId();
@@ -34,5 +41,33 @@ public class DealResponse {
         this.image = new DealImageResponse(deal.getImages().get(0));
         this.deleted = deal.isDeletion();
         this.expired = deal.getExpireTime().toLocalDate().isBefore(now.toLocalDate());
+        System.out.println("-------");
+        System.out.println(title);
+        System.out.println(now);
+        System.out.println(deal.getExpireTime());
+        System.out.println(now.toLocalDate());
+        System.out.println(deal.getExpireTime().toLocalDate());
+        System.out.println(remainDate);
+        System.out.println(expired);
+    }
+
+    public DealResponse(Deal deal, Integer userCount){
+        LocalDateTime now = LocalDateTime.now();
+        this.id = deal.getId();
+        this.category = deal.getCategory().getName();
+        this.title = deal.getTitle();
+        this.remainDate = ChronoUnit.DAYS
+                .between(now.toLocalDate(),deal.getExpireTime().toLocalDate());
+        this.unitPrice = deal.getUnitPrice();
+        this.quantity = deal.getQuantity();
+        this.nowCount = deal.getNowCount();
+        this.totalCount = deal.getTotalCount();
+        this.image = new DealImageResponse(deal.getImages().get(0));
+        this.deleted = deal.isDeletion();
+        this.expired = deal.getExpireTime().toLocalDate().isBefore(now.toLocalDate());
+        this.userCount = userCount;
+        this.unit = deal.getUnit();
+        this.expiredDate = deal.getExpireTime();
+        this.hostName = deal.getUser().getNickname();
     }
 }

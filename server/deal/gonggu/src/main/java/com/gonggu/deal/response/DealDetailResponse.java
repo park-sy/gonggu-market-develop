@@ -2,6 +2,8 @@ package com.gonggu.deal.response;
 
 import com.gonggu.deal.domain.Deal;
 import com.gonggu.deal.domain.Category;
+import com.gonggu.deal.domain.DealKeyword;
+import com.gonggu.deal.domain.Keyword;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -24,9 +26,11 @@ public class DealDetailResponse {
     private final Integer totalCount;
     private final String url;
     private final List<DealImageResponse> images;
+    private final List<String> keywords;
     private final int view;
     private final String user;
     private final Category category;
+    private final LocalDateTime expiredDate;
     private final boolean deleted;
     private final boolean expired;
 
@@ -47,9 +51,12 @@ public class DealDetailResponse {
         this.url = deal.getUrl();
         this.view = deal.getView();
         this.images = deal.getImages().stream().map(DealImageResponse::new).collect(Collectors.toList());
+        this.keywords = deal.getKeywords().stream().map(o ->o.getKeyword().getWord()).collect(Collectors.toList());
         this.user = deal.getUser().getNickname();
         this.category = deal.getCategory();
+        this.expiredDate = deal.getExpireTime();
         this.deleted = deal.isDeletion();
         this.expired = deal.getExpireTime().toLocalDate().isBefore(now.toLocalDate());
+
     }
 }

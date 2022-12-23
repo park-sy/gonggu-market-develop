@@ -7,6 +7,7 @@
 :sectlinks:
 
 == 게시글 조회
+=== 요청
 include::{snippets}/deal/search/http-request.adoc[]
 include::{snippets}/deal/search/path-parameters.adoc[]
 
@@ -15,6 +16,7 @@ include::{snippets}/deal/search/http-response.adoc[]
 include::{snippets}/deal/search/response-fields.adoc[]
 
 == 게시글 상세 보기
+=== 요청
 include::{snippets}/deal/detail/http-request.adoc[]
 include::{snippets}/deal/detail/path-parameters.adoc[]
 
@@ -24,12 +26,14 @@ include::{snippets}/deal/detail/response-fields.adoc[]
 
 
 == 게시글 작성
+=== 요청
 include::{snippets}/deal/create/http-request.adoc[]
 include::{snippets}/deal/create/request-fields.adoc[]
 === 응답
 include::{snippets}/deal/create/http-response.adoc[]
 
 == 게시글 수정
+=== 요청
 include::{snippets}/deal/edit/http-request.adoc[]
 include::{snippets}/deal/edit/path-parameters.adoc[]
 include::{snippets}/deal/edit/request-fields.adoc[]
@@ -37,6 +41,7 @@ include::{snippets}/deal/edit/request-fields.adoc[]
 include::{snippets}/deal/edit/http-response.adoc[]
 
 == 게시글 삭제
+=== 요청
 include::{snippets}/deal/delete/http-request.adoc[]
 include::{snippets}/deal/delete/path-parameters.adoc[]
 === 응답
@@ -44,6 +49,7 @@ include::{snippets}/deal/delete/http-response.adoc[]
 
 
 == 구매 참여
+=== 요청
 include::{snippets}/deal/join/http-request.adoc[]
 include::{snippets}/deal/join/path-parameters.adoc[]
 include::{snippets}/deal/join/request-fields.adoc[]
@@ -51,6 +57,7 @@ include::{snippets}/deal/join/request-fields.adoc[]
 include::{snippets}/deal/join/http-response.adoc[]
 
 == 구매 수정
+=== 요청
 include::{snippets}/deal/join-edit/http-request.adoc[]
 include::{snippets}/deal/join-edit/path-parameters.adoc[]
 include::{snippets}/deal/join-edit/request-fields.adoc[]
@@ -58,6 +65,7 @@ include::{snippets}/deal/join-edit/request-fields.adoc[]
 include::{snippets}/deal/join-edit/http-response.adoc[]
 
 == 구매 취소
+=== 요청
 include::{snippets}/deal/join-delete/http-request.adoc[]
 include::{snippets}/deal/join-delete/path-parameters.adoc[]
 === 응답
@@ -65,6 +73,7 @@ include::{snippets}/deal/join-delete/http-response.adoc[]
 
 
 == 참여 내역 조회
+=== 요청
 include::{snippets}/deal/join-list/http-request.adoc[]
 include::{snippets}/deal/join-list/path-parameters.adoc[]
 
@@ -73,6 +82,7 @@ include::{snippets}/deal/join-list/http-response.adoc[]
 include::{snippets}/deal/join-list/response-fields.adoc[]
 
 == 판매 내역 조회
+=== 요청
 include::{snippets}/deal/sell-list/http-request.adoc[]
 include::{snippets}/deal/sell-list/path-parameters.adoc[]
 

@@ -93,7 +93,7 @@ public class DealControllerDocTest {
                 .name("카테고리").build();
         categoryRepository.save(category);
 
-        LocalDateTime date = LocalDateTime.now();
+        LocalDateTime now  = LocalDateTime.of(2022,12,12,0,0,0);
         List<Deal> deals = IntStream.range(0,20)
                 .mapToObj(i -> Deal.builder()
                         .title("제목" +i)
@@ -103,7 +103,7 @@ public class DealControllerDocTest {
                         .unitPrice(200L)
                         .totalCount(i)
                         .url("url/")
-                        .expireTime(date)
+                        .expireTime(now)
                         .quantity(10)
                         .unitQuantity(2)
                         .nowCount(i/2)
@@ -155,7 +155,8 @@ public class DealControllerDocTest {
                                 fieldWithPath("[].deleted").description("삭제여부"),
                                 fieldWithPath("[].expired").description("만료여부")
                         )
-                ));
+                )
+        );
     }
 
     @Test
@@ -234,9 +235,12 @@ public class DealControllerDocTest {
                                 fieldWithPath("expired").description("만료 여부"),
                                 fieldWithPath("user").description("게시글 작성 유저 닉네임"),
                                 fieldWithPath("category.id").description("게시글 카테고리 ID"),
-                                fieldWithPath("category.name").description("게시글 카테고리 이름")
+                                fieldWithPath("category.name").description("게시글 카테고리 이름"),
+                                fieldWithPath("keywords").description("게시글 키워드"),
+                                fieldWithPath("expiredDate").description("게시글 만료일")
                         )
-                ));
+                )
+        );
     }
 
     @Test
@@ -291,6 +295,7 @@ public class DealControllerDocTest {
 
     @Test
     @DisplayName("게시글 수정")
+    @WithMockUser
     void editDeal() throws Exception{
         User user = User.builder()
                 .nickname("유저")
@@ -383,6 +388,7 @@ public class DealControllerDocTest {
 
     @Test
     @DisplayName("게시글 삭제")
+    @WithMockUser
     void deleteDeal() throws Exception{
         Category category = Category.builder()
                 .name("카테고리").build();
@@ -415,19 +421,17 @@ public class DealControllerDocTest {
                                 parameterWithName("dealId").description("게시글 ID")
                         )
                 ));
+        this.mockMvc.perform(get("/deal/{dealId}",deal.getId())
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(print());
     }
 
     @Test
     @DisplayName("구매 참가")
-    @WithMockUser
+    @WithUserDetails(value = "테스트유저", setupBefore = TestExecutionEvent.TEST_EXECUTION)
     void requestJoin() throws Exception{
-        List<User> users = IntStream.range(0,2)
-                .mapToObj(i -> User.builder()
-                        .nickname("이름" +i)
-                        .email("test@test.com")
-                        .password("password")
-                        .build()).collect(Collectors.toList());
-        userRepository.saveAll(users);
+
 
         Category category = Category.builder()
                 .name("카테고리").build();
@@ -452,10 +456,15 @@ public class DealControllerDocTest {
                 .url("url/")
                 .expireTime(now.plusDays(3))
                 .nowCount(2)
-                .user(users.get(0))
+                .user(user)
                 .build();
         dealRepository.save(deal);
-
+        DealMember dealMember = DealMember.builder()
+                .deal(deal)
+                .user(user)
+                .quantity(2)
+                .build();
+        dealMemberRepository.save(dealMember);
         DealJoin dealJoin = DealJoin.builder()
                 .quantity(5)
                 .build();
@@ -611,6 +620,7 @@ public class DealControllerDocTest {
                         .quantity(10)
                         .unitQuantity(2)
                         .nowCount(i)
+                        .unit("단위")
                         .user(user)
                         .build()).collect(Collectors.toList());
         dealRepository.saveAll(deals);
@@ -630,6 +640,15 @@ public class DealControllerDocTest {
                         .keyword(keyword)
                         .build()).collect(Collectors.toList());
         dealKeywordRepository.saveAll(keywords);
+
+        List<DealMember> dealMembers = IntStream.range(0,5)
+                .mapToObj(i-> DealMember.builder()
+                        .deal(deals.get(i))
+                        .quantity(i+1)
+                        .user(user)
+                        .host(true)
+                        .build()).collect(Collectors.toList());
+        dealMemberRepository.saveAll(dealMembers);
 
         this.mockMvc.perform(get("/deal/sale/{userId}",user.getNickname())
                         .contentType(APPLICATION_JSON))
@@ -651,7 +670,11 @@ public class DealControllerDocTest {
                                 fieldWithPath("[].image.fileName").description("이미지 이름"),
                                 fieldWithPath("[].image.thumbnail").description("썸네일 여부"),
                                 fieldWithPath("[].deleted").description("삭제 여부"),
-                                fieldWithPath("[].expired").description("만료 여부")
+                                fieldWithPath("[].expired").description("만료 여부"),
+                                fieldWithPath("[].userCount").description("유저 구매 갯수"),
+                                fieldWithPath("[].unit").description("단위 명"),
+                                fieldWithPath("[].expiredDate").description("만료 일자"),
+                                fieldWithPath("[].hostName").description("판매자 이름")
                         )
                 ));
 
@@ -686,6 +709,7 @@ public class DealControllerDocTest {
                         .quantity(10)
                         .unitQuantity(2)
                         .nowCount(i)
+                        .unit("단위")
                         .user(users.get(i))
                         .build()).collect(Collectors.toList());
         dealRepository.saveAll(deals);
@@ -735,7 +759,11 @@ public class DealControllerDocTest {
                                 fieldWithPath("[].image.fileName").description("이미지 이름"),
                                 fieldWithPath("[].image.thumbnail").description("썸네일 여부"),
                                 fieldWithPath("[].deleted").description("삭제 여부"),
-                                fieldWithPath("[].expired").description("만료 여부")
+                                fieldWithPath("[].expired").description("만료 여부"),
+                                fieldWithPath("[].userCount").description("유저 구매 갯수"),
+                                fieldWithPath("[].unit").description("단위 명"),
+                                fieldWithPath("[].expiredDate").description("만료 일자"),
+                                fieldWithPath("[].hostName").description("판매자 이름")
                         )
                 ));
     }

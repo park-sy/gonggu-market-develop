@@ -39,7 +39,7 @@ public class TransactionRepositoryImpl implements TransactionRepositoryCustom{
         return transaction.id.desc();
     }
     private BooleanExpression filter(User user, Integer filter){
-        if(filter == null) return null;
+        if(filter == null) return transaction.from.eq(user).or(transaction.to.eq(user));
         else if(filter == 1) return transaction.from.eq(user);
         return transaction.to.eq(user);
     }

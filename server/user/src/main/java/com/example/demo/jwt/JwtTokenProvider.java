@@ -22,9 +22,9 @@ import java.util.List;
 public class JwtTokenProvider {
     private String secretKey = "webfirewood";
 
-    // 토큰 유효시간 30분
-    private long accesstokenValidTime = 30 * 60 * 1000L;
-    //private long refreshtokenValidTime = 24 * 60 * 60 * 1000L;
+    // access token 유효시간 30분, refresh token 유효시간 12시간
+    public long accesstokenValidTime = 30 * 60 * 1000L;
+    public long refreshtokenValidTime = 60 * 12 * 60 * 1000L;
 
     private final UserDetailsService userDetailsService;
 
@@ -38,11 +38,25 @@ public class JwtTokenProvider {
     public String createToken(String userPk, List<String> roles) {
         Claims claims = Jwts.claims().setSubject(userPk); // JWT payload 에 저장되는 정보단위
         claims.put("roles", roles); // 정보는 key / value 쌍으로 저장된다.
+        //System.out.println("create token");
         Date now = new Date();
         return Jwts.builder()
                 .setClaims(claims) // 정보 저장
                 .setIssuedAt(now) // 토큰 발행 시간 정보
                 .setExpiration(new Date(now.getTime() + accesstokenValidTime)) // set Expire Time
+                .signWith(SignatureAlgorithm.HS256, secretKey)  // 사용할 암호화 알고리즘과
+                // signature 에 들어갈 secret값 세팅
+                .compact();
+    }
+
+    public String createRefreshToken(String userPk, List<String> roles) {
+        Claims claims = Jwts.claims().setSubject(userPk); // JWT payload 에 저장되는 정보단위
+        claims.put("roles", roles); // 정보는 key / value 쌍으로 저장된다.
+        Date now = new Date();
+        return Jwts.builder()
+                .setClaims(claims) // 정보 저장
+                .setIssuedAt(now) // 토큰 발행 시간 정보
+                .setExpiration(new Date(now.getTime() + refreshtokenValidTime)) // set Expire Time
                 .signWith(SignatureAlgorithm.HS256, secretKey)  // 사용할 암호화 알고리즘과
                 // signature 에 들어갈 secret값 세팅
                 .compact();
