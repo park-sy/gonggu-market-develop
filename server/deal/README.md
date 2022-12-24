@@ -5,7 +5,7 @@
 |------|---|
 |[게시글 조회](#게시글-조회)   |[구매 참여](#구매-참여)     |
 |[게시글 상세 보기](#게시글-상세-보기)   |[구매 수정](#구매-수정)     |
-|[게시글 작성](#게시글-작성) |[구매 취소](##구매-취소) |
+|[게시글 작성](#게시글-작성) |[구매 취소](#구매-취소) |
 |[게시글 수정](#게시글-수정)  |[참여 내역 조회](#참여-내역-조회)    |
 |[게시글 삭제](#게시글-삭제) |[판매 내역 조회](#판매-내역-조회)   |
 
@@ -109,7 +109,7 @@ PATCH /deal/{dealId}
 |content|String|변경 내용|Y||
 |images|Array|변경 이미지|Y||
 |keywords|Array|변경 키워드|Y||
-### 응답(#_응답_4)  
+### 응답
 HTTP/1.1 200 OK
 
 ---
@@ -165,12 +165,12 @@ DELETE /deal/{dealId}/enrollment
 |**Parameter**|**Description**|**Optional**|**Constraint**|
 | :- | :- | :- | :- |
 |dealId|게시글 ID|||
-### 응답(#_응답_8)
+### 응답
 HTTP/1.1 200 OK
 
 ---
 ## 참여 내역 조회
-### 요청(#_요청_9)
+### 요청
 GET /deal/enrollment/{userId} 
 
 |**Parameter**|**Description**|**Optional**|**Constraint**|
@@ -199,7 +199,7 @@ HTTP/1.1 200 OK
 |[].hostName|String|판매자 이름|
 ---
 ## 판매 내역 조회
-### 요청(#_요청_10)
+### 요청
 GET /deal/sale/{userId}
 |**Parameter**|**Description**|**Optional**|**Constraint**|
 | :- | :- | :- | :- |
