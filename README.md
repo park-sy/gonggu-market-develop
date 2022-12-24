@@ -52,6 +52,12 @@
 
 ### 서비스 실행
 
+#### PWA
+![KakaoTalk_20221225_022555934](https://user-images.githubusercontent.com/53611554/209446052-7dffd0c9-e55b-4e12-99db-d15cbb98a9ee.gif)
+![KakaoTalk_20221225_022619059](https://user-images.githubusercontent.com/53611554/209446055-243f078f-11ad-45ba-bea6-2117e9a340cf.gif)
+![KakaoTalk_20221225_022636060_01](https://user-images.githubusercontent.com/53611554/209446059-82bd7a02-8e1e-487b-9ad7-735c2ae329e9.gif)
+
+
 #### 로그인
 ![ezgif com-gif-maker](https://user-images.githubusercontent.com/53611554/209445242-dd33b67a-2aa6-4b08-a094-4f338e9eec1b.gif)
 
@@ -64,6 +70,8 @@
 #### 공구 참여
 ![ezgif com-gif-maker (4)](https://user-images.githubusercontent.com/53611554/209445321-39764a96-de1e-4250-bfd9-20a27a89e4d9.gif)
 
+#### 알림
+![KakaoTalk_20221225_022636060](https://user-images.githubusercontent.com/53611554/209446068-c9a6c52e-a3a6-4ee7-9e6d-1631355c3c7f.gif)
 
 #### 채팅
 ![KakaoTalk_20221225_015726667_07](https://user-images.githubusercontent.com/53611554/209445286-d3b08aff-58e0-4aa7-a7fe-e0d0d8fdd8ff.gif)
