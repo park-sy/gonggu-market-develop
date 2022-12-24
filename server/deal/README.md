@@ -13,7 +13,7 @@
 
 ## 게시글 조회
 ### 요청
-GET /deal
+GET /deal?title=제목&category=카테고리&
 |**Parameter**|**Description**|**Optional**|**Constraint**|
 | :- | :- | :- | :- |
 |title|게시글 제목|Y|입력된 단어가 포함된 모든 게시글. '제목’입력했습니다.|
