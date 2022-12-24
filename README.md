@@ -52,7 +52,29 @@
 
 ### 서비스 실행
 
-- 내용 추가 예정
+#### 로그인
+![ezgif com-gif-maker](https://user-images.githubusercontent.com/53611554/209445242-dd33b67a-2aa6-4b08-a094-4f338e9eec1b.gif)
+
+#### 게시글 생성
+![ezgif com-gif-maker (1)](https://user-images.githubusercontent.com/53611554/209445247-9eabaa4a-8b36-42ac-999c-0cb554b2d265.gif)
+
+#### 이미지 업로드
+![ezgif com-gif-maker (2)](https://user-images.githubusercontent.com/53611554/209445250-b5138e13-8c96-40ea-be46-d613c9991eef.gif)
+
+#### 공구 참여
+![ezgif com-gif-maker (4)](https://user-images.githubusercontent.com/53611554/209445321-39764a96-de1e-4250-bfd9-20a27a89e4d9.gif)
+
+
+#### 채팅
+![KakaoTalk_20221225_015726667_07](https://user-images.githubusercontent.com/53611554/209445286-d3b08aff-58e0-4aa7-a7fe-e0d0d8fdd8ff.gif)
+
+#### 송금
+![ezgif com-gif-maker (3)](https://user-images.githubusercontent.com/53611554/209445296-4995c61a-f84e-42e8-9751-3802f01aebdf.gif)
+
+#### 송금 내역
+![KakaoTalk_20221225_015726667_04](https://user-images.githubusercontent.com/53611554/209445359-d68843e9-cd16-4e9e-b0ac-c75131029ea4.gif)
+![KakaoTalk_20221225_015726667_05](https://user-images.githubusercontent.com/53611554/209445370-fc041b01-7399-4b2f-87b7-3062e53baa4b.gif)
+
 
 #### PWA 검증
 
