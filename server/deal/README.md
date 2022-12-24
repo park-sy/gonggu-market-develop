@@ -3,16 +3,16 @@
 ## Table of Contents  
 |게시글 관련|구매 관련|
 |------|---|
-|[게시글 조회](#게시글-조회)   |[구매 참여](#_구매_참여)     |
-|[게시글 조회](#_게시글_조회)   |[구매 수정](#[구매_수정])     |
-|[게시글 상세 보기](#[게시글-상세-보기]) |[구매 취소](##[구매_취소]) |
-|[게시글 수정](##[게시글-수정])  |[참여 내역 조회](#참여_내역_조회)    |
-|[게시글 삭제](##게시글-삭제) |[판매 내역 조회](##판매_내역_조회)   |
+|[게시글 조회](#게시글-조회)   |[구매 참여](#구매-참여)     |
+|[게시글 상세 보기](#게시글-상세-보기)   |[구매 수정](#구매-수정)     |
+|[게시글 작성](#게시글-작성) |[구매 취소](##구매-취소) |
+|[게시글 수정](#게시글-수정)  |[참여 내역 조회](#참여-내역-조회)    |
+|[게시글 삭제](#게시글-삭제) |[판매 내역 조회](#판매-내역-조회)   |
 
 ---
 
-## [게시글 조회]
-### [요청]
+## 게시글 조회
+### 요청
 GET /deal
 |**Parameter**|**Description**|**Optional**|**Constraint**|
 | :- | :- | :- | :- |
@@ -21,7 +21,7 @@ GET /deal
 |minPrice|최소 가격|Y||
 |maxPrice|최대 가격|Y||
 |order|게시글 정렬|Y|미입력시 최신순, 1 = 인기순, 2 = 적게 남은 수량 순|
-### [응답]
+### 응답
 HTTP/1.1 200 OK
   
 |**Path**|**Type**|**Description**|
@@ -39,14 +39,14 @@ HTTP/1.1 200 OK
 |[].deleted|Boolean|삭제여부|
 |[].expired|Boolean|만료여부|
 ---
-## [게시글 상세 보기](#_게시글_상세_보기)
-### [요청](#_요청_2)
+## 게시글 상세 보기
+### 요청
 GET /deal/{dealId} 
 
 |**Parameter**|**Description**|**Optional**|**Constraint**|
 | :- | :- | :- | :- |
 |dealId|게시글 ID|||
-### [응답](#_응답_2)
+### 응답
 HTTP/1.1 200 OK
 |**Path**|**Type**|**Description**|
 | :- | :- | :- |
@@ -73,8 +73,8 @@ HTTP/1.1 200 OK
 |keywords|Array|게시글 키워드|
 |expiredDate|String|게시글 만료일|
 ---
-## [게시글 작성](#_게시글_작성)
-### [요청](#_요청_3)
+## 게시글 작성
+### 요청
 POST /deal 
 
 |**Path**|**Type**|**Description**|**Optional**|**Constraint**|
@@ -91,12 +91,12 @@ POST /deal
 |keywords|Array|키워드|||
 |images|Array|이미지|||
 |expireTime|String|게시글 만료 시간|||
-### [응답](#_응답_3)
+### 응답(#_응답_3)
 HTTP/1.1 200 OK
 
 ---
-## [게시글 수정](#_게시글_수정)
-### [요청](#_요청_4)
+## 게시글 수정
+### 요청
 PATCH /deal/{dealId} 
 
 |**Parameter**|**Description**|**Optional**|**Constraint**|
@@ -109,25 +109,25 @@ PATCH /deal/{dealId}
 |content|String|변경 내용|Y||
 |images|Array|변경 이미지|Y||
 |keywords|Array|변경 키워드|Y||
-### [응답](#_응답_4)  
+### 응답(#_응답_4)  
 HTTP/1.1 200 OK
 
 ---
-## [게시글 삭제](#_게시글_삭제)
-### [요청](#_요청_5)
+## 게시글 삭제
+### 요청
 DELETE /deal/{dealId} 
 
 
 |**Parameter**|**Description**|**Optional**|**Constraint**|
 | :- | :- | :- | :- |
 |dealId|게시글 ID|||
-### [응답](#_응답_5)  
+### 응답
 
 HTTP/1.1 200 OK  
 
 ---
-## [구매 참여](#_구매_참여)
-### [요청](#_요청_6)
+## 구매 참여
+### 요청
 POST /deal/{dealId}/enrollment
 
 |**Parameter**|**Description**|**Optional**|**Constraint**|
@@ -138,12 +138,12 @@ POST /deal/{dealId}/enrollment
 |**Path**|**Type**|**Description**|**Optional**|**Constraint**|
 | :- | :- | :- | :- | :- |
 |quantity|Number|구매 수량|||
-### [응답](#_응답_6)  
+### 응답
 HTTP/1.1 200 OK  
 
 ---
-## [구매 수정](#_구매_수정)
-### [요청](#_요청_7)
+## 구매 수정
+### 요청
 PATCH /deal/{dealId}/enrollment
 
 |**Parameter**|**Description**|**Optional**|**Constraint**|
@@ -154,29 +154,29 @@ PATCH /deal/{dealId}/enrollment
 |**Path**|**Type**|**Description**|**Optional**|**Constraint**|
 | :- | :- | :- | :- | :- |
 |quantity|Number|구매 변경 수량|||
-### [응답](#_응답_7)
+### 응답
 HTTP/1.1 200 OK
 
 ---
-## [구매 취소](#_구매_취소)
-### [요청](#_요청_8)
+## 구매 취소
+### 요청
 DELETE /deal/{dealId}/enrollment 
 
 |**Parameter**|**Description**|**Optional**|**Constraint**|
 | :- | :- | :- | :- |
 |dealId|게시글 ID|||
-### [응답](#_응답_8)
+### 응답(#_응답_8)
 HTTP/1.1 200 OK
 
 ---
-## [참여 내역 조회](#_참여_내역_조회)
-### [요청](#_요청_9)
+## 참여 내역 조회
+### 요청(#_요청_9)
 GET /deal/enrollment/{userId} 
 
 |**Parameter**|**Description**|**Optional**|**Constraint**|
 | :- | :- | :- | :- |
 |userId|유저 ID|||
-### [응답](#_응답_9)
+### 응답
 HTTP/1.1 200 OK
 
 |**Path**|**Type**|**Description**|
@@ -198,13 +198,13 @@ HTTP/1.1 200 OK
 |[].expiredDate|String|만료 일자|
 |[].hostName|String|판매자 이름|
 ---
-## [판매 내역 조회](#_판매_내역_조회)
-### [요청](#_요청_10)
+## 판매 내역 조회
+### 요청(#_요청_10)
 GET /deal/sale/{userId}
 |**Parameter**|**Description**|**Optional**|**Constraint**|
 | :- | :- | :- | :- |
 |userId|유저 ID|||
-### [응답](#_응답_10)
+### 응답
 HTTP/1.1 200 OK
 
 |**Path**|**Type**|**Description**|
