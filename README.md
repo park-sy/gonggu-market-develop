@@ -46,7 +46,7 @@
 
 ### ERD
 
-![image](https://user-images.githubusercontent.com/53611554/208304882-7a6db0a6-ba7b-4a96-9fe1-61366304ca7b.png)
+![image](https://user-images.githubusercontent.com/53611554/209473276-621894c4-1285-4b81-954d-18d9ce78084f.png)
 
 ## 프로젝트 결과
 
