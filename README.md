@@ -98,4 +98,11 @@
 - 무중단 배포와, 확장성을 검증하기 위해 부하 테스트 진행
 - 테스트 시작과 동시에 서버 업데이트를 진행하였고 02:42에 서버 업데이트가 완료되며 무중단 배포 성공
 - 이후 scale-out 성공하여 서버 3대까지 증가
-- 독립성 내용 추가 예정
+- 독립성 테스트(deal 서버 내린 후 진행)
+![ezgif com-gif-maker (5)](https://user-images.githubusercontent.com/53611554/209574251-a4f8ad8f-6fcd-49ad-a051-6fd7473bb037.gif)
+- 채팅 서버 정상 동작 확인
+![ezgif com-gif-maker (6)](https://user-images.githubusercontent.com/53611554/209574271-09ae90ed-4deb-46e6-ba3b-d73252136ccc.gif)
+- 페이 서버 정상 동작 확인
+
+
+
