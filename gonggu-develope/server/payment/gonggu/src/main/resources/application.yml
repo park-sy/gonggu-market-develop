@@ -1,0 +1,65 @@
+spring:
+  profiles:
+    active: local
+---
+spring:
+  profiles:
+    - docker
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://db-mysql:3306/gonggupay?serverTimezone=Asia/Seoul
+    username: user
+    password: user
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    open-in-view: false
+    show-sql: true
+    hibernate:
+      format_sql: true
+      ddl-auto: update  #update / create
+  jwt:
+    secret: govlepel@$&
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+      location: c:\\temp\\upload
+server:
+  port: 8080
+
+---
+spring:
+  profiles:
+    - local
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/gonggupay?serverTimezone=Asia/Seoul
+    username: root
+    password: 1234
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    open-in-view: false
+    show-sql: true
+    properties:
+      hibernate:
+        default_batch_fetch_size: 100
+    hibernate:
+      format_sql: true
+      ddl-auto: update  #
+  jwt:
+    secret: govlepel@$&
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+      location: c:\\temp\\upload
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: gonggu
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
