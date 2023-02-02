@@ -1,4 +1,4 @@
-package gonggu.user;
+package com.gonggu.user;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
