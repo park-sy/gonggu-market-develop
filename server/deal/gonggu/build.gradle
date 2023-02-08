@@ -58,6 +58,8 @@ dependencies {
 	implementation "com.amazonaws:aws-java-sdk-s3:1.12.281"
 	//카프카
 	implementation 'org.springframework.kafka:spring-kafka'
+	implementation 'org.springframework.boot:spring-boot-starter-batch'
+	testImplementation 'org.springframework.batch:spring-batch-test'
 }
 
 tasks.named('test') {
