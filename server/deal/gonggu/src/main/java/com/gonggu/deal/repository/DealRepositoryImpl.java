@@ -1,15 +1,19 @@
 package com.gonggu.deal.repository;
 
+import com.gonggu.deal.batch.DealForExpires;
 import com.gonggu.deal.domain.Deal;
 import com.gonggu.deal.domain.User;
 import com.gonggu.deal.request.DealSearch;
 import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
+
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static com.gonggu.deal.domain.QDeal.deal;
@@ -92,4 +96,16 @@ public class DealRepositoryImpl implements DealRepositoryCustom {
                 .fetch();
     }
 
+    @Override
+    public List<DealForExpires> getDealIdByDate(LocalDate targetDate){
+        return jpaQueryFactory
+                .select(Projections.constructor
+                        (DealForExpires.class
+                        ,deal.id
+                        ,deal.title))
+                .from(deal)
+                .where(deal.expireTime.between(targetDate.atTime(0,0,0), targetDate.atTime(23,59,59))
+                ,deal.deletion.eq(false))
+                .fetch();
+    }
 }
