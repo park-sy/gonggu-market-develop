@@ -2,6 +2,7 @@ package com.gonggu.deal.batch;
 
 import com.gonggu.deal.domain.Deal;
 import com.gonggu.deal.repository.DealRepository;
+import com.gonggu.deal.service.KafkaProducer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
@@ -28,6 +29,7 @@ public class SimpleJobConfiguration {
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
     private final EntityManagerFactory entityManagerFactory;
+    private final KafkaProducer kafkaProducer;
 
     private int chunkSize;
     @Value("${chunkSize:100}")
@@ -47,7 +49,7 @@ public class SimpleJobConfiguration {
         return stepBuilderFactory.get("temp")
                 .<Deal, Deal>chunk(chunkSize)
                 .reader(jpaCursorItemReader(LocalDate.now()))
-                .writer(jpaCursorItemWriter())
+                .writer(jpaCursorItemWriter(6))
                 .build();
     }
 
@@ -63,11 +65,11 @@ public class SimpleJobConfiguration {
                 .build();
     }
 
-    private ItemWriter<Deal> jpaCursorItemWriter() {
+    private ItemWriter<Deal> jpaCursorItemWriter(int hour) {
         return list -> {
             for (Deal deal: list) {
-                DealForExpires expires = new DealForExpires(deal.getId(), deal.getTitle());
-                System.out.println(expires);
+                kafkaProducer.sendDealMemberAndTimeToPush("closeDeal",deal,hour);
+                System.out.println(deal);
             }
         };
     }
