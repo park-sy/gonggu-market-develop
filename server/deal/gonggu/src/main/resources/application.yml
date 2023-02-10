@@ -76,6 +76,31 @@ spring:
         classpath: quartz-create.sql
     scheduler-name: myScheduler
     overwrite-existing-jobs: true
-
+    properties:
+      org:
+        quartz:
+          scheduler:
+            instanceId: AUTO
+          jobStore:
+            class: org.quartz.impl.jdbcjobstore.JobStoreTX
+            driverDelegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate
+            useProperties: true
+            tablePrefix: QRTZ_
+            misfireThreshold: 60000
+            clusterCheckinInterval: 1000
+            isClustered: true
+            dataSource : quartzDataSource
+          dataSource:
+            quartzDataSource:
+              provider: hikaricp
+              driver: com.mysql.cj.jdbc.Driver
+              URL: jdbc:mysql://localhost:3306/gonggu?serverTimezone=Asia/Seoul
+              username: root
+              password: 1234
+          threadPool:
+            class: org.quartz.simpl.SimpleThreadPool
+            threadCount: 10
+            threadPriority: 5
+            threadsInheritContextClassLoaderOfInitializingThread: true
 server:
   port: 8080
