@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: aws
+    active: local
 
 ---
 # docker / mysql
@@ -33,6 +33,9 @@ server:
 spring:
   profiles:
     - local
+  batch:
+    job:
+      enabled: false
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/gonggu?serverTimezone=Asia/Seoul
@@ -46,7 +49,7 @@ spring:
       hibernate:
         default_batch_fetch_size: 100
     hibernate:
-      format_sql: true
+      format-sql: true
       ddl-auto: update  #
   jwt:
     secret: govlepel@$&
@@ -65,3 +68,14 @@ spring:
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
+  quartz:
+    job-store-type: jdbc
+    jdbc:
+      initialize-schema: always
+      schema:
+        classpath: quartz-create.sql
+    scheduler-name: myScheduler
+    overwrite-existing-jobs: true
+
+server:
+  port: 8080
