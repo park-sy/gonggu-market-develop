@@ -27,7 +27,7 @@ public class QuartzService {
             Map paramsMap = new HashMap<>();
             paramsMap.put("date", LocalDateTime.now().format(DateTimeFormatter.BASIC_ISO_DATE));
             //CronJob 등록
-            addCronJob(DealScheduler.class,"test","testing",paramsMap,"0/5 * * * * ?");
+            addCronJob(DealScheduler.class,"expirePush","produce message for imminent deal",paramsMap,"0 0 0,12,18,21,23 * * ?");
         }catch (Exception e){
             log.error("log : {}",e);
         }
