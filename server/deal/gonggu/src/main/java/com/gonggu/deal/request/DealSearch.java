@@ -17,7 +17,6 @@ public class DealSearch {
     private String category;
     private Integer minPrice;
     private Integer maxPrice;
-
     private String searchKey;
     private Integer order;
     //제목검색만

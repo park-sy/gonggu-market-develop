@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface DealRepositoryCustom {
 
-    List<Deal> getList(DealSearch dealSearch);
+    List<Deal> getList(DealSearch dealSearch, User user);
     void updateView(Long id);
     void deleteDeal(Long id);
     List<Deal> getJoinList(User user);

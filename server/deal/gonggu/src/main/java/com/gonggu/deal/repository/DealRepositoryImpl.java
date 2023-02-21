@@ -7,10 +7,12 @@ import com.gonggu.deal.request.DealSearch;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
+import org.locationtech.jts.geom.Point;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
@@ -25,14 +27,17 @@ public class DealRepositoryImpl implements DealRepositoryCustom {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public List<Deal> getList(DealSearch dealSearch){
+    public List<Deal> getList(DealSearch dealSearch, User user){
+        Expressions.stringTemplate("ST_DISTANCE_SPHERE({0},{1}) <= {3}", deal.point);
+
         return jpaQueryFactory.selectFrom(deal)
                 .where(
                         goePrice(dealSearch.getMinPrice()),
                         loePrice(dealSearch.getMaxPrice()),
                         containsTitle(dealSearch.getTitle()),
                         //containsContent(dealSearch.getSearchKey()),
-                        eqCategory(dealSearch.getCategory())
+                        eqCategory(dealSearch.getCategory()),
+                        loeDistance(user)
                 )
                 .limit(dealSearch.getSize())
                 .offset(dealSearch.getOffset())
@@ -67,6 +72,11 @@ public class DealRepositoryImpl implements DealRepositoryCustom {
         return deal.category.name.eq(category);
     }
 
+    private BooleanExpression loeDistance(User user){
+        if(user.getDistance() == null) return null;
+        return Expressions.stringTemplate("ST_DISTANCE_SPHERE({0},{1})",user.getPoint(), deal.point)
+                .loe(String.valueOf(user.getDistance()));
+    }
     @Override
     @Transactional
     public void updateView(Long id){

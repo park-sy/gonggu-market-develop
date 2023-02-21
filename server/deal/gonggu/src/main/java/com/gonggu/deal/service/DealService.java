@@ -37,9 +37,9 @@ public class DealService {
 
 
 
-    public List<DealResponse> getList(DealSearch dealSearch) {
+    public List<DealResponse> getList(DealSearch dealSearch, User user) {
 
-        return dealRepository.getList(dealSearch).stream()
+        return dealRepository.getList(dealSearch, user).stream()
                 .map(DealResponse::new).collect(Collectors.toList());
     }
     public DealDetailResponse getDealDetail(Long id){
@@ -121,6 +121,9 @@ public class DealService {
         }
         if(dealEdit.getImages()!=null){
             List<DealImage> deleteImage = dealImageRepository.findByDeal(deal);
+            for(DealImage dealImage : deleteImage){
+                if(!dealEdit.getImages().contains(dealImage.getFileName())) dealImageRepository.delete(dealImage);
+            }
             dealImageRepository.deleteAll(deleteImage);
             List<DealImage> dealImages = dealEdit.getImages().stream()
                     .map(path-> new DealImage(deal,path)).collect(Collectors.toList());

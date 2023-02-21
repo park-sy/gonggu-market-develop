@@ -22,8 +22,8 @@ public class DealController {
     private final KafkaProducer kafkaProducer;
     //게시글 불러오기
     @GetMapping("/deal")
-    public List<DealResponse> getDeal(@ModelAttribute DealSearch dealSearch){
-        return dealService.getList(dealSearch);
+    public List<DealResponse> getDeal(@AuthenticationPrincipal User user,@ModelAttribute DealSearch dealSearch){
+        return dealService.getList(dealSearch, user);
     }
     //게시글 상세 보기
     @GetMapping("/deal/{dealId}")
