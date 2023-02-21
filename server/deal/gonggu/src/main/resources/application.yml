@@ -42,14 +42,14 @@ spring:
     username: root
     password: 1234
   jpa:
-    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    database-platform: org.hibernate.spatial.dialect.mysql.MySQL56InnoDBSpatialDialect
     open-in-view: false
-    show-sql: true
+    show_sql: true
     properties:
       hibernate:
         default_batch_fetch_size: 100
     hibernate:
-      format-sql: true
+      format_sql: true
       ddl-auto: update  #
   jwt:
     secret: govlepel@$&
