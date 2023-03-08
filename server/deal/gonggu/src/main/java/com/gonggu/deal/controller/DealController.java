@@ -51,8 +51,11 @@ public class DealController {
     @PostMapping("/deal/{dealId}/enrollment")
     public void requestJoin(@PathVariable Long dealId, @AuthenticationPrincipal User user,
                             @RequestBody DealJoin join){
-        if(dealService.createJoin(dealId, join, user)) kafkaProducer.sendDealMemberToPush("dealComplete",dealId);
-        else kafkaProducer.sendDealMemberToPush("dealJoin",dealId);
+        if(dealService.createJoin(dealId, join, user)) {
+            kafkaProducer.sendDealMemberToPush("dealComplete",dealId);
+        } else {
+            kafkaProducer.sendDealMemberToPush("dealJoin",dealId);
+        }
         kafkaProducer.sendDealAndUserToChat("chatJoin",dealId,user);
     }
 
@@ -60,7 +63,9 @@ public class DealController {
     @PatchMapping("/deal/{dealId}/enrollment")
     public void editJoin(@PathVariable Long dealId, @AuthenticationPrincipal User user,
                          @RequestBody DealJoin join){
-        if(dealService.editJoin(dealId,join,user)) kafkaProducer.sendDealMemberToPush("dealComplete",dealId);;
+        if(dealService.editJoin(dealId,join,user)) {
+            kafkaProducer.sendDealMemberToPush("dealComplete",dealId);
+        }
     }
     //구매 철회
     @DeleteMapping("/deal/{dealId}/enrollment")
