@@ -56,13 +56,12 @@ public class DealService {
     }
     public DealDetailResponse getDealDetail(Long id){
         Deal deal = dealRepository.findById(id).orElseThrow(DealNotFound::new);
-        DealDetailResponse dealDetailResponse = new DealDetailResponse(deal);
-        return dealDetailResponse;
+        return new DealDetailResponse(deal);
     }
 
     public void createDeal(DealCreate dealCreate, User user){
         Category category = categoryRepository.findById(dealCreate.getCategoryId()).orElseThrow(CategoryNotFound::new);
-        Deal deal = Deal.builder()
+        Deal deal = dealRepository.save(Deal.builder()
                 .title(dealCreate.getTitle())
                 .content(dealCreate.getContent())
                 .price(dealCreate.getPrice())
@@ -78,16 +77,14 @@ public class DealService {
                 .totalCount(dealCreate.getTotalCount())
                 .category(category)
                 .point(changeToJSON(findPointByKakao(dealCreate.getAddress())))
-                .build();
-        dealRepository.save(deal);
+                .build());
 
-        DealMember dealMember = DealMember.builder()
+        dealMemberRepository.save(DealMember.builder()
                 .deal(deal)
                 .user(user)
                 .host(true)
                 .quantity(dealCreate.getNowCount())
-                .build();
-        dealMemberRepository.save(dealMember);
+                .build());
 
         if(dealCreate.getKeywords() != null){
             for(String keyword : dealCreate.getKeywords()){
@@ -157,12 +154,11 @@ public class DealService {
         if(deal.getNowCount() + join.getQuantity() > deal.getTotalCount()) throw new DealJoinFailed("구매 참여에 실패하였습니다.");
 
         deal.editCount(join.getQuantity() + deal.getNowCount());
-        DealMember dealMember = DealMember.builder()
+        dealMemberRepository.save(DealMember.builder()
                 .deal(deal)
                 .user(user)
                 .quantity(join.getQuantity())
-                .build();
-        dealMemberRepository.save(dealMember);
+                .build());
         if(deal.getNowCount() == deal.getTotalCount()) return true;
         else return false;
     }
