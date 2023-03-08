@@ -49,7 +49,6 @@ public class DealService {
     @Value(("${geo.key}"))
     private String apiKey;
 
-
     public List<DealResponse> getList(DealSearch dealSearch, User user) {
         return dealRepository.getList(dealSearch, user).stream()
                 .map(DealResponse::new).collect(Collectors.toList());
@@ -87,30 +86,20 @@ public class DealService {
                 .build());
 
         if(dealCreate.getKeywords() != null){
-            for(String keyword : dealCreate.getKeywords()){
-                Keyword findKey = keywordRepository.findByWord(keyword);
-                if (findKey == null) {
-                    findKey = Keyword.builder().word(keyword).build();
-                    keywordRepository.save(findKey);
-                }
-                DealKeyword bk = DealKeyword.builder().keyword(findKey).deal(deal).build();
-                dealKeywordRepository.save(bk);
-            }
+            saveKeywords(deal, dealCreate);
         }
         if(dealCreate.getImages() != null){
-            List<DealImage> dealImages = dealCreate.getImages().stream()
-                    .map(path-> new DealImage(deal,path)).collect(Collectors.toList());
-            dealImages.get(0).setThumbnail(true);
-            dealImageRepository.saveAll(dealImages);
+            saveImages(deal, dealCreate);
         }
     }
+
     public void deleteDeal(Long id){
         Deal deal = dealRepository.findById(id).orElseThrow(DealNotFound::new);
         DealEditor.DealEditorBuilder editorBuilder = deal.toEditor();
         DealEditor dealEditor = editorBuilder.deletion(true).build();
         deal.edit(dealEditor);
     }
-    public DealDetailResponse editDeal(Long id, DealEdit dealEdit){
+    public DealDetailResponse editDeal(Long id, DealCreate dealEdit){
         Deal deal = dealRepository.findById(id).orElseThrow(DealNotFound::new);
         DealEditor.DealEditorBuilder editorBuilder = deal.toEditor();
         DealEditor dealEditor = editorBuilder.content(dealEdit.getContent()).build();
@@ -119,28 +108,12 @@ public class DealService {
         if (dealEdit.getKeywords()!=null){
             List<DealKeyword> deleteKeyword = dealKeywordRepository.findByDeal(deal);
             dealKeywordRepository.deleteAll(deleteKeyword);
-            for(String keyword : dealEdit.getKeywords()){
-                Keyword findKey = keywordRepository.findByWord(keyword);
-                if (findKey == null) {
-                    findKey = Keyword.builder().word(keyword).build();
-                    keywordRepository.save(findKey);
-                }
-                DealKeyword bk = DealKeyword.builder().keyword(findKey).deal(deal).build();
-                dealKeywordRepository.save(bk);
-            }
+            saveKeywords(deal, dealEdit);
         }
         if(dealEdit.getImages()!=null){
             List<DealImage> deleteImage = dealImageRepository.findByDeal(deal);
-            for(DealImage dealImage : deleteImage){
-                if(!dealEdit.getImages().contains(dealImage.getFileName())){
-                    dealImageRepository.delete(dealImage);
-                }
-            }
             dealImageRepository.deleteAll(deleteImage);
-            List<DealImage> dealImages = dealEdit.getImages().stream()
-                    .map(path-> new DealImage(deal,path)).collect(Collectors.toList());
-            dealImages.get(0).setThumbnail(true);
-            dealImageRepository.saveAll(dealImages);
+            saveImages(deal, dealEdit);
         }
         return new DealDetailResponse(deal);
     }
@@ -242,7 +215,6 @@ public class DealService {
         return jsonString;
     }
     public Point changeToJSON(String jsonString) {
-
         JsonObject parseTree = null;
         try {
             parseTree = (JsonObject) JsonParser.parseString(jsonString);
@@ -258,5 +230,21 @@ public class DealService {
             throw new RuntimeException(e);
         }
     }
-
+    public void saveKeywords(Deal deal, DealCreate dealCreate){
+        for(String keyword : dealCreate.getKeywords()){
+            Keyword findKey = keywordRepository.findByWord(keyword);
+            if (findKey == null) {
+                findKey = Keyword.builder().word(keyword).build();
+                keywordRepository.save(findKey);
+            }
+            DealKeyword bk = DealKeyword.builder().keyword(findKey).deal(deal).build();
+            dealKeywordRepository.save(bk);
+        }
+    }
+    public void saveImages(Deal deal, DealCreate dealCreate){
+        List<DealImage> dealImages = dealCreate.getImages().stream()
+                .map(path-> new DealImage(deal,path)).collect(Collectors.toList());
+        dealImages.get(0).setThumbnail(true);
+        dealImageRepository.saveAll(dealImages);
+    }
 }

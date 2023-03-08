@@ -38,7 +38,7 @@ public class DealController {
     }
    //게시글 수정
     @PatchMapping("/deal/{dealId}")
-    public void editDeal(@PathVariable Long dealId, @RequestBody DealEdit dealEdit){
+    public void editDeal(@PathVariable Long dealId, @RequestBody DealCreate dealEdit){
         dealService.editDeal(dealId,dealEdit);
     }
     //게시글 삭제
