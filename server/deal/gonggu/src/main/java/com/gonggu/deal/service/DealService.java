@@ -48,11 +48,12 @@ public class DealService {
     private String apiUrl;
     @Value(("${geo.key}"))
     private String apiKey;
-
+    @Transactional(readOnly = true)
     public List<DealResponse> getList(DealSearch dealSearch, User user) {
         return dealRepository.getList(dealSearch, user).stream()
                 .map(DealResponse::new).collect(Collectors.toList());
     }
+    @Transactional(readOnly = true)
     public DealDetailResponse getDealDetail(Long id){
         updateView(id);
         return new DealDetailResponse(dealRepository.findById(id).orElseThrow(DealNotFound::new));
@@ -167,19 +168,19 @@ public class DealService {
         deal.editCount(deal.getNowCount()-dealMember.getQuantity());
         dealMemberRepository.delete(dealMember);
     }
-
+    @Transactional(readOnly = true)
     public List<DealMemberResponse> getJoin(Long dealId){
         Deal deal = dealRepository.findById(dealId).orElseThrow(DealNotFound::new);
        return dealMemberRepository.findByDeal(deal).stream()
                .map(DealMemberResponse::new).collect(Collectors.toList());
     }
-
+    @Transactional(readOnly = true)
     public List<DealResponse> getSellDeal(String userId) {
         User user = userRepository.findByNickname(userId).orElseThrow(UserNotFound::new);
         return dealMemberRepository.getByUser(user,true).stream()
                 .map(o-> new DealResponse(o.getDeal(), o.getQuantity())).collect(Collectors.toList());
     }
-
+    @Transactional(readOnly = true)
     public List<DealResponse> getJoinDeal(String userId){
         User user = userRepository.findByNickname(userId).orElseThrow(UserNotFound::new);
         return dealMemberRepository.getByUser(user,false).stream()

@@ -98,7 +98,6 @@ public class DealRepositoryImpl implements DealRepositoryCustom {
                 .loe(String.valueOf(user.getDistance()));
     }
     @Override
-    @Transactional
     public void updateView(Long id){
         jpaQueryFactory.update(deal)
                 .set(deal.view, deal.view.add(1))
@@ -109,7 +108,7 @@ public class DealRepositoryImpl implements DealRepositoryCustom {
     @Override
     public void deleteDeal(Long id){
         jpaQueryFactory.update(deal)
-                .set(deal.deletion, deal.deletion)
+                .set(deal.deletion, false)
                 .where(deal.id.eq(id))
                 .execute();
     }
@@ -134,8 +133,9 @@ public class DealRepositoryImpl implements DealRepositoryCustom {
                         ,deal.id
                         ,deal.title))
                 .from(deal)
-                .where(deal.expireTime.between(targetDate.atTime(0,0,0), targetDate.atTime(23,59,59))
-                ,deal.deletion.eq(false))
+                .where(
+                        deal.expireTime.between(targetDate.atTime(0,0,0), targetDate.atTime(23,59,59))
+                        ,deal.deletion.eq(false))
                 .fetch();
     }
 }
