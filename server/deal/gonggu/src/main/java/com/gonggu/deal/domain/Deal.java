@@ -3,6 +3,7 @@ package com.gonggu.deal.domain;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 import org.hibernate.annotations.BatchSize;
+import org.locationtech.jts.geom.Point;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -61,7 +62,7 @@ public class Deal {
     @ManyToOne(fetch = FetchType.EAGER ,cascade = CascadeType.MERGE)
     @JoinColumn(name = "category_id")
     private Category category;
-
+    private Point point;
     public DealEditor.DealEditorBuilder toEditor(){
         return DealEditor.builder().content(content).deletion(deletion);
     }

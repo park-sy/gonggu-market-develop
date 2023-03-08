@@ -10,13 +10,23 @@ import com.gonggu.deal.request.*;
 import com.gonggu.deal.response.DealDetailResponse;
 import com.gonggu.deal.response.DealMemberResponse;
 import com.gonggu.deal.response.DealResponse;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import lombok.RequiredArgsConstructor;
+
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.io.ParseException;
+import org.locationtech.jts.io.WKTReader;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
+import javax.net.ssl.HttpsURLConnection;
+import java.io.*;
+import java.net.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -34,12 +44,14 @@ public class DealService {
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
     private final KeywordRepository keywordRepository;
+    @Value("${geo.url}")
+    private String apiUrl;
+    @Value(("${geo.key}"))
+    private String apiKey;
 
 
-
-    public List<DealResponse> getList(DealSearch dealSearch) {
-
-        return dealRepository.getList(dealSearch).stream()
+    public List<DealResponse> getList(DealSearch dealSearch, User user) {
+        return dealRepository.getList(dealSearch, user).stream()
                 .map(DealResponse::new).collect(Collectors.toList());
     }
     public DealDetailResponse getDealDetail(Long id){
@@ -65,6 +77,7 @@ public class DealService {
                 .expireTime(dealCreate.getExpireTime().plusHours(9))
                 .totalCount(dealCreate.getTotalCount())
                 .category(category)
+                .point(changeToJSON(findPointByKakao(dealCreate.getAddress())))
                 .build();
         dealRepository.save(deal);
 
@@ -121,6 +134,9 @@ public class DealService {
         }
         if(dealEdit.getImages()!=null){
             List<DealImage> deleteImage = dealImageRepository.findByDeal(deal);
+            for(DealImage dealImage : deleteImage){
+                if(!dealEdit.getImages().contains(dealImage.getFileName())) dealImageRepository.delete(dealImage);
+            }
             dealImageRepository.deleteAll(deleteImage);
             List<DealImage> dealImages = dealEdit.getImages().stream()
                     .map(path-> new DealImage(deal,path)).collect(Collectors.toList());
@@ -187,4 +203,51 @@ public class DealService {
         return dealMemberRepository.getByUser(user,false).stream()
                 .map(o-> new DealResponse(o.getDeal(), o.getQuantity())).collect(Collectors.toList());
     }
+
+    public String findPointByKakao(String address){
+        String jsonString = null;
+        try {
+            address = URLEncoder.encode(address,"UTF-8");
+            String addr = apiUrl + address;
+            String authKey = "KakaoAK " + apiKey;
+
+            URL url = new URL(addr);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setRequestProperty("Authorization", authKey);
+            BufferedReader json = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
+            StringBuffer docJson = new StringBuffer();
+            String line;
+            while ((line = json.readLine()) != null) {
+                docJson.append(line);
+            }
+            jsonString = docJson.toString();
+            json.close();
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return jsonString;
+    }
+    public Point changeToJSON(String jsonString) {
+
+        JsonObject parseTree = null;
+        try {
+            parseTree = (JsonObject) JsonParser.parseString(jsonString);
+            JsonArray documents = parseTree.getAsJsonArray("documents");
+            JsonObject basicInfo = (JsonObject) documents.get(0);
+            Double lon = Double.parseDouble(String.valueOf(basicInfo.get("x")).replaceAll("\\\"",""));
+            Double lat = Double.parseDouble(String.valueOf(basicInfo.get("y")).replaceAll("\\\"",""));
+            System.out.println("lon: "+lon+", lat: "+lat);
+            String pointWKT = String.format("POINT(%s %s)", lon, lat);
+            Point point = (Point) new WKTReader().read(pointWKT);
+            return point;
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }

@@ -26,5 +26,6 @@ public class DealCreate {
     private LocalDateTime expireTime;
     private List<String> keywords;
     private List<String> images;
+    private String address;
 
 }
