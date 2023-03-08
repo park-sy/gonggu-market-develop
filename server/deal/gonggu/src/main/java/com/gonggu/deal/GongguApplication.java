@@ -10,7 +10,6 @@ import javax.annotation.PostConstruct;
 import java.util.TimeZone;
 @EnableAsync
 @EnableBatchProcessing
-//@EnableScheduling
 @SpringBootApplication
 public class GongguApplication {
 
