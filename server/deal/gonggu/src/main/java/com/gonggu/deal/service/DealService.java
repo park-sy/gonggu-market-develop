@@ -54,6 +54,11 @@ public class DealService {
                 .map(DealResponse::new).collect(Collectors.toList());
     }
     @Transactional(readOnly = true)
+    public List<DealResponse> getList2(DealSearch dealSearch, User user) {
+        return dealRepository.getList2(dealSearch, user);
+    }
+
+    @Transactional(readOnly = true)
     public DealDetailResponse getDealDetail(Long id){
         updateView(id);
         return new DealDetailResponse(dealRepository.findById(id).orElseThrow(DealNotFound::new));
