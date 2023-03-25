@@ -13,7 +13,7 @@ public interface DealRepositoryCustom {
 
     List<Deal> getList(DealSearch dealSearch, User user);
     List<DealResponse> getList2(DealSearch dealSearch, User user);
-
+    List<DealResponse> getList3(DealSearch dealSearch, User user);
     void updateView(Long id);
     void deleteDeal(Long id);
     List<Deal> getJoinList(User user);

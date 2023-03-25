@@ -74,7 +74,49 @@ public class DealRepositoryImpl implements DealRepositoryCustom {
         categoryBatch(dealResponseList);
         return dealResponseList;
     }
+    @Override
+    public List<DealResponse> getList3(DealSearch dealSearch, User user){
 
+        List<Long> dealIds = jpaQueryFactory
+                .select(deal.id)
+                .from(deal)
+                .where(
+                        goePrice(dealSearch.getMinPrice()),
+                        loePrice(dealSearch.getMaxPrice()),
+                        containsTitle(dealSearch.getTitle()),
+                        //containsContent(dealSearch.getSearchKey()),
+                        eqCategory(dealSearch.getCategory())
+                        //loeDistance(user)
+                )
+                .orderBy(sortOrder(dealSearch.getOrder()))
+                .limit(dealSearch.getSize())
+                .offset(dealSearch.getOffset())
+                .fetch();
+
+        List<DealResponse> dealResponseList =  jpaQueryFactory
+                .select(Projections.constructor(DealResponse.class
+                                , deal.id.as("id")
+                                , deal.title.as("title")
+                                , deal.unitPrice.as("unitPrice")
+                                , deal.quantity.as("quantity")
+                                , deal.nowCount.as("nowCount")
+                                , deal.totalCount.as("totalCount")
+                                , deal.deletion.as("deleted")
+                                , deal.expireTime.as("expiredDate")
+                                , deal.category.id.as("categoryId")
+                        )
+                )
+                .from(deal)
+                .where(
+                        deal.id.in(dealIds)
+                )
+                .limit(dealSearch.getSize())
+                .offset(dealSearch.getOffset())
+                .fetch();
+        dealImageBatch(dealResponseList);
+        categoryBatch(dealResponseList);
+        return dealResponseList;
+    }
     private void dealImageBatch(List<DealResponse> dealResponseList){
         List<Long> dealIds = dealResponseList.stream()
                 .map(DealResponse::getId).collect(Collectors.toList());

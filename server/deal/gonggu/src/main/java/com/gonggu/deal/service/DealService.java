@@ -57,7 +57,10 @@ public class DealService {
     public List<DealResponse> getList2(DealSearch dealSearch, User user) {
         return dealRepository.getList2(dealSearch, user);
     }
-
+    @Transactional(readOnly = true)
+    public List<DealResponse> getList3(DealSearch dealSearch, User user) {
+        return dealRepository.getList3(dealSearch, user);
+    }
     @Transactional(readOnly = true)
     public DealDetailResponse getDealDetail(Long id){
         updateView(id);
