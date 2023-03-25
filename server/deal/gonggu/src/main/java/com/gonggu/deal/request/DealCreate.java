@@ -1,16 +1,11 @@
 package com.gonggu.deal.request;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Setter
 @Getter
-@ToString
 @Builder
 public class DealCreate {
 
@@ -26,5 +21,6 @@ public class DealCreate {
     private LocalDateTime expireTime;
     private List<String> keywords;
     private List<String> images;
+    private String address;
 
 }

@@ -7,6 +7,9 @@ import com.gonggu.deal.request.DealCreate;
 import com.gonggu.deal.request.DealEdit;
 import com.gonggu.deal.request.DealJoin;
 import org.junit.jupiter.api.*;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.io.ParseException;
+import org.locationtech.jts.io.WKTReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,6 +21,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -48,19 +52,30 @@ class DealControllerTest {
     private CategoryRepository categoryRepository;
     @Autowired
     private DealImageRepository dealImageRepository;
+    @Autowired
+    private DealKeywordRepository dealKeywordRepository;
+    @Autowired
+    private KeywordRepository keywordRepository;
     private User testUser;
 
+
     @BeforeEach
-    void clean(){
+    void clean() throws Exception{
         dealMemberRepository.deleteAll();
         dealRepository.deleteAll();
         userRepository.deleteAll();
         categoryRepository.deleteAll();
-        dealImageRepository.deleteAll();
+        keywordRepository.deleteAll();
+        Double latitude = 37.51435;
+        Double longitude = 127.12215;
+        String pointWKT = String.format("POINT(%s %s)", longitude, latitude);
+        Point point = (Point) new WKTReader().read(pointWKT);
         testUser = User.builder()
                 .nickname("테스트유저")
                 .email("test@test.com")
                 .password("password")
+                .point(point)
+                .distance(50000)
                 .roles(Collections.singletonList("ROLE_USER")).build();
         userRepository.save(testUser);
     }
@@ -410,4 +425,124 @@ class DealControllerTest {
                 .andDo(print());
     }
 
+    @Test
+    @DisplayName("배치 글 생성")
+    void createForBatch(){
+        Category category = Category.builder()
+                .name("카테고리").build();
+        categoryRepository.save(category);
+
+        List<Deal> deals = IntStream.range(0,20)
+                .mapToObj(i -> Deal.builder()
+                        .title("제목" +i)
+                        .category(category)
+                        .content("내용")
+                        .price(1000L)
+                        .unitPrice(200L)
+                        .totalCount(i)
+                        .url("url/")
+                        .expireTime(LocalDateTime.now().plusDays((i > 9 ? 1:0)))
+                        .quantity(10)
+                        .unitQuantity(2)
+                        .nowCount(i/2)
+                        .build()).collect(Collectors.toList());
+        dealRepository.saveAll(deals);
+    }
+
+    @Test
+    @DisplayName("게시글 가져오기(거리 포함)")
+    @WithUserDetails(value = "테스트유저", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+    void getDealWithPoint() throws Exception {
+        List<Category> categorys = IntStream.range(0,16)
+                .mapToObj(i-> Category.builder()
+                        .name("카테고리"+i)
+                        .build()).collect(Collectors.toList());
+        categoryRepository.saveAll(categorys);
+        Random random = new Random();
+        Double longitude = 127.12215;
+        Double latitude = 37.51435;
+
+        Point point1 = (Point) new WKTReader().read(String.format("POINT(%s %s)", longitude, latitude));
+        Point point2 = (Point) new WKTReader().read(String.format("POINT(%s %s)", longitude+10, latitude));
+        Point[] points = {point1, point2};
+        List<Deal> deals = IntStream.range(0, 10000)
+                .mapToObj(i -> {
+                    try {
+                        int totalCount = (2 + random.nextInt(10));
+                        long price = 1000L *(1+ random.nextInt(100));
+                        return Deal.builder()
+                                .title("제목" + i)
+                                .category(categorys.get(random.nextInt(16)))
+                                .content("내용"+i)
+                                .price(price)
+                                .unitPrice(price/totalCount)
+                                .totalCount(totalCount)
+                                .url("url/")
+                                .expireTime(LocalDateTime.now().plusDays(random.nextInt(10)-5))
+                                .quantity(10)
+                                .unitQuantity(2)
+                                .nowCount(totalCount - random.nextInt(totalCount-1))
+                                .point((Point) new WKTReader().read(String.format("POINT(%s %s)", longitude+ random.nextDouble(), latitude+random.nextDouble())))
+                                .build();
+                    } catch (ParseException e) {
+                        throw new RuntimeException(e);
+                    }
+                }).collect(Collectors.toList());
+        dealRepository.saveAll(deals);
+
+        List<DealImage> images = IntStream.range(0, 10000)
+                .mapToObj(i -> DealImage.builder()
+                        .deal(deals.get(i))
+                        .build()).collect(Collectors.toList());
+        dealImageRepository.saveAll(images);
+
+        Keyword keyword = Keyword.builder().word("키워드").build();
+        keywordRepository.save(keyword);
+        List<DealKeyword> keywords = IntStream.range(0, 10000)
+                .mapToObj(i -> DealKeyword.builder()
+                        .deal(deals.get(i % 20))
+                        .keyword(keyword)
+                        .build()).collect(Collectors.toList());
+        dealKeywordRepository.saveAll(keywords);
+
+        mockMvc.perform(get("/deal")
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()",is(10)))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("게시글 작성(주소 포함)")
+    @WithMockUser
+    void postDealWithAddress() throws Exception{
+        Category category = Category.builder()
+                .name("카테고리").build();
+        categoryRepository.save(category);
+        Random random = new Random();
+        Double longitude = 127.12215;
+        Double latitude = 37.51435;
+
+        LocalDateTime date = LocalDateTime.now();
+        DealCreate dealCreate = DealCreate.builder()
+                .title("제목입니다.")
+                .content("내용입니다.")
+                .price(10000L)
+                .unitQuantity(5)
+                .unit("단위")
+                .nowCount(1)
+                .totalCount(5)
+                .categoryId(category.getId())
+                .url("url 주소")
+                .expireTime(date.plusDays(2))
+                .address("서울특별시 마포구 신수동")
+                .build();
+
+        mockMvc.perform(post("/deal")
+                        .content(objectMapper.writeValueAsString(dealCreate))
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(print());
+
+    }
 }

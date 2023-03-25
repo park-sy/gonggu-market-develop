@@ -45,7 +45,15 @@ public class KafkaProducer {
         pros.put(topicName, dealUserToChat);
         kafkaTemplate.send(topicName,dealUserToChat);
     }
-
+    @Async
+    public void sendDealMemberAndTimeToPush(String topicName, Deal deal, int hour){
+        List<String> members = dealMemberRepository.findByDeal(deal).stream()
+                .map(o->o.getUser().getNickname()).collect(Collectors.toList());
+        DealMemberToPush dealMemberToPush = new DealMemberToPush(deal.getId(),deal.getTitle(),members, hour);
+        HashMap<String, Object> pros = new HashMap<>();
+        pros.put(topicName, dealMemberToPush);
+        kafkaTemplate.send(topicName,dealMemberToPush);
+    }
 //    @KafkaListener(topics = "test", groupId = "testgroup")
 //    public void consumeTest(String message) throws IOException {
 //        System.out.println(String.format("Consumed message : %s", message));

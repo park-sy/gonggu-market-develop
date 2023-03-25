@@ -8,7 +8,6 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 
 @Getter
-@Setter
 public class DealSearch {
     private static final int MAX_SIZE = 2000;
     private Integer page;
@@ -17,7 +16,6 @@ public class DealSearch {
     private String category;
     private Integer minPrice;
     private Integer maxPrice;
-
     private String searchKey;
     private Integer order;
     //제목검색만

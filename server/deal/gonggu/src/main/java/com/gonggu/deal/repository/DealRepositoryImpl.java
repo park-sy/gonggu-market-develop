@@ -1,17 +1,26 @@
 package com.gonggu.deal.repository;
 
+import com.gonggu.deal.batch.DealForExpires;
+import com.gonggu.deal.domain.Category;
 import com.gonggu.deal.domain.Deal;
+import com.gonggu.deal.domain.QCategory;
 import com.gonggu.deal.domain.User;
 import com.gonggu.deal.request.DealSearch;
 import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
+
+import org.locationtech.jts.geom.Point;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 
+import static com.gonggu.deal.domain.QCategory.category;
 import static com.gonggu.deal.domain.QDeal.deal;
 import static com.gonggu.deal.domain.QDealMember.dealMember;
 
@@ -21,14 +30,15 @@ public class DealRepositoryImpl implements DealRepositoryCustom {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public List<Deal> getList(DealSearch dealSearch){
+    public List<Deal> getList(DealSearch dealSearch, User user){
         return jpaQueryFactory.selectFrom(deal)
                 .where(
                         goePrice(dealSearch.getMinPrice()),
                         loePrice(dealSearch.getMaxPrice()),
                         containsTitle(dealSearch.getTitle()),
                         //containsContent(dealSearch.getSearchKey()),
-                        eqCategory(dealSearch.getCategory())
+                        eqCategory(dealSearch.getCategory()),
+                        loeDistance(user)
                 )
                 .limit(dealSearch.getSize())
                 .offset(dealSearch.getOffset())
@@ -37,34 +47,57 @@ public class DealRepositoryImpl implements DealRepositoryCustom {
     }
 
     private OrderSpecifier<?> sortOrder(Integer order){
-        if(order == null) return deal.id.desc();
-        else if(order == 1) return deal.view.desc();
-        else if(order == 2) return deal.totalCount.subtract(deal.nowCount).desc();
+        if(order == null) {
+            return deal.id.desc();
+        } else if(order == 1) {
+            return deal.view.desc();
+        } else if(order == 2) {
+            return deal.totalCount.subtract(deal.nowCount).asc();
+        }
         return deal.id.desc();
     }
     private BooleanExpression goePrice(Integer minPrice){
-        if(minPrice == null) return null;
+        if(minPrice == null) {
+            return null;
+        }
         return deal.price.goe(minPrice);
     }
     private BooleanExpression loePrice(Integer maxPrice){
-        if(maxPrice == null) return null;
+        if(maxPrice == null) {
+            return null;
+        }
         return deal.price.loe(maxPrice);
     }
     private BooleanExpression containsTitle(String name){
-        if(name == null) return null;
+        if(name == null) {
+            return null;
+        }
         return deal.title.contains(name);
     }
     private BooleanExpression containsContent(String name){
-        if(name == null) return null;
+        if(name == null) {
+            return null;
+        }
         return deal.content.contains(name);
     }
-    private BooleanExpression eqCategory(String category){
-        if(category == null) return null;
-        return deal.category.name.eq(category);
+    private BooleanExpression eqCategory(String categoryName){
+        if(categoryName == null) {
+            return null;
+        }
+        Category category = jpaQueryFactory.selectFrom(QCategory.category)
+                .where(QCategory.category.name.eq(categoryName))
+                .fetchOne();
+        return deal.category.eq(category);
     }
 
+    private BooleanExpression loeDistance(User user){
+        if(user == null) {
+            return null;
+        }
+        return Expressions.stringTemplate("ST_DISTANCE_SPHERE({0},{1})",user.getPoint(), deal.point)
+                .loe(String.valueOf(user.getDistance()));
+    }
     @Override
-    @Transactional
     public void updateView(Long id){
         jpaQueryFactory.update(deal)
                 .set(deal.view, deal.view.add(1))
@@ -75,7 +108,7 @@ public class DealRepositoryImpl implements DealRepositoryCustom {
     @Override
     public void deleteDeal(Long id){
         jpaQueryFactory.update(deal)
-                .set(deal.deletion, deal.deletion)
+                .set(deal.deletion, false)
                 .where(deal.id.eq(id))
                 .execute();
     }
@@ -92,4 +125,17 @@ public class DealRepositoryImpl implements DealRepositoryCustom {
                 .fetch();
     }
 
+    @Override
+    public List<DealForExpires> getDealIdByDate(LocalDate targetDate){
+        return jpaQueryFactory
+                .select(Projections.constructor
+                        (DealForExpires.class
+                        ,deal.id
+                        ,deal.title))
+                .from(deal)
+                .where(
+                        deal.expireTime.between(targetDate.atTime(0,0,0), targetDate.atTime(23,59,59))
+                        ,deal.deletion.eq(false))
+                .fetch();
+    }
 }

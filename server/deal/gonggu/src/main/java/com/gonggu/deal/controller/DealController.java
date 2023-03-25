@@ -22,8 +22,8 @@ public class DealController {
     private final KafkaProducer kafkaProducer;
     //게시글 불러오기
     @GetMapping("/deal")
-    public List<DealResponse> getDeal(@ModelAttribute DealSearch dealSearch){
-        return dealService.getList(dealSearch);
+    public List<DealResponse> getDeal(@AuthenticationPrincipal User user,@ModelAttribute DealSearch dealSearch){
+        return dealService.getList(dealSearch, user);
     }
     //게시글 상세 보기
     @GetMapping("/deal/{dealId}")
@@ -38,7 +38,7 @@ public class DealController {
     }
    //게시글 수정
     @PatchMapping("/deal/{dealId}")
-    public void editDeal(@PathVariable Long dealId, @RequestBody DealEdit dealEdit){
+    public void editDeal(@PathVariable Long dealId, @RequestBody DealCreate dealEdit){
         dealService.editDeal(dealId,dealEdit);
     }
     //게시글 삭제
@@ -51,8 +51,11 @@ public class DealController {
     @PostMapping("/deal/{dealId}/enrollment")
     public void requestJoin(@PathVariable Long dealId, @AuthenticationPrincipal User user,
                             @RequestBody DealJoin join){
-        if(dealService.createJoin(dealId, join, user)) kafkaProducer.sendDealMemberToPush("dealComplete",dealId);
-        else kafkaProducer.sendDealMemberToPush("dealJoin",dealId);
+        if(dealService.createJoin(dealId, join, user)) {
+            kafkaProducer.sendDealMemberToPush("dealComplete",dealId);
+        } else {
+            kafkaProducer.sendDealMemberToPush("dealJoin",dealId);
+        }
         kafkaProducer.sendDealAndUserToChat("chatJoin",dealId,user);
     }
 
@@ -60,7 +63,9 @@ public class DealController {
     @PatchMapping("/deal/{dealId}/enrollment")
     public void editJoin(@PathVariable Long dealId, @AuthenticationPrincipal User user,
                          @RequestBody DealJoin join){
-        if(dealService.editJoin(dealId,join,user)) kafkaProducer.sendDealMemberToPush("dealComplete",dealId);;
+        if(dealService.editJoin(dealId,join,user)) {
+            kafkaProducer.sendDealMemberToPush("dealComplete",dealId);
+        }
     }
     //구매 철회
     @DeleteMapping("/deal/{dealId}/enrollment")
