@@ -34,8 +34,8 @@ public class DealRepositoryImpl implements DealRepositoryCustom {
                         goePrice(dealSearch.getMinPrice()),
                         loePrice(dealSearch.getMaxPrice()),
                         containsTitle(dealSearch.getTitle()),
-                        eqCategory(dealSearch.getCategory())
-                        //loeDistance(user) // 이번에는 미사용
+                        eqCategory(dealSearch.getCategory()),
+                        loeDistance(user)
                 )
                 .limit(dealSearch.getSize())
                 .offset(dealSearch.getOffset())
@@ -85,8 +85,8 @@ public class DealRepositoryImpl implements DealRepositoryCustom {
                         loePrice(dealSearch.getMaxPrice()),
                         containsTitle(dealSearch.getTitle()),
                         //containsContent(dealSearch.getSearchKey()),
-                        eqCategory(dealSearch.getCategory())
-                        //loeDistance(user)
+                        eqCategory(dealSearch.getCategory()),
+                        loeDistance(user)
                 )
                 .orderBy(sortOrder(dealSearch.getOrder()))
                 .limit(dealSearch.getSize())
