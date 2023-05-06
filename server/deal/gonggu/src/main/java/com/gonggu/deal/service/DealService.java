@@ -1,5 +1,6 @@
 package com.gonggu.deal.service;
 
+import com.gonggu.deal.config.AOP.RedissonLockAop;
 import com.gonggu.deal.domain.*;
 import com.gonggu.deal.exception.CategoryNotFound;
 import com.gonggu.deal.exception.DealJoinFailed;
@@ -16,25 +17,26 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import lombok.RequiredArgsConstructor;
 
+import lombok.extern.slf4j.Slf4j;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.WKTReader;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
-import javax.net.ssl.HttpsURLConnection;
 import java.io.*;
 import java.net.*;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class DealService {
 
     private final DealRepository dealRepository;
@@ -44,6 +46,7 @@ public class DealService {
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
     private final KeywordRepository keywordRepository;
+    private final RedissonClient redissonClient;
     @Value("${geo.url}")
     private String apiUrl;
     @Value(("${geo.key}"))
@@ -63,7 +66,6 @@ public class DealService {
     }
     @Transactional(readOnly = true)
     public DealDetailResponse getDealDetail(Long id){
-        updateView(id);
         return new DealDetailResponse(dealRepository.findById(id).orElseThrow(DealNotFound::new));
     }
 
@@ -130,7 +132,7 @@ public class DealService {
     public void updateView(Long dealId) {
         dealRepository.updateView(dealId);
     }
-
+    @RedissonLockAop(method = "구매 참여")
     public boolean createJoin(Long dealId, DealJoin join, User user) {
         Deal deal = dealRepository.findById(dealId).orElseThrow(DealNotFound::new);
         if(dealMemberRepository.findByDealAndUser(deal,user).isPresent()) {
@@ -152,7 +154,7 @@ public class DealService {
             return false;
         }
     }
-
+    @RedissonLockAop(method = "구매 수정")
     public boolean editJoin(Long dealId, DealJoin join, User user){
         Deal deal = dealRepository.findById(dealId).orElseThrow(DealNotFound::new);
         DealMember dealMember = dealMemberRepository.findByDealAndUser(deal, user).orElseThrow(UserNotFound::new);
@@ -169,7 +171,7 @@ public class DealService {
             return false;
         }
     }
-
+    @RedissonLockAop(method = "구매 취소")
     public void deleteJoin(Long dealId, User user){
         Deal deal = dealRepository.findById(dealId).orElseThrow(DealNotFound::new);
         DealMember dealMember = dealMemberRepository.findByDealAndUser(deal, user).orElseThrow(UserNotFound::new);
